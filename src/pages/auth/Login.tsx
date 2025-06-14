@@ -101,9 +101,9 @@ export default function Login() {
         <>
             <Splash uppertext="Login into"/>
             
-            <div className="container mx-auto lg:max-w-[50%] px-4 sm:px-0">
+            <div className="container mx-auto lg:max-w-[50%] px-4 lg:px-0">
                 <form 
-                className="grid grid-cols-1 md:grid-cols-2 gap-4" 
+                className="grid grid-cols-1 lg:grid-cols-2 gap-4" 
                 onSubmit={signIn} 
                 autoComplete="off" spellCheck="false" autoCorrect="off" autoCapitalize="off">
                     <div className="flex flex-col">
