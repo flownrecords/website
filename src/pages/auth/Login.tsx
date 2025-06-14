@@ -6,6 +6,7 @@ import axios from "axios";
 import Button from "../../components/general/Button";
 import Splash from "../../components/general/Splash";
 import useAlert from "../../components/alert/useAlert";
+import { useAuth } from "../../components/auth/AuthContext";
 
 export default function Login() {
     const emailRef = useRef<HTMLInputElement>(null);
@@ -13,6 +14,8 @@ export default function Login() {
 
     const alert = useAlert();
     const navigate = useNavigate();
+
+    const { login } = useAuth();
 
     useEffect(() => {
         autoLogin();
@@ -78,7 +81,7 @@ export default function Login() {
 						return;
 					}
 
-					localStorage.setItem('accessToken', token);
+					login(token);
 
 					return navigate("/me");
 				} else {
@@ -103,10 +106,9 @@ export default function Login() {
         <>
             <Splash uppertext="Login into"/>
             
-            <div className="container mx-auto lg:max-w-[50%] px-4 lg:px-0">
+            <div className="container mx-auto max-w-4xl p-4 lg:px-0">
                 <form 
                 className="grid grid-cols-1 lg:grid-cols-2 gap-4" 
-                onSubmit={signIn} 
                 autoComplete="off" spellCheck="false" autoCorrect="off" autoCapitalize="off">
                     <div className="flex flex-col">
 				        <label className="text-sm text-white/75 mb-1">email</label>
@@ -135,7 +137,7 @@ export default function Login() {
 
                 <div className="flex flex-col md:flex-row gap-4">
                     <Button text="Create an account" to="/getstarted"/>
-                    <Button text="Login" to="#" onClick={signIn}/>
+                    <Button text="Login" onClick={signIn} type="submit"/>
                 </div>
             </div>
         </>

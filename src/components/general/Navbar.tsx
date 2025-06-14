@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 
+import { useAuth } from "../auth/AuthContext";
 
 export default function Navbar() {
   const [mobileMenu, toggleMobileMenu] = useState(false);
+
+  const { user, logout } = useAuth();
 
   return (
     <>
@@ -22,9 +25,23 @@ export default function Navbar() {
               </div>
 
               <div>
-                <ul className="flex space-x-4">
-                  <li><Link to="/login" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Login</Link></li>
-                </ul>
+                {user ? (
+                  <ul className="flex space-x-6">
+                    <li>
+                      <Link to="/me" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 capitalize flex items-center">
+                        { user?.profilePictureUrl && <img src={user.profilePictureUrl} draggable="false" className="rounded-full h-5 w-5 mx-2"/>}
+                        { user?.firstName ?? `@${user.username}`}
+                      </Link>
+                    </li>
+                    <li>
+                      <button onClick={logout} className="decoration-second-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 cursor-pointer">Logout</button>
+                    </li>
+                  </ul>
+                ) : (
+                  <ul className="flex space-x-4">
+                    <li><Link to="/login" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Login</Link></li>
+                  </ul>
+                )}
               </div>
           </div>
 
@@ -48,7 +65,24 @@ export default function Navbar() {
             <li><Link to="/getstarted" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Get started</Link></li>
             <li><Link to="/tools" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Tools</Link></li>
             <li><Link to="/about" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">About Us</Link></li>
-            <li><Link to="/login" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Login</Link></li>
+            {
+              user ? (
+                <li>
+                  <Link to="/me" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 capitalize flex items-center">
+                    { user?.profilePictureUrl && <img src={user.profilePictureUrl} draggable="false" className="rounded-full h-5 w-5 mr-2"/>}
+                    { user?.firstName ?? `@${user.username}`}
+                  </Link>
+                </li>
+                
+              ) : (
+                <li><Link to="/login" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Login</Link></li>
+              )
+            }
+            { user && 
+              <li>
+                <button onClick={logout} className="decoration-second-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 cursor-pointer">Logout</button>
+              </li>
+            }
           </ul>
         </div>
         }

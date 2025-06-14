@@ -4,6 +4,7 @@ import Splash from "../../components/general/Splash";
 import { Link, useNavigate } from "react-router-dom";
 import useAlert from "../../components/alert/useAlert";
 import axios from "axios";
+import { useAuth } from "../../components/auth/AuthContext";
 
 type Role = {
     id: string;
@@ -20,6 +21,7 @@ export default function Register() {
     const alert = useAlert();
     const navigate = useNavigate();
 
+    const { login } = useAuth();
     const [ termsAccepted, setTermsAccepted ] = useState(false);
 
     const name = useRef<HTMLInputElement>(null);
@@ -144,7 +146,7 @@ export default function Register() {
                     return;
                 }
 
-                localStorage.setItem("accessToken", token);
+                login(token);
 
                 return navigate("/me");
             } else {
@@ -178,9 +180,9 @@ export default function Register() {
         <>
             <Splash/>
 
-            <div className="container mx-auto lg:max-w-[75%] xl:max-w-[50%] px-4 lg:px-0">
+            <div className="container mx-auto max-w-4xl p-4 lg:px-0">
                 <form 
-                className="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-4" 
+                className="grid grid-cols-1  xl:grid-cols-2 gap-4" 
                 autoComplete="off" 
                 spellCheck="false" 
                 autoCorrect="off" 
