@@ -15,8 +15,8 @@ export default function Navbar() {
                 <Link to="/" className="text-lg font-semibold">Flown Records</Link>
 
                 <ul className="flex space-x-6 mx-10">
-                  <li><Link to="/" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Home</Link></li>
-                  <li><Link to="/q&a" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Questions</Link></li>
+                  <li><Link to="/getstarted" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Get started</Link></li>
+                  <li><Link to="/tools" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Tools</Link></li>
                   <li><Link to="/about" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">About Us</Link></li>
                 </ul>
               </div>
@@ -45,8 +45,8 @@ export default function Navbar() {
         { mobileMenu && 
         <div className="block md:hidden p-4 m-4 bg-secondary rounded-lg ring-2 ring-white/25">
           <ul className="container mx-auto flex flex-col space-y-4">
-            <li><Link to="/" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Home</Link></li>
-            <li><Link to="/q&a" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Questions</Link></li>
+            <li><Link to="/getstarted" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Get started</Link></li>
+            <li><Link to="/tools" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Tools</Link></li>
             <li><Link to="/about" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">About Us</Link></li>
             <li><Link to="/login" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Login</Link></li>
           </ul>
