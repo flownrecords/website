@@ -1,4 +1,4 @@
-![Flight Records Banner](/docs/BANNER.png)
+![Flight Records Banner](/public/banner.png)
 # Flown Records
 Flown Records is a flight logbook platform that allows pilots to upload, analyze, and visualize their flight data.
 
