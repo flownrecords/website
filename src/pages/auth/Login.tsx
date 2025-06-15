@@ -52,19 +52,19 @@ export default function Login() {
     function signIn() {
         if(!emailRef?.current?.value || !passwordRef?.current?.value) {
             console.error("Email or password input reference is null.");
-            alert("Error", "Please fill in both email and password fields.");
+            //alert("Error", "Please fill in both email and password fields.");
             return;
         }
 
         const email = emailRef.current.value;
         const password = passwordRef.current.value;
         if(!email.includes("@") || !email.includes(".")) {
-            alert("Error", "Please enter a valid email address.");
+            //alert("Error", "Please enter a valid email address.");
             return;
         }
 
         if(password.length < 8) {
-            alert("Error", "Password must be at least 8 characters long.");
+            //alert("Error", "Password must be at least 8 characters long.");
             return;
         }
 
@@ -109,7 +109,10 @@ export default function Login() {
             <div className="container mx-auto max-w-4xl p-4 lg:px-0">
                 <form 
                 className="grid grid-cols-1 lg:grid-cols-2 gap-4" 
-                autoComplete="off" spellCheck="false" autoCorrect="off" autoCapitalize="off">
+                autoComplete="off" 
+                spellCheck="false" 
+                autoCorrect="off" 
+                autoCapitalize="off">
                     <div className="flex flex-col">
 				        <label className="text-sm text-white/75 mb-1">email</label>
                         <input
@@ -129,16 +132,18 @@ export default function Login() {
                             maxLength={18}
                         />
                     </div>
+
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <Button text="Create an account" to="/getstarted"/>
+                        <Button text="Login" onClick={signIn} type="submit"/>
+                    </div>
                 </form>
 
                 <div className="my-4">
                     Forgot your password? <Link to="#" className="text-accent font-semibold hover:underline hover:opacity-75 transition-all duration-150">Click here</Link>
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-4">
-                    <Button text="Create an account" to="/getstarted"/>
-                    <Button text="Login" onClick={signIn} type="submit"/>
-                </div>
+                
             </div>
         </>
     )
