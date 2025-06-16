@@ -3,6 +3,9 @@ import { useState } from "react";
 
 import { useAuth } from "../auth/AuthContext";
 
+
+import Icon from "../../assets/images/icon.png";
+
 export default function Navbar() {
   const [mobileMenu, toggleMobileMenu] = useState(false);
 
@@ -46,7 +49,9 @@ export default function Navbar() {
           </div>
 
           <div className="flex md:hidden container mx-auto justify-between items-center">
-            <Link to="/" className="text-lg font-semibold">Flown Records</Link>
+            <Link to="/" className="text-lg font-semibold">
+              <img src={Icon} alt="Flown Records Logo" className="h-6 w-6 inline-block" />
+            </Link>
 
             <button 
             className="cursor-pointer text-white focus:outline-none hover:opacity-75 transition duration-150" 
