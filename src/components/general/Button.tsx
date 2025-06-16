@@ -22,8 +22,8 @@ const Button: React.FC<ButtonProps> = ({
     from-neutral-900 to-neutral-800 
     hover:opacity-75 transition duration-150
     text-white
-    py-2 px-6 
-    rounded-md text-center
+    py-1 md:py-2 px-4 md:px-6 
+    rounded-lg text-center
     ring-2 ring-white/25 
   `;
 
