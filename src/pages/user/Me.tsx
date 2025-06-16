@@ -137,16 +137,28 @@ export default function Me() {
         <div className="col-span-1 lg:col-span-3">
           <div className="ring-2 ring-white/25 rounded-lg p-4">
 
-            <h1 className="text-2xl font-bold text-white mb-4">My Profile</h1>
+            <h1 className="text-2xl font-bold text-white mb-4">Overview</h1>
             <p className="text-white/75 mb-4">Manage your account settings and preferences.</p>
             
           </div>
         </div>
+
         <div className="col-span-1 ring-2 ring-white/25 rounded-lg p-4 hidden lg:block">
           <div className="flex flex-col space-y-4">
             <Button text="Edit Profile" to="/me/edit"/>
             <Button text="Logbook" to="/me/logbook"/>
             <Button text="Share" onClick={() => {}} type="button"/>
+          </div>
+        </div>
+
+        <div className="col-span-3"></div>
+
+        <div className="col-span-1 ring-2 ring-white/25 rounded-lg p-4 hidden lg:block">
+          <div className="flex justify-between">
+            <span className="font-semibold text-white/50">Local Weather</span><span>LPPR</span>
+          </div>
+          <div>
+            
           </div>
         </div>
       </div>
