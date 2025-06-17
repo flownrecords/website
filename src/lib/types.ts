@@ -23,4 +23,42 @@ export type User = {
   publicProfile: boolean
   disabled: boolean
   admin: boolean
+  logbookEntries: LogbookEntry[]
 } | null
+
+export type LogbookEntry = {
+  id: number
+  unique: string
+  pilotId: number | null
+  userId: number
+  crewId: number[]
+  createdAt: Date
+  updatedAt: Date
+  date: Date | null
+  depAd: string | null
+  arrAd: string | null
+  offBlock: Date | null
+  onBlock: Date | null
+  aircraftType: string | null
+  aircraftRegistration: string | null
+  picName: string | null
+  total: Number | string | null
+  dayTime: Number | string | null
+  nightTime: Number | string | null
+  sepVfr: Number | string | null
+  sepIfr: Number | string | null
+  meVfr: Number | string | null
+  meIfr: Number | string | null
+  picTime: Number | string | null
+  copilotTime: Number | string | null
+  multiPilotTime: Number | string | null
+  instructorTime: Number | string | null
+  dualTime: Number | string | null
+  simTime: Number | string | null
+  simInstructorTime: Number | string | null
+  landDay: number | null
+  landNight: number | null
+  includeInFt: boolean
+  rmks: string | null
+  flightTrack: any[]
+}

@@ -1,4 +1,7 @@
 import './App.css'
+import 'keen-slider/keen-slider.min.css';
+import 'leaflet/dist/leaflet.css';
+
 // Routing
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 

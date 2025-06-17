@@ -4,10 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/general/Button";
 
 import type { User } from "../../lib/types";
+import LogbookChartsCarousel from "../../components/user/ChartsCarousel";
+import Map from "../../components/user/FlownRoutesMap";
 
 export default function Me() {
   const navigate = useNavigate();
   const [user, setUser] = useState<User>(null);
+  const [localWeather, setLocalWeather] = useState<{
+    metar?: string,
+    taf?: string,
+  }>({});
 
   useEffect(() => {
     if(!localStorage.getItem("accessToken")) {
@@ -21,6 +27,7 @@ export default function Me() {
     })
     .then(response => {
       if(response.status === 200) {
+        fetchLocalWeather(response.data?.homeAirport)
         return setUser(response.data);
       }
     })
@@ -33,7 +40,77 @@ export default function Me() {
       }
     });
 
-  });
+    
+  }, []);
+
+  const fetchLocalWeather = async (homeAirport?: string) => {
+    if(!homeAirport) return;
+
+    const response = (await axios.get('http://localhost:7700/gen/wx/' + homeAirport)).data
+    setLocalWeather({
+      metar: response.data.rawOb,
+      taf: response.data.rawTaf,
+    });
+    return response;
+  }
+
+  const totalFlightTime = () => {
+		if (!user?.logbookEntries || user.logbookEntries.length === 0) {
+			return "-";
+		}
+
+		const total = user.logbookEntries
+		.map((entry: any) => entry.includeInFt ? Number(entry.total) : 0)
+		.reduce((acc: number, entry: any) => acc + entry, 0);
+
+		const hours = total.toFixed(0);
+		const minutes = Math.round((total % 1) * 60);
+		return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+	};
+
+  const mostVisitedAirport = () => {
+		if(!user?.logbookEntries || user.logbookEntries.length === 0) {
+			return "-";
+		}
+
+		return user?.logbookEntries
+		.map((entry: any) => entry.depAd)
+		.reduce(
+			(acc: any, icao: string) => {
+				acc[icao] = (acc[icao] || 0) + 1;
+				return acc;
+			},
+			{}
+		)
+		? Object.entries(
+			user?.logbookEntries
+				.map((entry: any) => entry.arrAd)
+				.reduce(
+					(acc: any, icao: string) => {
+						acc[icao] = (acc[icao] || 0) + 1;
+						return acc;
+					},
+					{}
+				)
+		).reduce((a: any, b: any) => (a[1] > b[1] ? a : b))[0]
+		: "-"
+	}
+
+  const mostFlownAcft = () => {
+		if (!user?.logbookEntries || user.logbookEntries.length === 0) {
+			return "-";
+		}
+		const aircraftCount = user.logbookEntries.reduce((acc: any, entry: any) => {
+			acc[entry.aircraftRegistration] = (acc[entry.aircraftRegistration] || 0) + 1;
+			return acc;
+		}, {});
+
+		const mostFlownAcft = Object.keys(aircraftCount).reduce((a, b) =>
+			aircraftCount[a] > aircraftCount[b] ? a : b,
+		);
+
+		return mostFlownAcft || "-";
+	};
 
   return (
     
@@ -108,19 +185,27 @@ export default function Me() {
         <div className="lg:ml-2 lg:pl-4 space-y-1 text-md">
           <div className="flex justify-between">
 						<span className="text-white/50">Flight Time</span>
-            <span className="text-white/75 font-semibold">65 hrs</span>
+            <span className="text-white/75 font-semibold">
+              { totalFlightTime() }
+            </span>
 					</div>
           <div className="flex justify-between">
 						<span className="text-white/50">Flown</span>
-            <span className="text-white/75 font-semibold">0 flights</span>
+            <span className="text-white/75 font-semibold">
+              { `${user?.logbookEntries?.length || 0} flights` }
+            </span>
 					</div>
           <div className="flex justify-between">
 						<span className="text-white/50">Most flown aircraft</span>
-            <span className="text-white/75 font-semibold">CS-EDS</span>
+            <span className="text-white/75 font-semibold">
+              { mostFlownAcft() }
+            </span>
 					</div>
           <div className="flex justify-between">
 						<span className="text-white/50">Most visited airport</span>
-            <span className="text-white/75 font-semibold">LPPR</span>
+            <span className="text-white/75 font-semibold">
+              { mostVisitedAirport() }
+            </span>
 					</div>
         </div>
       </div>
@@ -135,10 +220,9 @@ export default function Me() {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
         <div className="col-span-1 lg:col-span-3">
-          <div className="ring-2 ring-white/25 rounded-lg p-4">
+          <div className="ring-2 ring-white/25 rounded-lg w-full overflow-hidden">
 
-            <h1 className="text-2xl font-bold text-white mb-4">Overview</h1>
-            <p className="text-white/75 mb-4">Manage your account settings and preferences.</p>
+            <Map/>
             
           </div>
         </div>
@@ -151,14 +235,76 @@ export default function Me() {
           </div>
         </div>
 
-        <div className="col-span-3"></div>
+        <div className="col-span-3 ring-2 ring-white/25 rounded-lg p-4">
+          <Link to="/me/logbook" className="inline-flex items-center hover:opacity-50 transition-all duration-150">
+            <h1
+						className="font-semibold text-white/75 "
+						>
+							Logbook
+						</h1>
+
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							className="h-6 w-6 text-white/50 ml-2"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M9 5l7 7-7 7m0-14l7 7-7 7"
+							/>
+						</svg>
+          </Link>
+
+          <div className="mt-2">
+            <div className="grid grid-cols-4 text-sm text-white/50 pb-2">
+              <span>Flight</span>
+              <span>Aircraft</span>
+              <span className="hidden md:inline-block">Type</span>
+              <span>Date</span>
+            </div>
+            <div className="overflow-y-scroll custom-scrollbar h-[300px] pr-2">
+              {
+                user?.logbookEntries.map((entry, index) => (
+                  <Link to={`/me/logbook/${entry.id}`} 
+                  key={index} 
+                  className={
+                    `${index % 2 === 0 ? 'bg-gradient-to-br to-neutral-900 from-neutral-800' : ''}
+
+                    grid grid-cols-4 hover:opacity-75 transition-all duration-150 rounded-lg py-2 pl-2`}>
+                    <span className="text-sm text-white/50">{ entry.rmks?.split('/')[1] }</span>
+                    <span className="text-sm text-white/50">{ entry.aircraftRegistration || "-" }</span>
+                    <span className="text-sm text-white/50 hidden md:inline-block">{ entry.aircraftType || "-" }</span>
+                    <span className="text-sm text-white/50">{
+                      new Date(entry.date as any).toLocaleDateString("en-GB", {
+                        month: "numeric",
+                        day: "numeric",
+                        year: "numeric",
+                        })
+							      }
+                    </span>
+                  </Link>
+                )) 
+              }
+            </div>
+          </div>
+        </div>
 
         <div className="col-span-1 ring-2 ring-white/25 rounded-lg p-4 hidden lg:block">
-          <div className="flex justify-between">
-            <span className="font-semibold text-white/50">Local Weather</span><span>LPPR</span>
+          <div className="flex justify-between mb-2">
+            <h1 className="font-semibold text-white/75">Logbook</h1> <span>LPPR</span>
           </div>
-          <div>
-            
+          <div className="text-sm">
+            <span className="text-white/50"> Metar  </span><br/>
+            <span> { localWeather.metar?.slice(4) || "Not found"} </span>
+          </div>
+
+          <div className="text-sm mt-4">
+            <span className="text-white/50"> TAF  </span><br/>
+            <span> { localWeather.taf?.slice(8) || "Not found"} </span>
           </div>
         </div>
       </div>

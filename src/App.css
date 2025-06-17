@@ -43,7 +43,7 @@ html {
 
 /* Track */
 .custom-scrollbar::-webkit-scrollbar-track {
-	background: #999;
+	background: rgba(30, 30, 30, 0.5);
 	border-radius: 10px;
 }
 
@@ -54,4 +54,5 @@ html {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
 	background: rgba(115, 115, 115, 0.5);
+    cursor: s-resize;
 }
