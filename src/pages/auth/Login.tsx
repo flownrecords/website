@@ -9,7 +9,7 @@ import useAlert from "../../components/alert/useAlert";
 import { useAuth } from "../../components/auth/AuthContext";
 
 export default function Login() {
-    const emailRef = useRef<HTMLInputElement>(null);
+    const identifierRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
     const alert = useAlert();
@@ -40,6 +40,7 @@ export default function Login() {
             })
 
             if(request) {
+                login(token);
                 return navigate("/me");
             }
         } catch(e) {
@@ -49,30 +50,29 @@ export default function Login() {
         }
     }
 
+    function isEmail(input: string): boolean {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
+    }
+
     function signIn() {
-        if(!emailRef?.current?.value || !passwordRef?.current?.value) {
-            console.error("Email or password input reference is null.");
-            //alert("Error", "Please fill in both email and password fields.");
-            return;
+        const identifier = identifierRef.current?.value;
+        const password = passwordRef.current?.value;
+
+        if(!identifier || !password || typeof identifier !== "string" || typeof password !== "string") {
+            return alert("Error", "Please fill in both fields.");
         }
 
-        const email = emailRef.current.value;
-        const password = passwordRef.current.value;
-        if(!email.includes("@") || !email.includes(".")) {
-            //alert("Error", "Please enter a valid email address.");
-            return;
-        }
-
-        if(password.length < 8) {
-            //alert("Error", "Password must be at least 8 characters long.");
-            return;
-        }
+        const loginType = isEmail(identifier) ? "email" : "username";
+        const url = `http://localhost:7700/auth/signin?type=${loginType}`;
 
         try {
+            const payload = { 
+                identifier, 
+                password 
+            }
+
             axios
-            .post("http://localhost:7700/auth/signin", 
-                { email, password },
-            )
+            .post(url, payload)
             .then((response) => {
                 if (response.status === 200) {
 					const token = response.data.accessToken;
@@ -100,8 +100,6 @@ export default function Login() {
         }
     }
 
-    
-
     return (
         <>
             <Splash uppertext="Login into"/>
@@ -114,11 +112,10 @@ export default function Login() {
                 autoCorrect="off" 
                 autoCapitalize="off">
                     <div className="flex flex-col">
-				        <label className="text-sm text-white/75 mb-1">email</label>
+				        <label className="text-sm text-white/75 mb-1">email / username</label>
                         <input
                             className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
-                            ref={emailRef}
-                            type="email"
+                            ref={identifierRef}
                         />
 			        </div>
 
@@ -128,14 +125,12 @@ export default function Login() {
                             className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                             ref={passwordRef}
                             type="password"
-                            minLength={8}
-                            maxLength={18}
                         />
                     </div>
 
                     <div className="flex flex-col md:flex-row gap-4">
-                        <Button text="Create an account" to="/getstarted"/>
                         <Button text="Login" onClick={signIn} type="submit"/>
+                        <Button text="Create an account" to="/getstarted"/>
                     </div>
                 </form>
 

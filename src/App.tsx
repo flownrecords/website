@@ -3,7 +3,7 @@ import 'keen-slider/keen-slider.min.css';
 import 'leaflet/dist/leaflet.css';
 
 // Routing
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 // Pages
 import { Home, AboutUs, NotFound, Login, Register, Me, Logbook, MeEdit, LogbookEntry, Tools } from './pages';
@@ -14,8 +14,7 @@ import Navbar from './components/general/Navbar';
 function App() {
   return (
     <>
-      <Router>
-        <Navbar/>  
+      <Navbar/>  
         <Routes>          
           {/* GENERAL ROUTES */}          
           <Route path="/" element={<Home/>} />
@@ -35,7 +34,6 @@ function App() {
           {/* Catch-all route for 404 Not Found */}
           <Route path="*" element={<NotFound/>} />
         </Routes>
-      </Router>
     </>
   )
 }

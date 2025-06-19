@@ -8,6 +8,7 @@ import { AuthProvider } from './components/auth/AuthContext.tsx'
 import L from 'leaflet';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { HashRouter } from 'react-router-dom'
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -18,10 +19,12 @@ L.Icon.Default.mergeOptions({
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider>
+    <HashRouter>
+      <AuthProvider>
       <AlertProvider>
         <App />
       </AlertProvider>
     </AuthProvider>
+    </HashRouter>
   </StrictMode>,
 )

@@ -1,20 +1,23 @@
 
 
 import { createContext, useContext, useState, useEffect } from "react";
+
 import axios from "axios";
 import type { User } from "../../lib/types";
 import type { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   user: User | null;
   login: (token: string) => void;
-  logout: () => void;
+  logout: () => void | boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
 
   const fetchUser = async () => {
     const token = localStorage.getItem("accessToken");
@@ -46,6 +49,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     localStorage.removeItem("accessToken");
     setUser(null);
+    navigate("/");
+    return true;
   };
 
   return (

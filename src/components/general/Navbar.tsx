@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-
 import { useAuth } from "../auth/AuthContext";
-
 
 import Icon from "../../assets/images/icon.png";
 
