@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/general/Button";
 
 import type { User } from "../../lib/types";
-import LogbookChartsCarousel from "../../components/user/ChartsCarousel";
+// import LogbookChartsCarousel from "../../components/user/ChartsCarousel";
 import Map from "../../components/user/FlownMap";
 import Footer from "../../components/general/Footer";
 

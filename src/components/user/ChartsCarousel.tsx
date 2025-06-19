@@ -1,4 +1,7 @@
+/*
+
 import type { LogbookEntry } from "../../lib/types";
+
 import { useKeenSlider } from "keen-slider/react";
 import {
   BarChart,
@@ -21,6 +24,15 @@ type Props = {
 };
 
 export default function LogbookChartsCarousel({ logbook }: Props) {
+  
+  return (
+    <>
+    </>
+  );
+}
+*/
+
+export default function LogbookChartsCarousel() {
   
   return (
     <>
