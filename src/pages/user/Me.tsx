@@ -167,7 +167,7 @@ export default function Me() {
               <div>
                 <div className="font-semibold text-lg">
                   { user?.organizationRole && 
-                    <span className="text-white/75">
+                    <span className="text-white/50">
                       { roles.find(role => role.id === user?.organizationRole)?.label || user?.organizationRole }
                     </span>
                   }
@@ -175,7 +175,7 @@ export default function Me() {
                   { (user?.organizationId && user?.organizationRole) && <span className="text-white/25 px-2"> @ </span> }
 
                   { user?.organizationId && 
-                    <Link to={`/org/${user.organizationId}`} className="text-white/75 transtion-all duration-150 hover:text-white/50 capitalize">
+                    <Link to={`/org/${user.organizationId}`} className="text-white/50 capitalize">
                       { user?.organizationId }
                     </Link>
                   }
@@ -259,7 +259,6 @@ export default function Me() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
           <div className="col-span-1 lg:col-span-3">
             <div className="ring-2 ring-white/25 rounded-lg w-full overflow-hidden relative">
-
               <Map user={user} big={false}/>
             </div>
           </div>
