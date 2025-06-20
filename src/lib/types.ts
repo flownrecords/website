@@ -42,20 +42,20 @@ export type LogbookEntry = {
   aircraftType: string | null
   aircraftRegistration: string | null
   picName: string | null
-  total: Number | string | null
-  dayTime: Number | string | null
-  nightTime: Number | string | null
-  sepVfr: Number | string | null
-  sepIfr: Number | string | null
-  meVfr: Number | string | null
-  meIfr: Number | string | null
-  picTime: Number | string | null
-  copilotTime: Number | string | null
-  multiPilotTime: Number | string | null
-  instructorTime: Number | string | null
-  dualTime: Number | string | null
-  simTime: Number | string | null
-  simInstructorTime: Number | string | null
+  total: number | string | null
+  dayTime: number | string | null
+  nightTime: number | string | null
+  sepVfr: number | string | null
+  sepIfr: number | string | null
+  meVfr: number | string | null
+  meIfr: number | string | null
+  picTime: number | string | null
+  copilotTime: number | string | null
+  multiPilotTime: number | string | null
+  instructorTime: number | string | null
+  dualTime: number | string | null
+  simTime: number | string | null
+  simInstructorTime: number | string | null
   landDay: number | null
   landNight: number | null
   includeInFt: boolean

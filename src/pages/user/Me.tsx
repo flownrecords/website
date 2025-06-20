@@ -16,6 +16,24 @@ export default function Me() {
     taf?: string,
   }>({});
 
+  const roles = [
+    { id: "GUEST", label: "Guest" },
+    { id: "STUDENT", label: "Student Pilot" },
+    { id: "PILOT", label: "Pilot" },
+    { id: "CFI", label: "Chief Flight Instructor" },
+    { id: "CTKI", label: "Chief Theoretical Knowledge Instructor" },
+    { id: "SM", label: "Safety Manager" },
+    { id: "OPS", label: "Operations" },
+    { id: "FI", label: "Flight Instructor" },
+    { id: "TKI", label: "Theoretical Knowledge Instructor" },
+    { id: "MAIN", label: "Maintenance" },
+    { id: "OFFICE", label: "Office" },
+    { id: "SUPERVISOR", label: "Supervisor" },
+    { id: "ADMIN", label: "Administrator" },
+    { id: "MANAGER", label: "Manager" },
+    { id: "OTHER", label: "Other" },
+  ]
+
   useEffect(() => {
     if(!localStorage.getItem("accessToken")) {
       navigate("/login");
@@ -132,7 +150,7 @@ export default function Me() {
                 <div className="font-semibold text-lg">
                   { user?.organizationRole && 
                     <span className="text-white/75">
-                      { user.organizationRole }
+                      { roles.find(role => role.id === user?.organizationRole)?.label || user?.organizationRole }
                     </span>
                   }
 

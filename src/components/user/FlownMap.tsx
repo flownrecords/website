@@ -7,7 +7,7 @@ const Map = () => {
         <MapContainer
         center={[41.14961, -8.61099]} // Porto 😎
         zoom={13}
-        className='h-64 w-full'
+        className='h-72 w-full'
         >
         <TileLayer
         url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png"
