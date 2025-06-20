@@ -6,6 +6,7 @@ type ButtonProps = {
   className?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>;
   type?: "button" | "submit" | "reset";
+  styleType?: "normal" | "small"
 };
 
 const Button: React.FC<ButtonProps> = ({
@@ -14,9 +15,12 @@ const Button: React.FC<ButtonProps> = ({
   className = "",
   onClick,
   type = "button",
+  styleType= "normal"
 }) => {
   const style = `
     ${className}
+    ${styleType === "small" ? "text-sm" : "text-base"}
+    ${styleType === "small" ? "py-1" : ""}
     inline-block
     cursor-pointer bg-gradient-to-t 
     from-neutral-900 to-neutral-800 
