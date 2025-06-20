@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/general/Button";
 
 import type { User } from "../../lib/types";
-// import LogbookChartsCarousel from "../../components/user/ChartsCarousel";
+import ChartCarousel from "../../components/user/ChartCarousel";
 import Map from "../../components/user/FlownMap";
 import Footer from "../../components/general/Footer";
 
@@ -154,7 +154,6 @@ export default function Me() {
   
     <>
       <div className="container mx-auto max-w-6xl p-4">
-      
         <div className="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4 ring-2 ring-white/25 rounded-lg">
           <div className="flex flex-row items-center space-x-4 lg:col-span-3">
 
@@ -248,22 +247,12 @@ export default function Me() {
           </div>
         </div>
 
-        <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4 block lg:hidden">
-            <div className="flex flex-col space-y-4">
-              <Button text="Edit Profile" to="/me/edit"/>
-              <Button text="Logbook" to="/me/logbook"/>
-              <Button text="Share" onClick={() => {}} type="button"/>
-            </div>
-          </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
-          <div className="col-span-1 lg:col-span-3">
-            <div className="ring-2 ring-white/25 rounded-lg w-full overflow-hidden relative">
-              <Map user={user} big={false}/>
-            </div>
+          <div className="col-span-1 lg:col-span-3 ring-2 ring-white/25 rounded-lg overflow-hidden">
+            <Map user={user} big={false}/>
           </div>
 
-          <div className="col-span-1 ring-2 ring-white/25 rounded-lg p-4 hidden lg:block">
+          <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg hidden lg:block">
             <div className="flex flex-col space-y-4">
               <Button text="Edit Profile" to="/me/edit"/>
               <Button text="Logbook" to="/me/logbook"/>
@@ -271,75 +260,27 @@ export default function Me() {
             </div>
           </div>
 
-          <div className="col-span-3 ring-2 ring-white/25 rounded-lg p-4">
-            <Link to="/me/logbook" className="inline-flex items-center hover:opacity-50 transition-all duration-150">
-              <h1
-              className="font-semibold text-white/75 "
-              >
-                Logbook
-              </h1>
-            </Link>
-
-            <div className="mt-2">
-              <div className="grid grid-cols-4 text-sm text-white/50 mb-2 pr-2">
-                <span>Date</span>
-                <span>Aircraft Reg.</span>
-                <span>Flight Time</span>
-                <span className="">
-                  Date
-                </span>
-              </div>
-              <div className="overflow-y-scroll custom-scrollbar h-72 pr-2">
-                {
-                  user?.logbookEntries.sort(
-                    (a, b) => new Date(b.date as any).getTime() - new Date(a.date as any).getTime()
-                  ).map((entry, index) => (
-                    <Link to={`/me/logbook/${entry.id}`} 
-                    key={index} 
-                    className={
-                      `${index % 2 === 0 ? 'bg-gradient-to-br to-neutral-900 from-neutral-800' : ''}
-
-                      grid grid-cols-4 hover:opacity-75 transition-all duration-150 rounded-lg py-2 pl-2`}>
-                      <span className="text-sm text-white/50">
-                        {
-                          new Date(entry.date as any).toLocaleDateString("en-GB", {
-                          month: "numeric",
-                          day: "numeric",
-                          year: "numeric",
-                          })
-                        }
-                      </span>
-                      <span className="text-sm text-white/50">{ entry.aircraftRegistration || '-'}</span>
-                      <span className="text-sm text-white/50">{ parseTime(entry.total) || "-" }</span>
-                      <span className="text-sm text-white/50" title={entry?.rmks ?? ''}>
-                        {truncateString(entry?.rmks ?? '', 14) || '-'}
-                      </span>
-                    </Link>
-                  )) 
-                }
-                {
-                  user?.logbookEntries.length === 0 && 
-                  <div className="text-white/50 text-sm text-center py-4 col-span-4">
-                    No flights logged yet.
-                  </div>
-                }
-                
-              </div>
-            </div>
+          <div className="col-span-1 lg:col-span-3 p-4 ring-2 ring-white/25 rounded-lg ">
+            <ChartCarousel logbook={user?.logbookEntries}/>
           </div>
 
-          <div className="col-span-1 ring-2 ring-white/25 rounded-lg p-4 hidden lg:block">
+          <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg hidden lg:block">
             <div className="flex justify-between mb-2">
-              <h1 className="font-semibold text-white/75">Logbook</h1> <span>LPPR</span>
+              <h1 className="font-semibold text-white/75">Logbook</h1> <span>{ user?.homeAirport }</span>
             </div>
-            <div className="text-sm">
-              <span className="text-white/50"> Metar  </span><br/>
-              <span> { localWeather.metar?.slice(4) || "Not found"} </span>
-            </div>
-
-            <div className="text-sm mt-4">
-              <span className="text-white/50"> TAF  </span><br/>
-              <span> { localWeather.taf?.slice(8) || "Not found"} </span>
+            <div className="space-y-2">
+              {localWeather.metar && (
+                <div className="text-sm">
+                  <span className="font-semibold">METAR</span>
+                  <p className="text-sm text-white/75">{localWeather.metar}</p>
+                </div>
+              )}
+              {localWeather.taf && (
+                <div className="text-sm">
+                  <span className="font-semibold">TAF</span>
+                  <p className="text-sm text-white/75">{localWeather.taf}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
