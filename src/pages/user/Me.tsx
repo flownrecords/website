@@ -258,10 +258,9 @@ export default function Me() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
           <div className="col-span-1 lg:col-span-3">
-            <div className="ring-2 ring-white/25 rounded-lg w-full overflow-hidden">
+            <div className="ring-2 ring-white/25 rounded-lg w-full overflow-hidden relative">
 
               <Map user={user} big={false}/>
-              
             </div>
           </div>
 

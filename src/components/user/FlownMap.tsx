@@ -9,6 +9,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import type { Aerodrome, User } from '../../lib/types';
+import Button from '../general/Button';
 
 type MapProps = {
   big: boolean;
@@ -173,7 +174,9 @@ const FlownMap: React.FC<MapProps> = ({ big, user }) => {
   }, []);
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className="w-full overflow-hidden relative">
+      <Button type="button" onClick={() => {}} text='Open' className='absolute bottom-4 left-4 z-[1000] bg-white text-black px-4 py-2 rounded shadow-md hover:bg-gray-200 transition' styleType='small'/>
+
       <MapContainer
         center={[41.14961, -8.61099]}
         minZoom={2}
@@ -188,7 +191,6 @@ const FlownMap: React.FC<MapProps> = ({ big, user }) => {
 
         <AerodromeLayer aerodromes={aerodromes} visitedIcaos={visitedIcaos} />
         <RouteLines aerodromes={aerodromes} logbook={user?.logbookEntries} />
-        
         
       </MapContainer>
     </div>
