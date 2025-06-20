@@ -62,3 +62,20 @@ export type LogbookEntry = {
   rmks: string | null
   flightTrack: any[]
 }
+
+export type Waypoint = {
+    name: string;
+    id: string;
+    coords: Coordinates;
+    aliases?: string[];
+}
+
+export type Aerodrome = {
+    icao: string;
+    coords: Coordinates;
+}
+
+export type Coordinates = {
+    lat: number;
+    long: number;
+}

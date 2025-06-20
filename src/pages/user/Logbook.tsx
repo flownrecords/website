@@ -7,8 +7,10 @@ import axios from "axios";
 import Button from "../../components/general/Button";
 import Splash from "../../components/general/Splash";
 import useAlert from "../../components/alert/useAlert";
+import type { User } from "../../lib/types";
 
 export default function Logbook() {
+  const [ user, setUser ] = useState<User>(null);
   const [ manageMode, toggleManageMode ] = useState(false);
   const [ managedEntries, setManagedEntries] = useState<number[]>([]);
   const [ uploadModal, toggleUploadModal ] = useState(false);
@@ -19,10 +21,36 @@ export default function Logbook() {
 
   const alert = useAlert();
 
-  const { user } = useAuth();
   let navigate = useNavigate();
 
   const token = localStorage.getItem("accessToken");
+
+  useEffect(() => {
+    if(!localStorage.getItem("accessToken")) {
+      navigate("/login");
+    }
+
+    axios.get('http://localhost:7700/users/me', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+      }
+    })
+    .then(response => {
+      if(response.status === 200) {
+        return setUser(response.data);
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching user data:", error);
+      if(error.response?.status === 401) {
+        console.log("Unauthorized access, redirecting to login.");
+        localStorage.removeItem("accessToken");
+        navigate("/login");
+      }
+    });
+
+    
+  }, []);
 
   const fileSources =[
     { 
@@ -31,11 +59,6 @@ export default function Logbook() {
       logo: "https://d308f3rtp9iyib.cloudfront.net/assets/my_flightlogger_icon-99fc56ba222dde06d0b11a88e430a81cc59dbb07027548a1f3666e398f2cfea0.png" 
     },
   ]
-
-  if(!user) {
-    navigate('/login');
-    return null;  
-  }
 
   function captalize(str?: string | null) {
     if(!str) return undefined;
@@ -208,7 +231,7 @@ export default function Logbook() {
             </span>
           </div>
           {
-            user?.logbookEntries.length > 0 && (
+            (user?.logbookEntries && user?.logbookEntries.length > 0) && (
               user?.logbookEntries.sort(
                 (a, b) => new Date(b.date as any).getTime() - new Date(a.date as any).getTime()
               ).map((entry, index) => (

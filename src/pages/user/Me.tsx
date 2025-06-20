@@ -260,7 +260,7 @@ export default function Me() {
           <div className="col-span-1 lg:col-span-3">
             <div className="ring-2 ring-white/25 rounded-lg w-full overflow-hidden">
 
-              <Map user={user}/>
+              <Map user={user} big={false}/>
               
             </div>
           </div>
@@ -280,21 +280,6 @@ export default function Me() {
               >
                 Logbook
               </h1>
-
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-white/50 ml-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7m0-14l7 7-7 7"
-                />
-              </svg>
             </Link>
 
             <div className="mt-2">
