@@ -3,7 +3,7 @@ name: Feature request
 about: Suggest an idea for this project
 title: "[FEATURE] - Title"
 labels: feature, flown-records, under review
-assignees: ''
+assignees: 'jurgenjacobsen'
 
 ---
 
