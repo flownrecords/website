@@ -95,7 +95,7 @@ export default function Logbook() {
     form.append('file', file);
     form.append('source', source);
 
-    axios.post('http://localhost:7700/users/logbook/update', form, {
+    axios.post('http://localhost:7700/users/logbook/upload', form, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`
@@ -131,7 +131,7 @@ export default function Logbook() {
     }
 
     axios.post('http://localhost:7700/users/logbook/delete', {
-      entryIds: managedEntries,
+      entryIds: managedEntries.map(id => Number(id)),
       userId: user.id
     }, {
       headers: {

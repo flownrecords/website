@@ -147,7 +147,7 @@ export default function Me() {
 		return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
   }
 
-  const truncateString = (str: string, max: number) =>  str.length > max ? `${str.substring(0, max)}…` : str;
+  const truncateString = (str: string, max: number) =>  str.length > max ? `${str.substring(0, max).trim()}…` : str;
 
   return (
     
@@ -329,7 +329,7 @@ export default function Me() {
                       <span className="text-sm text-white/50">{ entry.aircraftRegistration || '-'}</span>
                       <span className="text-sm text-white/50">{ parseTime(entry.total) || "-" }</span>
                       <span className="text-sm text-white/50" title={entry?.rmks ?? ''}>
-                        {truncateString(entry?.rmks ?? '', 15) || '-'}
+                        {truncateString(entry?.rmks ?? '', 14) || '-'}
                       </span>
                     </Link>
                   )) 
