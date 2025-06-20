@@ -131,6 +131,24 @@ export default function Me() {
 		return mostFlownAcft || "-";
 	};
 
+  const parseTime = (time?: string | number | null) => {
+    if(!time) return "0:00";
+    const total = typeof time === 'string' ? parseFloat(time) : time;
+    if(isNaN(total)) return "0:00";
+    if(total < 0) return "0:00";
+    if(total === 0) return "0:00";
+    if(total < 1) {
+      const minutes = Math.round(total * 60);
+      return `0:${minutes < 10 ? '0' + minutes : minutes}`;
+    }
+
+    const hours = total.toFixed(0);
+		const minutes = Math.round((total % 1) * 60);
+		return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+  }
+
+  const truncateString = (str: string, max: number) =>  str.length > max ? `${str.substring(0, max)}…` : str;
+
   return (
     
   
@@ -242,7 +260,7 @@ export default function Me() {
           <div className="col-span-1 lg:col-span-3">
             <div className="ring-2 ring-white/25 rounded-lg w-full overflow-hidden">
 
-              <Map/>
+              <Map user={user}/>
               
             </div>
           </div>
@@ -280,35 +298,49 @@ export default function Me() {
             </Link>
 
             <div className="mt-2">
-              <div className="grid grid-cols-4 text-sm text-white/50 pb-2">
-                <span>Flight</span>
-                <span>Aircraft</span>
-                <span className="hidden md:inline-block">Type</span>
+              <div className="grid grid-cols-4 text-sm text-white/50 mb-2 pr-2">
                 <span>Date</span>
+                <span>Aircraft Reg.</span>
+                <span>Flight Time</span>
+                <span className="">
+                  Date
+                </span>
               </div>
-              <div className="overflow-y-scroll custom-scrollbar h-[300px] pr-2">
+              <div className="overflow-y-scroll custom-scrollbar h-72 pr-2">
                 {
-                  user?.logbookEntries.map((entry, index) => (
+                  user?.logbookEntries.sort(
+                    (a, b) => new Date(b.date as any).getTime() - new Date(a.date as any).getTime()
+                  ).map((entry, index) => (
                     <Link to={`/me/logbook/${entry.id}`} 
                     key={index} 
                     className={
                       `${index % 2 === 0 ? 'bg-gradient-to-br to-neutral-900 from-neutral-800' : ''}
 
                       grid grid-cols-4 hover:opacity-75 transition-all duration-150 rounded-lg py-2 pl-2`}>
-                      <span className="text-sm text-white/50">{ entry.rmks?.split('/')[1] }</span>
-                      <span className="text-sm text-white/50">{ entry.aircraftRegistration || "-" }</span>
-                      <span className="text-sm text-white/50 hidden md:inline-block">{ entry.aircraftType || "-" }</span>
-                      <span className="text-sm text-white/50">{
-                        new Date(entry.date as any).toLocaleDateString("en-GB", {
+                      <span className="text-sm text-white/50">
+                        {
+                          new Date(entry.date as any).toLocaleDateString("en-GB", {
                           month: "numeric",
                           day: "numeric",
                           year: "numeric",
                           })
-                      }
+                        }
+                      </span>
+                      <span className="text-sm text-white/50">{ entry.aircraftRegistration || '-'}</span>
+                      <span className="text-sm text-white/50">{ parseTime(entry.total) || "-" }</span>
+                      <span className="text-sm text-white/50" title={entry?.rmks ?? ''}>
+                        {truncateString(entry?.rmks ?? '', 15) || '-'}
                       </span>
                     </Link>
                   )) 
                 }
+                {
+                  user?.logbookEntries.length === 0 && 
+                  <div className="text-white/50 text-sm text-center py-4 col-span-4">
+                    No flights logged yet.
+                  </div>
+                }
+                
               </div>
             </div>
           </div>

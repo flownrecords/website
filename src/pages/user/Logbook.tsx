@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../components/auth/AuthContext";
 import { useEffect, useRef, useState } from "react";
 
@@ -56,6 +56,14 @@ export default function Logbook() {
     const hours = total.toFixed(0);
 		const minutes = Math.round((total % 1) * 60);
 		return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+  }
+
+  function parseDate(date?: string | Date | null, cut = false) {
+    return new Date(date as any).toLocaleDateString("en-GB", {
+      month: "numeric",
+      day: "numeric",
+      year: "numeric",
+    }).slice(0, cut ? 5 : undefined);
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -147,19 +155,22 @@ export default function Logbook() {
           bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2
           flex justify-between items-center
           ">
-          <div className="flex items-center py-2">
+
+          <Link to="/me"  className="flex items-center py-2">
             <img src={user?.profilePictureUrl ?? 'https://placehold.co/512x512'} className="h-8 w-8 rounded-full"/>
             <h1 className="font-semibold ml-2">
               {captalize(user?.firstName) ?? `@${user?.username}`}
             </h1>
-          </div>
+          </Link>
 
           <div className="flex items-center font-semibold">
             <span className="text-sm text-white/50">{ user?.logbookEntries.length } flights</span>
           </div>
 
           <div className="space-x-4">
-            <Button to="/me" text="Back to profile" styleType="small"/>
+            <span  className="hidden lg:inline-block">
+              <Button to="/me" text="Profile" styleType="small"/>
+            </span>
             {manageMode && (
               <Button
                 type="button"
@@ -178,17 +189,18 @@ export default function Logbook() {
         <div className="mt-4 bg-secondary ring-2 ring-white/25 rounded-lg p-4">
           <div className="grid grid-cols-6 px-2 mb-4">
             <span>
-              Registration
-            </span>
-            <span>
               Date
             </span>
-            <span>
-              Departure
-            </span>
-            <span>
-              Arrival
-            </span>
+
+            <span className="hidden md:block"> Registration </span>
+            <span className="block md:hidden"> Reg. </span>
+
+            <span className="hidden md:block"> Departure </span>
+            <span className="block md:hidden"> Dep. </span>
+
+            <span className="hidden md:block"> Arrival </span>
+            <span className="block md:hidden"> Arr. </span>
+            
             <span>
               Flight Time
             </span>
@@ -207,17 +219,16 @@ export default function Logbook() {
                   ${index % 2 === 0 ? 'bg-gradient-to-br to-neutral-900 from-neutral-800' : 'bg-primary'} 
                   rounded-xl
                   `}>
-                  <span className="text-sm text-white/50">{entry.aircraftRegistration || "-"}</span>
-                  <span className="text-sm text-white/50">
-                    {new Date(entry.date as any).toLocaleDateString("en-GB", {
-                      month: "numeric",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                  <span className="text-sm text-white/50 ml-2 hidden">
+                    {parseDate(entry.date, false)}
                   </span>
+                  <span className="text-sm text-white/50 ml-2 md:block">
+                    {parseDate(entry.date, true)}
+                  </span>
+                  <span className="text-sm text-white/50">{entry.aircraftRegistration || "-"}</span>
                   <span className="text-sm text-white/50">{entry.depAd || "-"}</span>
                   <span className="text-sm text-white/50">{entry.arrAd || "-"}</span>
-                  <span className="text-sm text-white/50">{parseTime(entry.total)}</span>
+                  <span className="text-sm text-white/50">{parseTime(entry.total) || '-'}</span>
                   <span className="flex justify-end px-2">
 
                     {manageMode && (
