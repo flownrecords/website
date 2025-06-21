@@ -81,7 +81,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
           <h2 className="text-white mb-2 text-sm font-semibold text-center">Monthly Hours & Flights</h2>
           <ResponsiveContainer width="100%" height={400}>
             
-            <LineChart data={chartDataONE} margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
+            <LineChart data={chartDataONE} margin={{ top: 15, right: 45, left: 45, bottom: 0 }}>
               <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
               <XAxis dataKey="name" stroke="#ccc" />
 
@@ -116,11 +116,11 @@ export default function ChartCarousel({ logbook = [] }: Props) {
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={Object.values(sortedAircraft)} margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
               <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
-              <XAxis dataKey="name" stroke="#fff"/>
+              <XAxis dataKey="name" stroke="#fff" label={''}/>
               <YAxis />
               <Tooltip cursor={{ fill: "rgba(255, 255, 255, 0.01)" }}/>
               <Legend/>
-              <Bar dataKey="flights" fill="#1E1E1E" radius={[5, 5, 0, 0]}/>
+              <Bar dataKey="flights" name="Aircraft Flights" fill="#2e2e2e" radius={[5, 5, 0, 0]}/>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -133,13 +133,13 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
       <button
         onClick={() => slider.current?.prev()}
-        className="absolute top-1/2 left-2 -translate-y-1/2 bg-secondary/25 hover:bg-secondary/50 text-white rounded-full h-8 w-8 p-1 cursor-pointer"
+        className="absolute top-1/2 left-1 -translate-y-1/2 bg-secondary/25 hover:bg-secondary/50 text-white rounded-full h-8 w-8 p-1 cursor-pointer"
       >
         ←
       </button>
       <button
         onClick={() => slider.current?.next()}
-        className="absolute top-1/2 right-2 -translate-y-1/2 bg-secondary/25 hover:bg-secondary/50 text-white rounded-full h-8 w-8 p-1 cursor-pointer"
+        className="absolute top-1/2 right-1 -translate-y-1/2 bg-secondary/25 hover:bg-secondary/50 text-white rounded-full h-8 w-8 p-1 cursor-pointer"
       >
         →
       </button>

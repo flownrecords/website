@@ -154,7 +154,7 @@ export default function Me() {
   
     <>
       <div className="container mx-auto max-w-6xl p-4">
-        <div className="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4 ring-2 ring-white/25 rounded-lg">
+        <div className="px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-4 ring-2 ring-white/25 rounded-lg">
           <div className="flex flex-row items-center space-x-4 lg:col-span-3">
 
             <img className="h-18 w-18 md:h-28 md:w-28 rounded-full ring-2 ring-white/25" draggable="false" src={user?.profilePictureUrl ?? 'https://placehold.co/512x512'} alt="" />

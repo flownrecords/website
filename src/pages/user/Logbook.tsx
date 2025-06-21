@@ -179,13 +179,13 @@ export default function Logbook() {
           ">
 
           <Link to="/me"  className="flex items-center py-2">
-            <img src={user?.profilePictureUrl ?? 'https://placehold.co/512x512'} className="h-8 w-8 rounded-full"/>
+            <img src={user?.profilePictureUrl ?? 'https://placehold.co/512x512'} className="h-8 w-8 rounded-full ring-1 ring-white/25"/>
             <h1 className="font-semibold ml-2">
               {captalize(user?.firstName) ?? `@${user?.username}`}
             </h1>
           </Link>
 
-          <div className="flex items-center font-semibold">
+          <div className="hidden md:flex items-center font-semibold ">
             <span className="text-sm text-white/50">{ user?.logbookEntries.length } flights</span>
           </div>
 
@@ -206,8 +206,6 @@ export default function Logbook() {
           </div>
         </div>
 
-
-
         <div className="mt-4 bg-secondary ring-2 ring-white/25 rounded-lg p-4">
           <div className="grid grid-cols-6 px-2 mb-4">
             <span>
@@ -223,9 +221,8 @@ export default function Logbook() {
             <span className="hidden md:block"> Arrival </span>
             <span className="block md:hidden"> Arr. </span>
             
-            <span>
-              Flight Time
-            </span>
+            <span className="hidden md:block"> Flight Time </span>
+            <span className="block md:hidden"> Time </span>
             <span>
             </span>
           </div>
@@ -238,11 +235,7 @@ export default function Logbook() {
                   key={index}
                   className={`
                   grid grid-cols-6 py-4 px-2 items-center
-<<<<<<< HEAD
-                  ${index % 2 === 0 ? 'bg-primary' : 'bg-gradient-to-br to-neutral-900 from-neutral-800'}
-=======
                   ${index % 2 === 0 ? 'bg-primary' : 'bg-gradient-to-br to-neutral-900 from-neutral-800'} 
->>>>>>> 3771197bd6f9f6a857880cdf168c0f5c80a32a57
                   rounded-xl
                   `}>
                   <span className="text-sm text-white/50 ml-2 hidden">
