@@ -238,7 +238,11 @@ export default function Logbook() {
                   key={index}
                   className={`
                   grid grid-cols-6 py-4 px-2 items-center
+<<<<<<< HEAD
                   ${index % 2 === 0 ? 'bg-primary' : 'bg-gradient-to-br to-neutral-900 from-neutral-800'}
+=======
+                  ${index % 2 === 0 ? 'bg-primary' : 'bg-gradient-to-br to-neutral-900 from-neutral-800'} 
+>>>>>>> 3771197bd6f9f6a857880cdf168c0f5c80a32a57
                   rounded-xl
                   `}>
                   <span className="text-sm text-white/50 ml-2 hidden">

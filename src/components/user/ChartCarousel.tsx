@@ -120,7 +120,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
               <YAxis />
               <Tooltip cursor={{ fill: "rgba(255, 255, 255, 0.01)" }}/>
               <Legend/>
-              <Bar dataKey="flights" fill="#1E1E1E"/>
+              <Bar dataKey="flights" fill="#1E1E1E" radius={[5, 5, 0, 0]}/>
             </BarChart>
           </ResponsiveContainer>
         </div>
