@@ -11,6 +11,9 @@ import {
   CartesianGrid,
   Legend,
   Line,
+  PieChart,
+  Cell,
+  Pie,
 } from "recharts";
 
 type Props = {
@@ -74,6 +77,40 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
   const sortedAircraft = Object.values(chartDataTWO).sort((a, b) => b.flights - a.flights).slice(0, 9);
 
+  const vfrIfrData = [
+    {
+      name: "VFR",
+      value: logbook.reduce((sum, e) => sum + ((Number(e.sepVfr) || 0) + (Number(e.meVfr) || 0)), 0),
+    },
+    {
+      name: "IFR",
+      value: logbook.reduce((sum, e) => sum + ((Number(e.sepIfr) || 0) + (Number(e.meIfr) || 0)), 0),
+    },
+  ];
+
+  const dayNightData = [
+    {
+      name: "Day",
+      value: logbook.reduce((sum, e) => sum + (Number(e.dayTime) || 0), 0),
+    },
+    {
+      name: "Night",
+      value: logbook.reduce((sum, e) => sum + (Number(e.nightTime) || 0), 0),
+    },
+  ];
+
+  const sixMonths = new Date();
+  sixMonths.setMonth(sixMonths.getMonth() - 5);
+  const landingData = logbook.filter(e => e.date && new Date(e.date) >= sixMonths).reduce((acc, entry) => {
+    const date = new Date(entry.date as any);
+    const key = date.toLocaleString("default", { month: "short", year: "numeric" });
+    if (!acc[key]) acc[key] = { name: key, landings: 0 };
+    acc[key].landings += (entry.landDay || 0) + (entry.landNight || 0);
+    return acc;
+  }, {} as Record<string, { name: string; landings: number }>);
+
+  const landingChartData = Object.values(landingData);
+
   return (
     <div className="relative">
       <div ref={sliderRef} className="keen-slider">
@@ -125,9 +162,56 @@ export default function ChartCarousel({ logbook = [] }: Props) {
           </ResponsiveContainer>
         </div>
 
-        <div className="keen-slider__slide">
-          <h2 className="text-white mb-2 text-sm font-semibold text-center">Y</h2>
+         <div className="keen-slider__slide">
+          <h2 className="text-white text-center">VFR vs IFR Time</h2>
+          <ResponsiveContainer width="100%" height={400}>
+            <PieChart>
+              
+              <Pie 
+              data={vfrIfrData} 
+              dataKey="value" 
+              nameKey="name" 
+              cx="50%" 
+              cy="50%" 
+              outerRadius={128} 
+              label={(entry) => `${entry.name}: ${parseTime(entry.value)}`} 
+              strokeWidth={0}>
+                {vfrIfrData.map((entry, index) => (
+                  <Cell key={`cell-${index}-${entry.name}`} fill={index % 2 ? '#DD3434' : '#313ED8'} />
+                ))}
+              </Pie>
+            </PieChart>
+            
+          </ResponsiveContainer>
         </div>
+
+        <div className="keen-slider__slide">
+          <h2 className="text-white text-center">Day vs Night Time</h2>
+          <ResponsiveContainer width="100%" height={400}>
+            <PieChart>
+              <Legend />
+              <Tooltip formatter={(value: any) => parseTime(value)} />
+              <Pie data={dayNightData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={120} label={(entry) => `${entry.name}: ${parseTime(entry.value)}`}>
+                {dayNightData.map((entry, index) => (
+                  <Cell key={`cell-day-${index}-${entry.name}`} fill={index % 2 ? '#DD3434' : '#313ED8'} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="keen-slider__slide">
+          <h2 className="text-white text-center">Monthly Landings</h2>
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={landingChartData}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="landings" fill="#EAB308" radius={[5, 5, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      
         
       </div>
 
