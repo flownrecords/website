@@ -131,7 +131,7 @@ export default function Me() {
 		return mostFlownAcft || "-";
 	};
 
-  const parseTime = (time?: string | number | null) => {
+  /*const parseTime = (time?: string | number | null) => {
     if(!time) return "0:00";
     const total = typeof time === 'string' ? parseFloat(time) : time;
     if(isNaN(total)) return "0:00";
@@ -147,7 +147,7 @@ export default function Me() {
 		return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
   }
 
-  const truncateString = (str: string, max: number) =>  str.length > max ? `${str.substring(0, max).trim()}…` : str;
+  const truncateString = (str: string, max: number) =>  str.length > max ? `${str.substring(0, max).trim()}…` : str;*/
 
   return (
     
@@ -254,9 +254,13 @@ export default function Me() {
 
           <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg hidden lg:block">
             <div className="flex flex-col space-y-4">
-              <Button text="Edit Profile" to="/me/edit"/>
-              <Button text="Logbook" to="/me/logbook"/>
               <Button text="Share" onClick={() => {}} type="button"/>
+              <hr className="bg-transparent border-b-2 border-white/25 rounded-lg"/>
+              <Button text="Logbook" to="/me/logbook"/>
+              
+              <Button text="Edit Profile" to="/me/edit"/>
+              
+              
             </div>
           </div>
 
