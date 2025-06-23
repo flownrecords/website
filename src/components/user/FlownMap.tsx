@@ -151,7 +151,7 @@ const RouteLines = ({
             color={colors.accent}
             weight={2}
             noClip={true}
-            opacity={0.5}
+            opacity={0.75}
           />
         );
       })}

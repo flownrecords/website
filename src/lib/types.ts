@@ -60,7 +60,26 @@ export type LogbookEntry = {
   landNight: number | null
   includeInFt: boolean
   rmks: string | null
-  flightTrack: any[]
+  recording: any[]
+  plan: FlightPlan | null
+}
+
+export type FlightPlan = {
+  id: number
+  depAd: string
+  arrAd: string
+  route: string | null
+  alternate: string | null
+  cruiseLevel: string | null
+  cruiseSpeed: string | null
+  fuelPlan: Number | null
+  etd: Date | null
+  eta: Date | null
+  remarks: string | null
+  weather: any | null
+  createdAt: Date
+  updatedAt: Date
+  logbookEntryId: number
 }
 
 export type Waypoint = {
