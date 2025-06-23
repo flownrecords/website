@@ -266,7 +266,7 @@ export default function Me() {
 
           <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg hidden lg:block">
             <div className="flex justify-between mb-2">
-              <h1 className="font-semibold text-white/75">Logbook</h1> <span>{ user?.homeAirport }</span>
+              <h1 className="font-semibold text-white/75">Local Weather</h1> <span title="Home Airport">{ user?.homeAirport }</span>
             </div>
             <div className="space-y-2">
               {localWeather.metar && (

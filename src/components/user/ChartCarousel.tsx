@@ -125,6 +125,17 @@ export default function ChartCarousel({ logbook = [] }: Props) {
               <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
               <XAxis dataKey="name" stroke="#ccc" />
 
+              <YAxis
+                stroke="#ccc"
+                label={{
+                  value: "Flight Time (h)",
+                  angle: -90,
+                  position: "insideLeft",
+                  offset: 10,
+                  style: { fill: "#ccc" },
+                }}
+              />
+
               <Tooltip
                 formatter={(value: any, name: string) => {
                   if (name === "Flight Time") return [parseTime(value), name];
@@ -134,20 +145,19 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                  content={<ChartTooltip/>}
               />
               <Legend />
-              <Line
-                yAxisId="left"
+              <Line      
                 type="monotone"
                 dataKey="time"
                 stroke="#313ED8"
                 name="Flight Time"
               />
 
-              <Line
-                yAxisId="right"
+              <Line 
                 type="monotone"
                 dataKey="flights"
                 stroke="#DD3434"
                 name="Flights"
+               
               />
             </LineChart>
           </ResponsiveContainer>
@@ -172,6 +182,9 @@ export default function ChartCarousel({ logbook = [] }: Props) {
           <ResponsiveContainer width="100%" height={400}>
             <PieChart margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
               
+              <Legend />
+              <Tooltip formatter={(value: any) => parseTime(value)} content={<ChartTooltip/>}/>
+
               <Pie 
               data={vfrIfrData} 
               dataKey="value" 
@@ -194,9 +207,19 @@ export default function ChartCarousel({ logbook = [] }: Props) {
           <h2 className="text-white text-center">Day vs Night Time</h2>
           <ResponsiveContainer width="100%" height={400}>
             <PieChart margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
-              <Legend />
-              <Tooltip formatter={(value: any) => parseTime(value)} />
-              <Pie data={dayNightData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={120} label={(entry) => `${entry.name}: ${parseTime(entry.value)}`}>
+
+              <Legend/>
+              <Tooltip formatter={(value: any) => parseTime(value)} content={<ChartTooltip/>}/>
+
+              <Pie 
+              data={dayNightData} 
+              dataKey="value" 
+              nameKey="name" 
+              cx="50%" 
+              cy="50%" 
+              outerRadius={128} 
+              label={(entry) => `${entry.name}: ${parseTime(entry.value)}`} 
+              strokeWidth={0}>
                 {dayNightData.map((entry, index) => (
                   <Cell key={`cell-day-${index}-${entry.name}`} fill={index % 2 ? '#DD3434' : '#313ED8'} />
                 ))}
