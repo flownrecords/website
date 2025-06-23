@@ -179,7 +179,7 @@ export default function Logbook() {
           ">
 
           <Link to="/me"  className="flex items-center py-2">
-            <img src={user?.profilePictureUrl ?? 'https://placehold.co/512x512'} className="h-8 w-8 rounded-full ring-1 ring-white/25"/>
+            <img src={user?.profilePictureUrl ?? 'https://placehold.co/512x512'} draggable={false} className="h-8 w-8 rounded-full ring-1 ring-white/25" alt="User profile icon"/>
             <h1 className="font-semibold ml-2">
               {captalize(user?.firstName) ?? `@${user?.username}`}
             </h1>
