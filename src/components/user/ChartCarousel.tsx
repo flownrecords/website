@@ -15,27 +15,30 @@ import {
   Cell,
   Pie,
 } from "recharts";
+import { ChartTooltip } from "./ChartTooltip";
 
 type Props = {
   logbook?: LogbookEntry[];
 };
 
-export default function ChartCarousel({ logbook = [] }: Props) {
-  function parseTime(time?: string | number | null) {
-    if(!time) return "0:00";
-    const total = typeof time === 'string' ? parseFloat(time) : time;
-    if(isNaN(total)) return "0:00";
-    if(total < 0) return "0:00";
-    if(total === 0) return "0:00";
-    if(total < 1) {
-      const minutes = Math.round(total * 60);
-      return `0:${minutes < 10 ? '0' + minutes : minutes}`;
-    }
-
-    const hours = total.toFixed(0);
-		const minutes = Math.round((total % 1) * 60);
-		return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+export function parseTime(time?: string | number | null) {
+  if(!time) return "0:00";
+  const total = typeof time === 'string' ? parseFloat(time) : time;
+  if(isNaN(total)) return "0:00";
+  if(total < 0) return "0:00";
+  if(total === 0) return "0:00";
+  if(total < 1) {
+    const minutes = Math.round(total * 60);
+    return `0:${minutes < 10 ? '0' + minutes : minutes}`;
   }
+
+  const hours = total.toFixed(0);
+  const minutes = Math.round((total % 1) * 60);
+  return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+}
+
+export default function ChartCarousel({ logbook = [] }: Props) {
+  
 
   const [sliderRef, slider] = useKeenSlider<HTMLDivElement>({
     loop: false,
@@ -127,6 +130,8 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                   if (name === "Flight Time") return [parseTime(value), name];
                   return [value, name];
                 }}
+
+                 content={<ChartTooltip/>}
               />
               <Legend />
               <Line
@@ -155,9 +160,9 @@ export default function ChartCarousel({ logbook = [] }: Props) {
               <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
               <XAxis dataKey="name" stroke="#fff" label={''}/>
               <YAxis />
-              <Tooltip cursor={{ fill: "rgba(255, 255, 255, 0.01)" }}/>
+              <Tooltip cursor={{ fill: "rgba(255, 255, 255, 0.01)" }} content={<ChartTooltip/>}/>
               <Legend/>
-              <Bar dataKey="flights" name="Aircraft Flights" fill="#2e2e2e" radius={[5, 5, 0, 0]}/>
+              <Bar dataKey="flights" name="Aircraft Flights" fill="#E6AF2E" radius={[5, 5, 0, 0]}/>
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -165,7 +170,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
          <div className="keen-slider__slide">
           <h2 className="text-white text-center">VFR vs IFR Time</h2>
           <ResponsiveContainer width="100%" height={400}>
-            <PieChart>
+            <PieChart margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
               
               <Pie 
               data={vfrIfrData} 
@@ -188,7 +193,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         <div className="keen-slider__slide">
           <h2 className="text-white text-center">Day vs Night Time</h2>
           <ResponsiveContainer width="100%" height={400}>
-            <PieChart>
+            <PieChart margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
               <Legend />
               <Tooltip formatter={(value: any) => parseTime(value)} />
               <Pie data={dayNightData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={120} label={(entry) => `${entry.name}: ${parseTime(entry.value)}`}>
@@ -203,11 +208,12 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         <div className="keen-slider__slide">
           <h2 className="text-white text-center">Monthly Landings</h2>
           <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={landingChartData}>
+            <BarChart data={landingChartData} margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
+              <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
               <XAxis dataKey="name" />
               <YAxis />
-              <Tooltip />
-              <Bar dataKey="landings" fill="#EAB308" radius={[5, 5, 0, 0]} />
+              <Tooltip cursor={{ fill: "rgba(255, 255, 255, 0.01)" }}  content={<ChartTooltip/>}/>
+              <Bar dataKey="landings" name="Landings" fill="#62BF58" radius={[5, 5, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

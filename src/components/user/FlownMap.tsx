@@ -116,7 +116,6 @@ const AerodromeLayer = ({
   );
 };
 
-// 🔹 Route lines from logbook
 const RouteLines = ({
   aerodromes,
   logbook,
@@ -160,8 +159,8 @@ const RouteLines = ({
   );
 };
 
-// 🔹 Main map component
 const FlownMap: React.FC<MapProps> = ({ big, user }) => {
+  const [ showModal, setShowModal ] = useState(false);
   const [aerodromes, setAerodromes] = useState<Aerodrome[]>([]);
   const [initialMapBounds, setInitialMapBounds] = useState<[number, number][] | null>(null);
 
@@ -219,7 +218,7 @@ const FlownMap: React.FC<MapProps> = ({ big, user }) => {
 
   return (
     <div className="w-full overflow-hidden relative">
-      <Button type="button" onClick={() => {}} text='Open' className='absolute bottom-4 left-4 z-[1000] bg-white text-black px-4 py-2 rounded shadow-md hover:bg-gray-200 transition' styleType='small'/>
+      <Button type="button" onClick={() => setShowModal(true)} text='Open' className='absolute bottom-4 left-4 z-[1000] bg-white text-black px-4 py-2 rounded shadow-md hover:bg-gray-200 transition' styleType='small'/>
 
       <MapContainer
         center={mapCenter as any} // Use dynamic center or undefined if bounds are set
@@ -246,6 +245,45 @@ const FlownMap: React.FC<MapProps> = ({ big, user }) => {
           </>
         )}
       </MapContainer>
+
+      {showModal && (
+        <div className="fixed inset-0 z-[2000] bg-black/80 flex items-center justify-center">
+          <div className="relative w-full h-full">
+            <Button
+              type="button"
+              onClick={() => setShowModal(false)}
+              text="Close"
+              className="absolute top-4 right-4 z-[2100] bg-white text-black px-4 py-2 rounded shadow-md hover:bg-gray-200 transition"
+              styleType="small"
+            />
+            <MapContainer
+              center={mapCenter as any}
+              bounds={initialMapBounds || undefined}
+              boundsOptions={{ padding: [5, 5] }}
+              minZoom={2}
+              maxZoom={12}
+              className="h-full w-full"
+              maxBounds={[
+                [-90, -180],
+                [90, 180],
+              ]}
+            >
+              <TileLayer
+                url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png"
+                attribution="&copy; OpenStreetMap & CARTO"
+                keepBuffer={12}
+              />
+
+              {aerodromes.length > 0 && user?.logbookEntries && (
+                <>
+                  <AerodromeLayer aerodromes={aerodromes} visitedIcaos={visitedIcaos} />
+                  <RouteLines aerodromes={aerodromes} logbook={user?.logbookEntries} />
+                </>
+              )}
+            </MapContainer>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
