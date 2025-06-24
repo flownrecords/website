@@ -264,9 +264,9 @@ export default function LogbookEntry() {
                     </h1>
                     <div className='grid grid-cols-2 lg:grid-cols-4 gap-4'>
                         <div>
-                            <h1 className='mb-1'>Date</h1>
+                            <h1 className='mb-1'>Registration</h1>
                             <div className='rounded-lg bg-secondary p-2'>
-                                {entry ? parseDate(entry.offBlock) : 'N/A'}
+                                {entry ? entry.aircraftRegistration : 'N/A'}
                             </div>
                         </div>
 
@@ -287,14 +287,14 @@ export default function LogbookEntry() {
                         <div>
                             <h1 className='mb-1'>Uploaded on</h1>
                             <div className='rounded-lg bg-secondary p-2'>
-                                {entry ? parseDate(entry.createdAt) : 'N/A'}
+                                {entry ? `${parseDate(entry.createdAt)} ${parseTime(entry.createdAt)}` : 'N/A'}
                             </div>
                         </div>
 
                         <div>
-                            <h1 className='mb-1'>Registration</h1>
+                            <h1 className='mb-1'>Date</h1>
                             <div className='rounded-lg bg-secondary p-2'>
-                                {entry ? entry.aircraftRegistration : 'N/A'}
+                                {entry ? parseDate(entry.offBlock) : 'N/A'}
                             </div>
                         </div>
 

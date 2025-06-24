@@ -30,7 +30,7 @@ export default function Navbar() {
                   <ul className="flex space-x-6">
                     <li>
                       <Link to="/me" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 capitalize flex items-center">
-                        { user?.profilePictureUrl && <img src={user?.profilePictureUrl ?? 'https://placehold.co/512x512'} draggable="false" className="rounded-full h-5 w-5 mx-2"  alt="User profile icon"/>}
+                        <img src={user?.profilePictureUrl ?? 'https://placehold.co/512x512'} draggable="false" className="rounded-full h-5 w-5 mx-2"  alt="User profile icon"/>
                         { user?.firstName ?? `@${user.username}`}
                       </Link>
                     </li>
