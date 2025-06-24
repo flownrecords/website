@@ -4,6 +4,7 @@ import {
   CircleMarker,
   Polyline,
   Popup,
+  useMap,
 } from 'react-leaflet';
 import { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
@@ -96,15 +97,15 @@ const LogbookEntryMap: React.FC<MapProps> = ({ entry }) => {
       <MapContainer
         center={mapCenter as any}
         bounds={bounds || undefined}
-        boundsOptions={{ padding: [5, 5] }}
+        boundsOptions={{ padding: [10, 10] }}
         minZoom={2}
         maxZoom={12}
-        zoom={6}
-        maxBounds={[
-          [-90, -180], // Southwest corner
-          [90, 180],   // Northeast corner
-        ]}
+        scrollWheelZoom={true}
         className="h-full w-full"
+        maxBounds={[
+          [-90, -180],
+          [90, 180],
+        ]}
       >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png"
@@ -112,14 +113,16 @@ const LogbookEntryMap: React.FC<MapProps> = ({ entry }) => {
           keepBuffer={6}
         />
 
-        
+        {bounds && <FitBoundsHandler bounds={bounds} />}
+
         {routeCoords.length > 1 && (
-          <Polyline 
-            positions={routeCoords} 
-            pathOptions={{ color: colors.base }} 
+          <Polyline
+            positions={routeCoords}
+            pathOptions={{ color: colors.base }}
             weight={2}
             noClip={true}
-            opacity={0.75}/>
+            opacity={0.75}
+          />
         )}
 
         {routeCoords.map((pos, idx) => (
@@ -135,10 +138,21 @@ const LogbookEntryMap: React.FC<MapProps> = ({ entry }) => {
             <Popup>Fix {idx + 1}</Popup>
           </CircleMarker>
         ))}
-
       </MapContainer>
     </div>
   );
 };
 
 export default LogbookEntryMap;
+
+const FitBoundsHandler = ({ bounds }: { bounds: [number, number][] }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (bounds && bounds.length > 1) {
+      map.fitBounds(bounds, { padding: [25, 25] });
+    }
+  }, [bounds, map]);
+
+  return null;
+};

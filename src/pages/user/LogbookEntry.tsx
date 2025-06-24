@@ -1,20 +1,28 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { use, useEffect, useRef, useState } from 'react';
 
 import axios from 'axios';
 import LogbookEntryMap from '../../components/Logbook/LogbookEntryMap';
 import type  { LogbookEntry,  User } from '../../lib/types';
 import Button from '../../components/general/Button';
 import Footer from '../../components/general/Footer';
-
-
+import useAlert from '../../components/alert/useAlert';
 
 export default function LogbookEntry() {
+    const { entryId } = useParams();
+
     const [user, setUser] = useState<User>(null);
     const [entry, setEntry] = useState<LogbookEntry | null>(null);
-    const navigate = useNavigate();
+    const [crew, setCrew] = useState<User[]>([]);
 
-    const { entryId } = useParams();
+    const alert = useAlert();
+    const navigate = useNavigate(); 
+
+    const [crewModal, setCrewModal] = useState<boolean>(false);
+
+    const addCrewMemberRef = useRef<HTMLInputElement>(null);
+
+    
 
     useEffect(() => {
         if(!localStorage.getItem("accessToken")) {
@@ -49,6 +57,28 @@ export default function LogbookEntry() {
             if(response.status === 200) {
                 let e = response.data?.find((entry: LogbookEntry) => entry.id === Number(entryId));
                 setEntry(e);
+
+                const crewPromises = e.crewId.map((id: number) => {
+                    return axios.get(`http://localhost:7700/users/id/${id}`, {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+                        }
+                    });
+                })
+
+                Promise.all(crewPromises)
+                .then(responses => {
+                    const crewMembers = responses.map(res => res.data);
+                    setCrew(crewMembers);
+                })
+                .catch(error => {
+                    console.error("Error fetching crew members:", error);
+                    if(error.response?.status === 401) {
+                        console.log("Unauthorized access, redirecting to login.");
+                        localStorage.removeItem("accessToken");
+                        navigate("/login");
+                    }
+                });
             }
         })
         .catch(error => {
@@ -60,6 +90,16 @@ export default function LogbookEntry() {
             }
         });
     }, []);
+
+    useEffect(() => {
+        if (entry && entry.aircraftRegistration) {
+            const img = document.querySelectorAll('#aircraft-image')[0] as HTMLImageElement;
+            if (img) {
+                img.src = `https://api.planespotters.net/pub/photos/reg/${entry.aircraftRegistration.toLowerCase()}`;
+                img.alt = `Aircraft ${entry.aircraftRegistration}`;
+            }
+        }
+    }, [entry]);
 
     function parseDate(date?: string | Date | null, cut = false) {
         return new Date(date as any).toLocaleDateString("en-GB", {
@@ -93,8 +133,110 @@ export default function LogbookEntry() {
         return `${hours}:${minutes}`;
     }
 
+    function addCrewMember() {
+        let username = addCrewMemberRef.current?.value.trim();
+        if(username?.startsWith('@')) {
+            username = username.slice(1);
+        }
+
+        axios.get(`http://localhost:7700/users/${username}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+            }
+        })
+        .then(response => {
+            if(response.status === 200) {
+                const newMember = response.data;
+                if(!newMember || !newMember.id) {
+                    return alert("Error", "User not found.");
+                }
+
+                if(crew.some(member => member?.id === newMember.id)) {
+                    return alert("Error", "This user is already assigned to the crew.");
+                }
+
+                setCrew([...crew, newMember]);
+                
+                axios.post(`http://localhost:7700/users/logbook/edit`, {
+                    entryId: entry?.id,
+                    entryData: {
+                        crewId: [...(entry?.crewId || []), newMember.id]
+                    }
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+                    }
+                })
+                .then(response => {
+                    if(response.status === 200) {
+                        window.location.reload();
+                    }
+                })
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching user data:", error);
+            if(error.response?.status === 404) {
+                return alert("Error", "User not found.");
+            }
+            if(error.response?.status === 401) {
+                console.log("Unauthorized access, redirecting to login.");
+                localStorage.removeItem("accessToken");
+                navigate("/login");
+            } else {
+                alert("Error", "An error occurred while trying to add the crew member. Please try again later.");
+            }
+        });
+    }
+
+    function removeCrewMember(memberId: number) {
+        if(!entry || !entry.crewId || !memberId) return;
+
+        const updatedCrew = entry.crewId.filter(id => id !== memberId);
+        setCrew(crew.filter(member => member?.id !== memberId));
+
+        axios.post(`http://localhost:7700/users/logbook/edit`, {
+            entryId: entry.id,
+            entryData: {
+                crewId: updatedCrew
+            }
+        }, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+            }
+        })
+        .then(response => {
+            if(response.status === 200) {
+                window.location.reload();
+            }
+        })
+        .catch(error => {
+            console.error("Error removing crew member:", error);
+            alert("Error", "An error occurred while trying to remove the crew member. Please try again later.");
+        });
+    }
+
+
     return (
         <>
+            <div className="text-center mt-24 mb-4">
+                <div>
+                    <h3 className="text-2xl md:text-3xl font-bold text-white/50">
+                        {entry?.aircraftRegistration ?? ''}
+                    </h3>
+                    <h1 className="block text-7xl md:text-8xl font-bold">
+                        {entry?.depAd} <span className='text-white/5'>to</span> {entry?.arrAd}
+                    </h1>
+                    
+                        <h3 className="font-semibold text-white/50">
+                            {
+                                entry ? parseDate(entry.offBlock) : 'N/A'
+                            }
+                        </h3>
+                    
+                </div>
+            </div>
+
             <div className="container mx-auto max-w-6xl p-4">
                 <div className='ring-2 ring-white/25 rounded-lg overflow-hidden'>
                     {
@@ -104,10 +246,15 @@ export default function LogbookEntry() {
                 </div>
                 
                 <div className='mt-4 ring-2 ring-white/25 rounded-lg p-4'>
-                    <div className='space-x-4'>
-                        <Button text='Assign Crew' styleType='small'/>
+                    <div className='hidden lg:grid grid-cols-4 gap-4'>
+                        <Button text='Edit Crew' styleType='small' type='button' onClick={() => setCrewModal(!crewModal)}/>
                         <Button text='Link Flight Recording' styleType='small'/>
-                        <Button text='Link Flight Plan' styleType='small'/>
+                        { !entry?.plan?.id && <Button text='Link Flight Plan' styleType='small'/> }
+                    </div>
+                    <div className='flex flex-col space-y-4 lg:hidden'>
+                        <Button text='Edit Crew' styleType='small' type='button' onClick={() => setCrewModal(!crewModal)}/>
+                        <Button text='Link Flight Recording' styleType='small'/>
+                        { !entry?.plan?.id && <Button text='Link Flight Plan' styleType='small'/> }
                     </div>
                 </div>
 
@@ -140,7 +287,7 @@ export default function LogbookEntry() {
                         <div>
                             <h1 className='mb-1'>Uploaded on</h1>
                             <div className='rounded-lg bg-secondary p-2'>
-                                {entry ? new Date(entry.createdAt).toLocaleString() : 'N/A'}
+                                {entry ? parseDate(entry.createdAt) : 'N/A'}
                             </div>
                         </div>
 
@@ -174,12 +321,16 @@ export default function LogbookEntry() {
 
                         <div>
                             <h1 className='mb-1'>Crew</h1>
-                            <div className='rounded-lg bg-secondary p-2 space-y-2'>
+                            <div className='rounded-lg bg-secondary p-2 '>
                                 {
-                                    entry && entry.crewId && entry.crewId.length > 0 ? (
-                                        entry.crewId.map((member, index) => (
-                                            <div key={index} className={`${index % 2 ? '' : 'border-b border-b-white/25 pb-2'}`}>
-                                                <img src="https://placehold.co/128x128" className='h-8 w-8 rounded-full inline-block ring-2 ring-white/25' /> <span className='ml-2 font-semibold'>@{member}</span>
+                                    entry && entry.crewId?.length > 0 && crew.length > 0 ? (
+                                        crew.map((member, i) => (
+                                            <div className={`inline-block hover:mr-2 ${i !== 0 ? '-ml-1 hover:ml-1' : ''} transition-all duration-500`} key={i}>
+                                                <Link className='inline-block' to={`/user/${member?.id}`} title={member?.firstName && member.lastName ? `${member.firstName} ${member.lastName}` : `@${member?.username}`}>
+                                                    <img 
+                                                    src={ member?.profilePictureUrl ?? "https://placehold.co/128x128" } 
+                                                    className='h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600'/> 
+                                                </Link>
                                             </div>
                                         ))
                                     ) : (
@@ -267,6 +418,45 @@ export default function LogbookEntry() {
             </div>
 
             <Footer/>
+
+            { crewModal && (
+                <div className="fixed inset-0 bg-black/50 z-3000 flex items-center justify-center">
+                    <div className="bg-secondary p-4 rounded-lg w-96">
+                        <h2 className="text-xl font-semibold mb-4">Edit flight crew</h2>
+                        <ul>
+                            {
+                                crew.map((member, index) => (
+                                    <li key={index} className="flex items-center justify-between mb-4">
+                                        <Link to={`/user/${member?.id}`} className="flex items-center space-x-">
+                                            <img 
+                                                src={member?.profilePictureUrl ?? "https://placehold.co/128x128"} 
+                                                alt={`${member?.firstName} ${member?.lastName}`} 
+                                                className="h-8 w-8 rounded-full ring-2 ring-neutral-600 mr-2"
+                                            />
+                                            <span>{member?.firstName} {member?.lastName}</span>
+                                        </Link>
+                                        <Button text='Remove' styleType='small' type='button' onClick={() => {
+                                            if(!member?.id) return;
+                                            removeCrewMember(member.id);
+                                        }}/>
+                                    </li>
+                                ))
+                            }
+                        </ul>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">add crew @username</label>
+                            <input
+                                className="bg-primary/5 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                                ref={addCrewMemberRef}
+                                type="text"
+                            />
+                            <Button text='Add Crew' styleType='small' type='button' className='mt-4' onClick={addCrewMember}/>
+                            <Button text='Close' styleType='small' type='button' className='mt-4' onClick={() => setCrewModal(!crewModal)}/>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }

@@ -23,7 +23,7 @@ const CustomAlert: React.FC<Props> = ({ alert, closeAlert }) => {
   if (!alert) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-5000">
       <div
         ref={dialogRef}
         className="bg-secondary ring-2 ring-neutral-600 rounded-lg p-4 w-[90%] max-w-md text-center"
