@@ -18,6 +18,8 @@ type Organization = {
 }
 
 export default function Register() {
+    const API = import.meta.env.VITE_API_URL;
+
     const alert = useAlert();
     const navigate = useNavigate();
 
@@ -62,7 +64,7 @@ export default function Register() {
         if(!token) return console.log("No access token found, skipping auto-login.");
         try {
             const request = await axios
-            .get('http://localhost:7700/users/me', {
+            .get(API + '/users/me', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -130,7 +132,7 @@ export default function Register() {
         }
         
         try {
-            const response = await axios.post("http://localhost:7700/auth/signup", formData, {
+            const response = await axios.post(API + "/auth/signup", formData, {
                 headers: {
                     "Content-Type": "application/json",
                 },

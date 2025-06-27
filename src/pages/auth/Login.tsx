@@ -9,6 +9,8 @@ import useAlert from "../../components/alert/useAlert";
 import { useAuth } from "../../components/auth/AuthContext";
 
 export default function Login() {
+    const API = import.meta.env.VITE_API_URL;
+
     const identifierRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -26,7 +28,7 @@ export default function Login() {
         if(!token) return console.log("No access token found, skipping auto-login.");
         try {
             const request = await axios
-            .get('http://localhost:7700/users/me', {
+            .get(API + '/users/me', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -63,7 +65,7 @@ export default function Login() {
         }
 
         const loginType = isEmail(identifier) ? "email" : "username";
-        const url = `http://localhost:7700/auth/signin?type=${loginType}`;
+        const url = API + `/auth/signin?type=${loginType}`;
 
         try {
             const payload = { 

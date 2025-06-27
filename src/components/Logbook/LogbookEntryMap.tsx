@@ -23,6 +23,8 @@ const colors = {
 };
 
 const LogbookEntryMap: React.FC<MapProps> = ({ entry }) => {
+  const API = import.meta.env.VITE_API_URL;
+
   const [aerodromes, setAerodromes] = useState<any[]>([]);
   const [waypoints, setWaypoints] = useState<any[]>([]);
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
@@ -34,11 +36,14 @@ const LogbookEntryMap: React.FC<MapProps> = ({ entry }) => {
   };
 
   useEffect(() => {
+    aerodromes
+    waypoints
+
     const fetchData = async () => {
       try {
         const [adsRes, wptRes] = await Promise.all([
-          axios.get('http://localhost:7700/data/nav/ad'),
-          axios.get('http://localhost:7700/data/nav/wpt'),
+          axios.get(API + '/data/nav/ad'),
+          axios.get(API + '/data/nav/wpt'),
         ]);
 
         const ads = adsRes.data;

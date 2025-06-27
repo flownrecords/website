@@ -9,6 +9,8 @@ import Map from "../../components/user/FlownMap";
 import Footer from "../../components/general/Footer";
 
 export default function Me() {
+  const API = import.meta.env.VITE_API_URL;
+
   const navigate = useNavigate();
   const [user, setUser] = useState<User>(null);
   const [localWeather, setLocalWeather] = useState<{
@@ -39,7 +41,7 @@ export default function Me() {
       navigate("/login");
     }
 
-    axios.get('http://localhost:7700/users/me', {
+    axios.get(API + '/users/me', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`
       }
@@ -65,7 +67,7 @@ export default function Me() {
   const fetchLocalWeather = async (homeAirport?: string) => {
     if(!homeAirport) return;
 
-    const response = (await axios.get('http://localhost:7700/gen/wx/' + homeAirport)).data
+    const response = (await axios.get(API + '/gen/wx/' + homeAirport)).data
     setLocalWeather({
       metar: response.data.rawOb,
       taf: response.data.rawTaf,

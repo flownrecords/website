@@ -16,6 +16,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const API = import.meta.env.VITE_API_URL;
+  
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
@@ -24,7 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!token) return;
 
     try {
-      const res = await axios.get<User>("http://localhost:7700/users/me", {
+      const res = await axios.get<User>(API + "/users/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

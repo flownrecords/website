@@ -1,5 +1,5 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { use, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import axios from 'axios';
 import LogbookEntryMap from '../../components/Logbook/LogbookEntryMap';
@@ -9,8 +9,10 @@ import Footer from '../../components/general/Footer';
 import useAlert from '../../components/alert/useAlert';
 
 export default function LogbookEntry() {
+    const API = import.meta.env.VITE_API_URL;
     const { entryId } = useParams();
 
+    
     const [user, setUser] = useState<User>(null);
     const [entry, setEntry] = useState<LogbookEntry | null>(null);
     const [crew, setCrew] = useState<User[]>([]);
@@ -29,7 +31,7 @@ export default function LogbookEntry() {
             navigate("/login");
         }
 
-        axios.get('http://localhost:7700/users/me', {
+        axios.get(API + '/users/me', {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`
             }
@@ -48,7 +50,7 @@ export default function LogbookEntry() {
             }
         });
 
-        axios.get('http://localhost:7700/users/logbook', {
+        axios.get(API + '/users/logbook', {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`
             }
@@ -59,7 +61,7 @@ export default function LogbookEntry() {
                 setEntry(e);
 
                 const crewPromises = e.crewId.map((id: number) => {
-                    return axios.get(`http://localhost:7700/users/id/${id}`, {
+                    return axios.get(API + `/users/id/${id}`, {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("accessToken")}`
                         }
@@ -90,16 +92,6 @@ export default function LogbookEntry() {
             }
         });
     }, []);
-
-    useEffect(() => {
-        if (entry && entry.aircraftRegistration) {
-            const img = document.querySelectorAll('#aircraft-image')[0] as HTMLImageElement;
-            if (img) {
-                img.src = `https://api.planespotters.net/pub/photos/reg/${entry.aircraftRegistration.toLowerCase()}`;
-                img.alt = `Aircraft ${entry.aircraftRegistration}`;
-            }
-        }
-    }, [entry]);
 
     function parseDate(date?: string | Date | null, cut = false) {
         return new Date(date as any).toLocaleDateString("en-GB", {
@@ -139,7 +131,7 @@ export default function LogbookEntry() {
             username = username.slice(1);
         }
 
-        axios.get(`http://localhost:7700/users/${username}`, {
+        axios.get(API + `/users/${username}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`
             }
@@ -157,7 +149,7 @@ export default function LogbookEntry() {
 
                 setCrew([...crew, newMember]);
                 
-                axios.post(`http://localhost:7700/users/logbook/edit`, {
+                axios.post(API + `/users/logbook/edit`, {
                     entryId: entry?.id,
                     entryData: {
                         crewId: [...(entry?.crewId || []), newMember.id]
@@ -195,7 +187,7 @@ export default function LogbookEntry() {
         const updatedCrew = entry.crewId.filter(id => id !== memberId);
         setCrew(crew.filter(member => member?.id !== memberId));
 
-        axios.post(`http://localhost:7700/users/logbook/edit`, {
+        axios.post(API + `/users/logbook/edit`, {
             entryId: entry.id,
             entryData: {
                 crewId: updatedCrew

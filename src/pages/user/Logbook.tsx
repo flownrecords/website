@@ -9,6 +9,8 @@ import useAlert from "../../components/alert/useAlert";
 import type { User } from "../../lib/types";
 
 export default function Logbook() {
+  const API = import.meta.env.VITE_API_URL;
+
   const [ user, setUser ] = useState<User>(null);
   const [ manageMode, toggleManageMode ] = useState(false);
   const [ managedEntries, setManagedEntries] = useState<number[]>([]);
@@ -29,7 +31,7 @@ export default function Logbook() {
       navigate("/login");
     }
 
-    axios.get('http://localhost:7700/users/me', {
+    axios.get(API + '/users/me', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`
       }

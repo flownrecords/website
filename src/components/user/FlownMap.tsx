@@ -160,6 +160,8 @@ const RouteLines = ({
 };
 
 const FlownMap: React.FC<MapProps> = ({ big, user }) => {
+  const API = import.meta.env.VITE_API_URL;
+  
   const [ showModal, setShowModal ] = useState(false);
   const [aerodromes, setAerodromes] = useState<Aerodrome[]>([]);
   const [initialMapBounds, setInitialMapBounds] = useState<[number, number][] | null>(null);
@@ -176,7 +178,7 @@ const FlownMap: React.FC<MapProps> = ({ big, user }) => {
   useEffect(() => {
     const fetchAerodromes = async () => {
       try {
-        const response = await axios.get('http://localhost:7700/data/nav/ad/');
+        const response = await axios.get(API + '/data/nav/ad/');
         const fetchedAerodromes: Aerodrome[] = response.data || [];
         fetchedAerodromes.forEach((ad: Aerodrome) => {
           ad.icao = ad.icao.toUpperCase();
