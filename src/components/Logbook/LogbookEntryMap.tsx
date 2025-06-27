@@ -25,7 +25,9 @@ const colors = {
 const LogbookEntryMap: React.FC<MapProps> = ({ entry }) => {
   const API = import.meta.env.VITE_API_URL;
 
+  // @ts-ignore
   const [aerodromes, setAerodromes] = useState<any[]>([]);
+  // @ts-ignore
   const [waypoints, setWaypoints] = useState<any[]>([]);
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
 
@@ -36,8 +38,6 @@ const LogbookEntryMap: React.FC<MapProps> = ({ entry }) => {
   };
 
   useEffect(() => {
-    aerodromes
-    waypoints
 
     const fetchData = async () => {
       try {
@@ -57,8 +57,8 @@ const LogbookEntryMap: React.FC<MapProps> = ({ entry }) => {
 
         const route = extractRoutePoints(entry.plan?.route || '');
 
-        const dep = ads.find((ad: any) => ad.icao === entry.plan?.depAd);
-        const arr = ads.find((ad: any) => ad.icao === entry.plan?.arrAd);
+        const dep = ads.find((ad: any) => ad.icao === (entry.plan?.depAd || entry.depAd));
+        const arr = ads.find((ad: any) => ad.icao === (entry.plan?.arrAd || entry.arrAd));
 
         const coords: [number, number][] = [];
 
@@ -102,7 +102,7 @@ const LogbookEntryMap: React.FC<MapProps> = ({ entry }) => {
       <MapContainer
         center={mapCenter as any}
         bounds={bounds || undefined}
-        boundsOptions={{ padding: [10, 10] }}
+        boundsOptions={{ padding: [25, 25] }}
         minZoom={2}
         maxZoom={12}
         scrollWheelZoom={true}
