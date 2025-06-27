@@ -3,45 +3,50 @@ export type User = {
   email: string
   username: string
   phone: string | null
-  emailVerified: boolean
+
   lastLogin: Date | null
   createdAt: Date
   updatedAt: Date
+  birthday: Date | null
+
   firstName: string | null
   lastName: string | null
   profilePictureUrl: string | null
   bio: string | null
   location: string | null
-  birthday: Date | null
   homeAirport: string | null
+
+  permissions: UserPermissions[] | null
+
   organizationId: string | null
-  organizationRole: string | null
+  organizationRole: UserOrganizationRole | null
   organizationJoinedAt: Date | null
-  orgMemberVerifiedAt: boolean
-  theme: string | null
+  
   language: string | null
   publicProfile: boolean
   disabled: boolean
-  admin: boolean
+  
   logbookEntries: LogbookEntry[]
+  crewFor: LogbookEntry[] | null
+  organization: Organization | null
 } | null
 
 export type LogbookEntry = {
   id: number
   unique: string
-  pilotId: number | null
-  userId: number
-  crewId: number[]
   createdAt: Date
   updatedAt: Date
+
   date: Date | null
   depAd: string | null
   arrAd: string | null
   offBlock: Date | null
   onBlock: Date | null
+
   aircraftType: string | null
   aircraftRegistration: string | null
   picName: string | null
+
   total: number | string | null
   dayTime: number | string | null
   nightTime: number | string | null
@@ -59,8 +64,13 @@ export type LogbookEntry = {
   landDay: number | null
   landNight: number | null
   includeInFt: boolean
-  rmks: string | null
-  recording: any[]
+  remarks: string | null
+
+  userId: number | string | null
+  user: User | null
+  crew: User[]
+
+  recording: FlightRecording[]
   plan: FlightPlan | null
 }
 
@@ -79,8 +89,45 @@ export type FlightPlan = {
   weather: any | null
   createdAt: Date
   updatedAt: Date
+
   logbookEntryId: number
+  logbookEntry: LogbookEntry | null
 }
+
+export type FlightRecording = {
+  id: number
+  createdAt: Date
+  updatedAt: Date
+
+  fileName: string
+  data: any | null
+
+  logbookEntryId: number | null
+  logbookEntry: LogbookEntry | null
+}
+
+export type Organization = {
+  id: string
+  name: string
+  handle: string
+  type: OrganizationType
+  createdAt: Date
+  updatedAt: Date
+  description: string | null
+  logoUrl: string | null
+  websiteUrl: string | null
+  contactEmail: string | null
+  address: string | null
+  phoneNumber: string | null
+  public: boolean
+  archived: boolean
+
+  members: User[]
+}
+
+export type OrganizationType = 'SCHOOL' | 'COMPANY' | 'COMMUNITY' | 'CLUB' | 'OTHER';
+export type UserOrganizationRole = 'GUEST' | 'STUDENT' | 'PILOT' | 'OPS' | 'FI' | 'TKI' | 'MAIN' | 'OFFICE' | 'SUPERVISOR' | 'ADMIN' | 'OTHER';
+export type UserPermissions = 'USER' | 'SUPPORT' | 'QUESTIONS_MANAGER' | 'FPL_MANAGER' | 'LOGBOOK_MANAGER' | 'MANAGER' | 'ADMIN';
 
 export type Waypoint = {
     name: string;

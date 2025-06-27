@@ -116,6 +116,9 @@ export default function Login() {
                     <div className="flex flex-col">
 				        <label className="text-sm text-white/75 mb-1">email / username</label>
                         <input
+                            type="text"
+                            placeholder="Enter your email or username"
+                            autoComplete="identifier"
                             className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                             ref={identifierRef}
                         />
@@ -124,6 +127,8 @@ export default function Login() {
                     <div className="flex flex-col">
                         <label className="text-sm text-white/75 mb-1">password</label>
                         <input
+                            placeholder="Enter your password"
+                            autoComplete="current-password"
                             className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                             ref={passwordRef}
                             type="password"

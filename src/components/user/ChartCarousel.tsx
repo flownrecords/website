@@ -121,7 +121,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
           <h2 className="text-white mb-2 text-sm font-semibold text-center">Monthly Hours & Flights</h2>
           <ResponsiveContainer width="100%" height={400}>
             
-            <LineChart data={chartDataONE} margin={{ top: 15, right: 45, left: 45, bottom: 0 }}>
+            <LineChart data={chartDataONE} margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
               <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
               <XAxis dataKey="name" stroke="#ccc" />
 

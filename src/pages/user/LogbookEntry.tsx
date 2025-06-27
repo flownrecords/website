@@ -15,7 +15,7 @@ export default function LogbookEntry() {
     
     const [user, setUser] = useState<User>(null);
     const [entry, setEntry] = useState<LogbookEntry | null>(null);
-    const [crew, setCrew] = useState<User[]>([]);
+    const [recording, setRecording] = useState<any>(null); // FlightRecording type can be defined later if needed
 
     const alert = useAlert();
     const navigate = useNavigate(); 
@@ -55,36 +55,10 @@ export default function LogbookEntry() {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`
             }
         })
-        .then(response => {
-            
+        .then(response => {   
             if(response.status === 200) {
                 let e = response.data?.find((entry: LogbookEntry) => entry.id === Number(entryId));
                 setEntry(e);
-
-                console.log(e)
-                /*
-                const crewPromises = e.crew.map((id: number) => {
-                    return axios.get(API + `/users/id/${id}`, {
-                        headers: {
-                            Authorization: `Bearer ${localStorage.getItem("accessToken")}`
-                        }
-                    });
-                })
-
-                Promise.all(crewPromises)
-                .then(responses => {
-                    const crewMembers = responses.map(res => res.data);
-                    setCrew(crewMembers);
-                })
-                .catch(error => {
-                    console.error("Error fetching crew members:", error);
-                    if(error.response?.status === 401) {
-                        console.log("Unauthorized access, redirecting to login.");
-                        localStorage.removeItem("accessToken");
-                        navigate("/login");
-                    }
-                });
-                */
             }
         })
         .catch(error => {
@@ -147,7 +121,7 @@ export default function LogbookEntry() {
                     return alert("Error", "User not found.");
                 }
 
-                if(crew.some(member => member?.id === newMember.id)) {
+                if(entry?.crew.some(member => member?.id === newMember.id)) {
                     return alert("Error", "This user is already assigned to the crew.");
                 }
 
@@ -202,7 +176,6 @@ export default function LogbookEntry() {
             alert("Error", "An error occurred while trying to remove the crew member. Please try again later.");
         });
     }
-
 
     return (
         <>
@@ -314,7 +287,7 @@ export default function LogbookEntry() {
                                     entry?.crew && entry?.crew?.length > 0 ? entry?.crew?.map((m: User, i) => {
                                         return (
                                             <div className={`inline-block hover:mr-2 ${i !== 0 ? '-ml-1 hover:ml-1' : ''} transition-all duration-500`} key={i}>
-                                                <Link to={'/users/' + m?.id} className='inline-block'>
+                                                <Link to={'/users/' + m?.id} className='inline-block' title={m?.firstName ? `${m?.firstName} ${m?.lastName ? m?.lastName : ''}` : `@${m?.username}`}>
                                                     <img src={ m?.profilePictureUrl ?? "https://placehold.co/128x128" } className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"/>
                                                 </Link>
                                             </div>
@@ -346,7 +319,7 @@ export default function LogbookEntry() {
                     <h1 className='text-lg text-white/50 font-semibold mb-2'>
                         Flight Plan
                     </h1>
-                    <div className='grid grid-cols-2 lg:grid-cols-4 gap-4'>
+                    {entry?.plan ? (<div className='grid grid-cols-2 lg:grid-cols-4 gap-4'>
                         <div className=''>
                             <h1 className='mb-1'>Departure</h1>
                             <div className='rounded-lg bg-secondary p-2'>
@@ -399,7 +372,26 @@ export default function LogbookEntry() {
                                 {entry && entry.plan ? parseTime(entry.plan.eta) : 'N/A'}
                             </div>
                         </div>
-                    </div>
+                    </div>) : (
+                        <span>
+                            No flight plan linked to this entry.
+                        </span>
+                    ) }
+                </div>
+
+                <div className='mt-4 ring-2 ring-white/25 rounded-lg p-4'>                    
+                    <h1 className='text-lg text-white/50 font-semibold mb-2'>
+                        Flight Recording
+                    </h1>
+                    {
+                        recording ? (
+                            <></>
+                        ) : (
+                            <span>
+                                No flight recording linked to this entry.
+                            </span>
+                        )
+                    }
                 </div>
             </div>
 
