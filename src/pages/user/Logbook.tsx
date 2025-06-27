@@ -119,7 +119,7 @@ export default function Logbook() {
     form.append('file', file);
     form.append('source', source);
 
-    axios.post('http://localhost:7700/users/logbook/upload', form, {
+    axios.post(API + '/users/logbook/upload', form, {
       headers: {
         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${token}`
@@ -154,8 +154,8 @@ export default function Logbook() {
       return;
     }
 
-    axios.post('http://localhost:7700/users/logbook/delete', {
-      entryIds: managedEntries.map(id => Number(id)),
+    axios.post(API + '/users/logbook/delete', {
+      entryIds: managedEntries,
       userId: user.id
     }, {
       headers: {
@@ -225,8 +225,32 @@ export default function Logbook() {
             
             <span className="hidden md:block"> Flight Time </span>
             <span className="block md:hidden"> Time </span>
-            <span>
-            </span>
+            {manageMode && (
+                      <div className="flex items-center justify-center cursor-pointer relative mr-4">
+                        <input 
+                            onClick={(e) => {
+                              // Select or deselect all entries
+                              const isChecked = (e.target as HTMLInputElement).checked;
+                              if(isChecked) {
+                                // Select all entries
+                                const allEntryIds = user?.logbookEntries.map(entry => entry.id) || [];
+                                
+                                setManagedEntries(allEntryIds);
+                              } else {
+                                // Deselect all entries
+                                setManagedEntries([]);
+                              }
+                            }}
+                            type="checkbox" 
+                            className="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded border border-white/25 checked:bg-accent/25 checked:border-accent"
+                        />
+                        <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" strokeWidth="1">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                        </span>
+                      </div>
+                    )}
           </div>
           {
             (user?.logbookEntries && user?.logbookEntries.length > 0) && (

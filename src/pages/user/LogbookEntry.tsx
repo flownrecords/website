@@ -56,11 +56,14 @@ export default function LogbookEntry() {
             }
         })
         .then(response => {
+            
             if(response.status === 200) {
                 let e = response.data?.find((entry: LogbookEntry) => entry.id === Number(entryId));
                 setEntry(e);
 
-                const crewPromises = e.crewId.map((id: number) => {
+                console.log(e)
+                /*
+                const crewPromises = e.crew.map((id: number) => {
                     return axios.get(API + `/users/id/${id}`, {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("accessToken")}`
@@ -81,6 +84,7 @@ export default function LogbookEntry() {
                         navigate("/login");
                     }
                 });
+                */
             }
         })
         .catch(error => {
@@ -147,13 +151,9 @@ export default function LogbookEntry() {
                     return alert("Error", "This user is already assigned to the crew.");
                 }
 
-                setCrew([...crew, newMember]);
-                
-                axios.post(API + `/users/logbook/edit`, {
+                axios.post(API + `/users/logbook/crewAdd`, {
                     entryId: entry?.id,
-                    entryData: {
-                        crewId: [...(entry?.crewId || []), newMember.id]
-                    }
+                    crewUsername: newMember.username
                 }, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("accessToken")}`
@@ -181,17 +181,12 @@ export default function LogbookEntry() {
         });
     }
 
-    function removeCrewMember(memberId: number) {
-        if(!entry || !entry.crewId || !memberId) return;
+    function removeCrewMember(memberUsername: string) {
+        if(!entry || !entry.crew || !memberUsername) return;
 
-        const updatedCrew = entry.crewId.filter(id => id !== memberId);
-        setCrew(crew.filter(member => member?.id !== memberId));
-
-        axios.post(API + `/users/logbook/edit`, {
+        axios.post(API + `/users/logbook/crewRemove`, {
             entryId: entry.id,
-            entryData: {
-                crewId: updatedCrew
-            }
+            crewUsername: memberUsername
         }, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`
@@ -239,9 +234,10 @@ export default function LogbookEntry() {
                 
                 <div className='mt-4 ring-2 ring-white/25 rounded-lg p-4'>
                     <div className='hidden lg:grid grid-cols-4 gap-4'>
+                        <Button text='Go Back' styleType='small' to="/me/logbook"/>
                         <Button text='Edit Crew' styleType='small' type='button' onClick={() => setCrewModal(!crewModal)}/>
                         <Button text='Link Flight Recording' styleType='small'/>
-                        { !entry?.plan?.id && <Button text='Link Flight Plan' styleType='small'/> }
+                        { !entry?.plan?.id && <Button text='Link Flight Plan' styleType='small' onClick={() => console.log(entry)}/> }
                     </div>
                     <div className='flex flex-col space-y-4 lg:hidden'>
                         <Button text='Edit Crew' styleType='small' type='button' onClick={() => setCrewModal(!crewModal)}/>
@@ -307,7 +303,7 @@ export default function LogbookEntry() {
                         <div>
                             <h1 className='mb-1'>Flight Time</h1>
                             <div className='rounded-lg bg-secondary p-2'>
-                                {entry ? parseDuration(entry.total) : 'N/A'}
+                                {entry ? parseDuration(entry.total) : '00h00'}
                             </div>
                         </div>
 
@@ -315,18 +311,16 @@ export default function LogbookEntry() {
                             <h1 className='mb-1'>Crew</h1>
                             <div className='rounded-lg bg-secondary p-2 '>
                                 {
-                                    entry && entry.crewId?.length > 0 && crew.length > 0 ? (
-                                        crew.map((member, i) => (
+                                    entry?.crew && entry?.crew?.length > 0 ? entry?.crew?.map((m: User, i) => {
+                                        return (
                                             <div className={`inline-block hover:mr-2 ${i !== 0 ? '-ml-1 hover:ml-1' : ''} transition-all duration-500`} key={i}>
-                                                <Link className='inline-block' to={`/user/${member?.id}`} title={member?.firstName && member.lastName ? `${member.firstName} ${member.lastName}` : `@${member?.username}`}>
-                                                    <img 
-                                                    src={ member?.profilePictureUrl ?? "https://placehold.co/128x128" } 
-                                                    className='h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600'/> 
+                                                <Link to={'/users/' + m?.id} className='inline-block'>
+                                                    <img src={ m?.profilePictureUrl ?? "https://placehold.co/128x128" } className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"/>
                                                 </Link>
                                             </div>
-                                        ))
-                                    ) : (
-                                        <span>No crew members assigned.</span>
+                                        )
+                                    }) : (
+                                        <span >No crew assigned</span>
                                     )
                                 }
                             </div>
@@ -335,14 +329,14 @@ export default function LogbookEntry() {
                         <div>
                             <h1 className='mb-1'>Landings</h1>
                             <div className='rounded-lg bg-secondary p-2'>
-                                {entry ? (entry.landDay??0)+(entry.landNight??0) : 'N/A'}
+                                {entry ? (entry.landDay??0)+(entry.landNight??0) : '1'}
                             </div>
                         </div>
 
                         <div className='col-span-2'>
                             <h1 className='mb-1'>Remarks</h1>
                             <div className='rounded-lg bg-secondary p-2'>
-                                {entry ? entry.rmks : 'N/A'}
+                                {entry?.remarks ? entry.remarks : 'N/A'}
                             </div>
                         </div>
                     </div>
@@ -381,7 +375,7 @@ export default function LogbookEntry() {
                         <div className=''>
                             <h1 className='mb-1'>Estimated Fuel</h1>
                             <div className='rounded-lg bg-secondary p-2'>
-                                {entry && entry.plan && entry.plan.fuelPlan ? Number(entry.plan.fuelPlan) : 'N/A'}l
+                                {entry && entry.plan && entry.plan.fuelPlan ? `${Number(entry.plan.fuelPlan)}l` : 'N/A'}
                             </div>
                         </div>
 
@@ -417,7 +411,7 @@ export default function LogbookEntry() {
                         <h2 className="text-xl font-semibold mb-4">Edit flight crew</h2>
                         <ul>
                             {
-                                crew.map((member, index) => (
+                                entry?.crew?.map((member, index) => (
                                     <li key={index} className="flex items-center justify-between mb-4">
                                         <Link to={`/user/${member?.id}`} className="flex items-center space-x-">
                                             <img 
@@ -429,7 +423,7 @@ export default function LogbookEntry() {
                                         </Link>
                                         <Button text='Remove' styleType='small' type='button' onClick={() => {
                                             if(!member?.id) return;
-                                            removeCrewMember(member.id);
+                                            removeCrewMember(member.username);
                                         }}/>
                                     </li>
                                 ))
