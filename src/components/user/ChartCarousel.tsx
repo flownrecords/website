@@ -62,7 +62,12 @@ export default function ChartCarousel({ logbook = [] }: Props) {
     return acc;
   }, {} as Record<string, { time: number; flights: number }>);
 
-  const chartDataONE = Object.entries(monthlyData).map(([month, values]) => ({
+  const chartDataONE = Object.entries(monthlyData)
+  .sort(([a], [b]) => {
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    return dateA.getTime() - dateB.getTime();
+  }).map(([month, values]) => ({
     name: month,
     time: parseFloat(values.time.toFixed(1)),
     flights: values.flights,

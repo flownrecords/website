@@ -15,6 +15,7 @@ export default function LogbookEntry() {
     
     const [user, setUser] = useState<User>(null);
     const [entry, setEntry] = useState<LogbookEntry | null>(null);
+    // @ts-ignore
     const [recording, setRecording] = useState<any>(null); // FlightRecording type can be defined later if needed
 
     const alert = useAlert();
