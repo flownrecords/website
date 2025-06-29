@@ -20,19 +20,19 @@ type Organization = {
 export default function Register() {
     const API = import.meta.env.VITE_API_URL;
 
-    const alert = useAlert();
-    const navigate = useNavigate();
+	const alert = useAlert();
+	const navigate = useNavigate();
 
-    const { login } = useAuth();
-    const [ termsAccepted, setTermsAccepted ] = useState(false);
+	const { login } = useAuth();
+	const [termsAccepted, setTermsAccepted] = useState(false);
 
-    const name = useRef<HTMLInputElement>(null);
-    const username = useRef<HTMLInputElement>(null);
-    const email = useRef<HTMLInputElement>(null);
-    const password = useRef<HTMLInputElement>(null);
-    const role = useRef<HTMLSelectElement>(null);
-    const organization = useRef<HTMLSelectElement>(null);
-    const terms = useRef<HTMLInputElement>(null);
+	const name = useRef<HTMLInputElement>(null);
+	const username = useRef<HTMLInputElement>(null);
+	const email = useRef<HTMLInputElement>(null);
+	const password = useRef<HTMLInputElement>(null);
+	const role = useRef<HTMLSelectElement>(null);
+	const organization = useRef<HTMLSelectElement>(null);
+	const terms = useRef<HTMLInputElement>(null);
 
     const roles: Role[] = [
         { id: "PILOT", label: "Pilot" },
@@ -59,124 +59,107 @@ export default function Register() {
 	    { id: 'ifa', name: "IFA" },
     ];
 
-    async function autoLogin() {
-        const token = localStorage.getItem("accessToken");
-        if(!token) return console.log("No access token found, skipping auto-login.");
-        try {
-            const request = await axios
-            .get(API + '/users/me', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            .catch((e) => {
-                if(e.response?.status === 401) {
-                    console.log("Unauthorized access, token may be invalid.");
-                    localStorage.removeItem("accessToken");
-                    return;
-                }
-            })
-
-            if(request) {
-                return navigate("/me");
-            }
-        } catch(e) {
-            console.error("Error during auto-login:", e);
-            alert("Error", "An error occurred while trying to log in automatically. Please try again later.");
-            return;
-        }
-    }
-
-    async function signUp() {
-        if (
-            !name.current ||
-            !username.current ||
-            !email.current ||
-            !password.current ||
-            !role.current
-        ) {
-            alert("Error", "Please fill in all fields.");
-            return;
-        }
-
-        if (!termsAccepted) {
-            alert("Error", "You must accept the terms and conditions.");
-            return;
-        }
-
-        const formData = {
-            name: name.current.value,
-            username: username.current.value,
-            email: email.current.value,
-            password: password.current.value,
-            role: role.current.value,
-            organization:
-                !organization.current?.value || organization.current?.value === "none"
-                ? undefined
-                : organization.current?.value,
-        };
-
-        if (!formData.name || !formData.username || !formData.email || !formData.password) {
-            return;
-        }
-
-        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
-        if (!isValidEmail) {
-            //alert("Error", "Please enter a valid email address.");
-            return;
-        }
-
-        if (formData.password.length < 8 || formData.password.length > 18) {
-            //alert("Error", "Password must be between 8 and 18 characters long.");
-            return;
-        }
-        
-        try {
-            const response = await axios.post(API + "/auth/signup", formData, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (response.status === 200) {
-                const token = response.data.accessToken;
-                if (!token) {
-                    alert(
-                    "Error",
-                    "An error occurred while creating your account. Please try again later. [1]"
-                    );
-                    return;
-                }
-
-                login(token);
-
-                return navigate("/me");
-            } else {
-                alert(
-                    "Error",
-                    "An error occurred while creating your account. Please try again later. [2]"
-                );
-            }
-        } catch (e) {
-            console.error("Error sending registration data:", e);
-            alert(
-            "Error",
-            "An error occurred while submitting your registration. Please try again later. [3]"
-            );
-        }
-    }
-
     useEffect(() => {
-        autoLogin();
+		autoLogin();
 
-        const handleChange = () => {
-            setTermsAccepted(terms.current?.checked ?? false);
-        };
+		const handleChange = () => {
+			setTermsAccepted(terms.current?.checked ?? false);
+		};
 
-        const el = terms.current;
-        el?.addEventListener("change", handleChange);
-        return () => el?.removeEventListener("change", handleChange);
-    }, []);
+		const el = terms.current;
+		el?.addEventListener("change", handleChange);
+		return () => el?.removeEventListener("change", handleChange);
+	}, []);
+
+    async function autoLogin() {
+		const token = localStorage.getItem("accessToken");
+		if (!token) return console.log("No access token found, skipping auto-login.");
+		try {
+			const request = await axios
+				.get(API + "/users/me", {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				})
+				.catch((e) => {
+					if (e.response?.status === 401) {
+						console.log("Unauthorized access, token may be invalid.");
+						localStorage.removeItem("accessToken");
+						return;
+					}
+				});
+
+			if (request) {
+				return navigate("/me");
+			}
+		} catch (e) {
+			console.error("Error during auto-login:", e);
+			alert("Error", "An error occurred while trying to log in automatically. Please try again later.");
+			return;
+		}
+	}
+
+	async function signUp() {
+		if (!name.current || !username.current || !email.current || !password.current || !role.current) {
+			alert("Error", "Please fill in all fields.");
+			return;
+		}
+
+		if (!termsAccepted) {
+			alert("Error", "You must accept the terms and conditions.");
+			return;
+		}
+
+		const formData = {
+			name: name.current.value,
+			username: username.current.value,
+			email: email.current.value,
+			password: password.current.value,
+			role: role.current.value,
+			organization:
+				!organization.current?.value || organization.current?.value === "none"
+					? undefined
+					: organization.current?.value,
+		};
+
+		if (!formData.name || !formData.username || !formData.email || !formData.password) {
+			return;
+		}
+
+		const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+		if (!isValidEmail) return;
+
+		if (formData.password.length < 8 || formData.password.length > 18) return;
+
+		try {
+			const response = await axios.post(API + "/auth/signup", formData, {
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			if (response.status === 200) {
+				const token = response.data.accessToken;
+				if (!token) {
+					alert("Error", "An error occurred while creating your account. Please try again later. [1]");
+					return;
+				}
+
+				login(token);
+				return navigate("/me");
+			} else {
+				alert("Error", "An error occurred while creating your account. Please try again later. [2]");
+			}
+		} catch (e) {
+			console.error("Error sending registration data:", e);
+			alert("Error", "An error occurred while submitting your registration. Please try again later. [3]");
+		}
+	}
+
+	function handleSubmit(e: React.FormEvent) {
+		e.preventDefault();
+		signUp();
+	}
 
     return (
         <>
@@ -189,6 +172,7 @@ export default function Register() {
                 spellCheck="false" 
                 autoCorrect="off" 
                 autoCapitalize="off"
+                onSubmit={handleSubmit}
                 >
                     <div>
                         <label className="inline-block text-sm text-white/75 mb-1">name</label>
@@ -291,7 +275,6 @@ export default function Register() {
                     <div className="col-span-1 lg:col-span-2 block lg:flex lg:justify-end">
                         <button
                         type="submit"
-                        onClick={signUp}
                         className={`
                         ${!termsAccepted ? "opacity-50 cursor-default hover:opacity-50" : "cursor-pointer hover:opacity-75"}
                             inline-block
