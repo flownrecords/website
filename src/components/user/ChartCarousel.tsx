@@ -16,10 +16,14 @@ import {
   Pie,
 } from "recharts";
 import { ChartTooltip } from "./ChartTooltip";
+import { useEffect, useState } from "react";
+import Button from "../general/Button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Props = {
   logbook?: LogbookEntry[];
 };
+
 
 export function parseTime(time?: string | number | null) {
   if(!time) return "0:00";
@@ -38,7 +42,24 @@ export function parseTime(time?: string | number | null) {
 }
 
 export default function ChartCarousel({ logbook = [] }: Props) {
-  
+  function useIsMobile(breakpoint = 768) {
+	  const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
+
+	  useEffect(() => {
+		  const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, [breakpoint]);
+
+    return isMobile;
+  }  
+
+  const isMobile = useIsMobile(768);
+  const chartMargin = isMobile
+  ? { top: 0, right: 0, left: 0, bottom: 0 }
+  : { top: 0, right: 45, left: 45, bottom: 0 };
+
+  const chartHeight = isMobile ? 350 : 400;
 
   const [sliderRef, slider] = useKeenSlider<HTMLDivElement>({
     loop: false,
@@ -67,7 +88,9 @@ export default function ChartCarousel({ logbook = [] }: Props) {
     const dateA = new Date(a);
     const dateB = new Date(b);
     return dateA.getTime() - dateB.getTime();
-  }).map(([month, values]) => ({
+  })
+  .slice(isMobile ? -3 : -6) // ⬅️ keep only the last 6 months
+  .map(([month, values]) => ({
     name: month,
     time: parseFloat(values.time.toFixed(1)),
     flights: values.flights,
@@ -83,7 +106,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
   , {} as Record<string, { name: string; flights: number }>);
   Object.values(chartDataTWO).sort((a, b) => b.flights - a.flights);
 
-  const sortedAircraft = Object.values(chartDataTWO).sort((a, b) => b.flights - a.flights).slice(0, 9);
+  const sortedAircraft = Object.values(chartDataTWO).sort((a, b) => b.flights - a.flights).slice(0, isMobile ? 5 : 9);
 
   const vfrIfrData = [
     {
@@ -109,6 +132,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
   const sixMonths = new Date();
   sixMonths.setMonth(sixMonths.getMonth() - 5);
+
   const landingData = logbook.filter(e => e.date && new Date(e.date) >= sixMonths).reduce((acc, entry) => {
     const date = new Date(entry.date as any);
     const key = date.toLocaleString("default", { month: "short", year: "numeric" });
@@ -117,27 +141,37 @@ export default function ChartCarousel({ logbook = [] }: Props) {
     return acc;
   }, {} as Record<string, { name: string; landings: number }>);
 
-  const landingChartData = Object.values(landingData);
+  const landingChartData = Object.values(landingData).sort((a, b) => {
+    const dateA = new Date(a.name)
+    const dateB = new Date(b.name)
+    return dateA.getTime() - dateB.getTime()
+  }).slice(isMobile ? -3 : -6);
 
   return (
     <div className="relative">
       <div ref={sliderRef} className="keen-slider">
         <div className="keen-slider__slide">
           <h2 className="text-white mb-2 text-sm font-semibold text-center">Monthly Hours & Flights</h2>
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={chartHeight}>
             
-            <LineChart data={chartDataONE} margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
+            <LineChart data={chartDataONE} margin={{
+              right: 5,
+            }}>
               <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
-              <XAxis dataKey="name" stroke="#ccc" />
+              <XAxis dataKey="name" stroke="#ccc" fontSize={isMobile ? 10 : 14} />
 
               <YAxis
                 stroke="#ccc"
+                tick={{ fontSize: isMobile ? 10 : 14, fill: "#ccc" }}
+                
                 label={{
                   value: "Flight Time (h)",
                   angle: -90,
                   position: "insideLeft",
-                  offset: 10,
+                  fontSize: isMobile ? 12 : 14,
+                  offset: isMobile ? 8 : 10,
                   style: { fill: "#ccc" },
+                  margin: isMobile ? 0 : 10,
                 }}
               />
 
@@ -149,7 +183,9 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
                  content={<ChartTooltip/>}
               />
-              <Legend />
+
+              <Legend/>
+
               <Line      
                 type="monotone"
                 dataKey="time"
@@ -170,13 +206,19 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
         <div className="keen-slider__slide">
           <h2 className="text-white mb-2 text-sm font-semibold text-center">Most Flown Aircraft</h2>
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={Object.values(sortedAircraft)} margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
+
+          <ResponsiveContainer width="100%" height={chartHeight}>
+            <BarChart data={Object.values(sortedAircraft)} margin={{
+              left: isMobile ? -45 : -45,
+            }}>
               <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
-              <XAxis dataKey="name" stroke="#fff" label={''}/>
-              <YAxis />
+
+              <XAxis dataKey="name" stroke="#fff" label={''} angle={isMobile ? -45 : 0} fontSize={isMobile ? 8 : 12} textAnchor="end" padding={{ left: 0, right: 0 }}/>
+              <YAxis style={{padding: 0}} fontSize={isMobile ? 10 : 12}/>
+
               <Tooltip cursor={{ fill: "rgba(255, 255, 255, 0.01)" }} content={<ChartTooltip/>}/>
               <Legend/>
+
               <Bar dataKey="flights" name="Aircraft Flights" fill="#E6AF2E" radius={[5, 5, 0, 0]}/>
             </BarChart>
           </ResponsiveContainer>
@@ -184,8 +226,9 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
          <div className="keen-slider__slide">
           <h2 className="text-white text-center">VFR vs IFR Time</h2>
-          <ResponsiveContainer width="100%" height={400}>
-            <PieChart margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
+
+          <ResponsiveContainer width="100%" height={chartHeight}>
+            <PieChart margin={chartMargin}>
               
               <Legend />
               <Tooltip formatter={(value: any) => parseTime(value)} content={<ChartTooltip/>}/>
@@ -196,7 +239,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
               nameKey="name" 
               cx="50%" 
               cy="50%" 
-              outerRadius={128} 
+              outerRadius={isMobile ? 64 : 128} 
               label={(entry) => `${entry.name}: ${parseTime(entry.value)}`} 
               strokeWidth={0}>
                 {vfrIfrData.map((entry, index) => (
@@ -210,8 +253,8 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
         <div className="keen-slider__slide">
           <h2 className="text-white text-center">Day vs Night Time</h2>
-          <ResponsiveContainer width="100%" height={400}>
-            <PieChart margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
+          <ResponsiveContainer width="100%" height={chartHeight}>
+            <PieChart margin={chartMargin}>
 
               <Legend/>
               <Tooltip formatter={(value: any) => parseTime(value)} content={<ChartTooltip/>}/>
@@ -222,7 +265,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
               nameKey="name" 
               cx="50%" 
               cy="50%" 
-              outerRadius={128} 
+              outerRadius={isMobile ? 64 : 128} 
               label={(entry) => `${entry.name}: ${parseTime(entry.value)}`} 
               strokeWidth={0}>
                 {dayNightData.map((entry, index) => (
@@ -235,11 +278,13 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
         <div className="keen-slider__slide">
           <h2 className="text-white text-center">Monthly Landings</h2>
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={landingChartData} margin={{ top: 0, right: 45, left: 45, bottom: 0 }}>
+          <ResponsiveContainer width="100%" height={chartHeight}>
+            <BarChart data={landingChartData} margin={{
+              left: -30,
+            }}>
               <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
-              <XAxis dataKey="name" />
-              <YAxis />
+              <XAxis dataKey="name" fontSize={isMobile ? 12 : 14}/>
+              <YAxis fontSize={isMobile ? 12 : 14}/>
               <Tooltip cursor={{ fill: "rgba(255, 255, 255, 0.01)" }}  content={<ChartTooltip/>}/>
               <Bar dataKey="landings" name="Landings" fill="#62BF58" radius={[5, 5, 0, 0]} />
             </BarChart>
@@ -249,18 +294,29 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         
       </div>
 
-      <button
-        onClick={() => slider.current?.prev()}
-        className="absolute top-1/2 left-1 -translate-y-1/2 bg-secondary/25 hover:bg-secondary/50 text-white rounded-full h-8 w-8 p-1 cursor-pointer"
-      >
-        ←
-      </button>
-      <button
-        onClick={() => slider.current?.next()}
-        className="absolute top-1/2 right-1 -translate-y-1/2 bg-secondary/25 hover:bg-secondary/50 text-white rounded-full h-8 w-8 p-1 cursor-pointer"
-      >
-        →
-      </button>
+      <div className="w-3/4 flex mx-auto gap-4 mt-4 opacity-50">
+        <button onClick={() => slider.current?.prev()} className="inline-flex w-full text-center
+          cursor-pointer bg-gradient-to-t 
+          from-neutral-900 to-neutral-800 
+          hover:opacity-75 transition duration-150
+          text-white
+          py-1 md:py-2 px-4 md:px-6 
+          rounded-lg
+          ring-2 ring-white/25 justify-center">
+          <ChevronLeft/>
+        </button>
+
+        <button onClick={() => slider.current?.next()} className="inline-flex w-full text-center
+          cursor-pointer bg-gradient-to-t 
+          from-neutral-900 to-neutral-800 
+          hover:opacity-75 transition duration-150
+          text-white
+          py-1 md:py-2 px-4 md:px-6 
+          rounded-lg
+          ring-2 ring-white/25 justify-center">
+          <ChevronRight/>
+        </button>
+      </div>
     </div>
   );
 }
