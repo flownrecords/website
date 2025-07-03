@@ -209,7 +209,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
           <ResponsiveContainer width="100%" height={chartHeight}>
             <BarChart data={Object.values(sortedAircraft)} margin={{
-              left: isMobile ? -45 : -45,
+              left: -40,
             }}>
               <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
 
