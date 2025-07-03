@@ -256,11 +256,12 @@ export default function Me() {
 
           <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg hidden lg:block">
             <div className="flex flex-col space-y-4">
-              <Button text="Share" onClick={() => {}} type="button"/>
+              <Button text="Edit Profile" to="/me/edit"/>
+              
               <hr className="bg-transparent border-b-2 border-white/25 rounded-lg"/>
               <Button text="Logbook" to="/me/logbook"/>
               
-              <Button text="Edit Profile" to="/me/edit"/>
+              <Button text="Share" onClick={() => {}} type="button"/>
             </div>
           </div>
 
