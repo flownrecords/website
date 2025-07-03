@@ -261,8 +261,6 @@ export default function Me() {
               <Button text="Logbook" to="/me/logbook"/>
               
               <Button text="Edit Profile" to="/me/edit"/>
-              
-              
             </div>
           </div>
 
@@ -278,13 +276,13 @@ export default function Me() {
               {localWeather.metar && (
                 <div className="text-sm">
                   <span className="font-semibold">METAR</span>
-                  <p className="text-sm text-white/75">{localWeather.metar?.replace(/[A-Z]{4}/g, '')}</p>
+                  <p className="text-sm text-white/75">{localWeather.metar?.replace(/[A-Z]{4}/, '')}</p>
                 </div>
               )}
               {localWeather.taf && (
                 <div className="text-sm">
                   <span className="font-semibold">TAF</span>
-                  <p className="text-sm text-white/75">{localWeather.taf?.replace(/TAF [A-Z]{4}/g, '')}</p>
+                  <p className="text-sm text-white/75">{localWeather.taf?.replace(/TAF [A-Z]{4}/, '')}</p>
                 </div>
               )}
             </div>
