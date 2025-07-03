@@ -77,7 +77,7 @@ export default function Me() {
 
   const totalFlightTime = () => {
 		if (!user?.logbookEntries || user.logbookEntries.length === 0) {
-			return "-";
+			return "0h00";
 		}
 
 		const total = user.logbookEntries
@@ -91,7 +91,7 @@ export default function Me() {
 
   const mostVisitedAirport = () => {
 		if(!user?.logbookEntries || user.logbookEntries.length === 0) {
-			return "-";
+			return "None";
 		}
 
 		return user?.logbookEntries
@@ -114,12 +114,12 @@ export default function Me() {
 					{}
 				)
 		).reduce((a: any, b: any) => (a[1] > b[1] ? a : b))[0]
-		: "-"
+		: "None"
 	}
 
   const mostFlownAcft = () => {
 		if (!user?.logbookEntries || user.logbookEntries.length === 0) {
-			return "-";
+			return "None";
 		}
 		const aircraftCount = user.logbookEntries.reduce((acc: any, entry: any) => {
 			acc[entry.aircraftRegistration] = (acc[entry.aircraftRegistration] || 0) + 1;
@@ -130,7 +130,7 @@ export default function Me() {
 			aircraftCount[a] > aircraftCount[b] ? a : b,
 		);
 
-		return mostFlownAcft || "-";
+		return mostFlownAcft || "None";
 	};
 
   /*const parseTime = (time?: string | number | null) => {
@@ -265,7 +265,13 @@ export default function Me() {
           </div>
 
           <div className="col-span-1 lg:col-span-3 p-4 ring-2 ring-white/25 rounded-lg ">
-            <ChartCarousel logbook={user?.logbookEntries}/>
+            {user?.logbookEntries && user?.logbookEntries.length > 0 ? 
+            <ChartCarousel logbook={user?.logbookEntries}/> : (
+              <div className="text-center text-white/50">
+                <h1 className="font-semibold text-white/75">No logbook entries found.</h1>
+                <p className="text-sm">Start logging your flights to see your charts here.</p>
+              </div>
+            )}
           </div>
 
           <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg hidden lg:block">
@@ -273,18 +279,25 @@ export default function Me() {
               <h1 className="font-semibold text-white/75">Local Weather</h1> <span title="Home Airport">{ user?.homeAirport }</span>
             </div>
             <div className="space-y-2">
-              {localWeather.metar && (
-                <div className="text-sm">
-                  <span className="font-semibold">METAR</span>
+              
+              <div className="text-sm">
+                <span className="font-semibold">METAR</span>
+                { localWeather.metar ? (
                   <p className="text-sm text-white/75">{localWeather.metar?.replace(/[A-Z]{4}/, '')}</p>
-                </div>
-              )}
-              {localWeather.taf && (
-                <div className="text-sm">
-                  <span className="font-semibold">TAF</span>
+                ) : (
+                  <p className="text-sm text-white/75">No METAR available</p>
+                ) }
+              </div>
+              
+              <div className="text-sm">
+                <span className="font-semibold">TAF</span>
+                { localWeather.taf ? (
                   <p className="text-sm text-white/75">{localWeather.taf?.replace(/TAF [A-Z]{4}/, '')}</p>
-                </div>
-              )}
+                ) : (
+                  <p className="text-sm text-white/75">No TAF available</p>
+                ) }
+              </div>
+              
             </div>
           </div>
         </div>

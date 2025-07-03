@@ -122,7 +122,7 @@ export default function LogbookEntry() {
                     return alert("Error", "User not found.");
                 }
 
-                if(entry?.crew.some(member => member?.id === newMember.id)) {
+                if(entry?.crew && entry.crew.some(member => member?.id === newMember.id)) {
                     return alert("Error", "This user is already assigned to the crew.");
                 }
 
