@@ -195,6 +195,10 @@ export default function Logbook() {
             <span  className="hidden lg:inline-block">
               <Button to="/me" text="Profile" styleType="small"/>
             </span>
+            { !manageMode && (
+              <Button type="button" text="Upload" styleType="small" onClick={() => toggleUploadModal(!uploadModal)}/>
+            )}
+
             {manageMode && (
               <Button
                 type="button"
@@ -204,7 +208,7 @@ export default function Logbook() {
               />
             )}
             <Button type="button" text="Manage" className={`${manageMode ? 'underline decoration-2 decoration-accent' : ''}`} styleType="small" onClick={() => toggleManageMode(!manageMode)}/>
-            <Button type="button" text="Upload" styleType="small" onClick={() => toggleUploadModal(!uploadModal)}/>
+            
           </div>
         </div>
 
@@ -229,7 +233,7 @@ export default function Logbook() {
             <span className="flex items-center justify-end px-4">
               { manageMode && (
                 <>
-                  <div className="flex items-center cursor-pointer relative mr-5">
+                  <div className="flex items-center cursor-pointer relative mr-2 md:mr-5">
                     <input 
                       onClick={(e) => {
                         const isChecked = (e.target as HTMLInputElement).checked;
@@ -257,7 +261,7 @@ export default function Logbook() {
                       </svg>
                     </span>
                   </div>
-                  <span className="text-sm inline-block px-1">
+                  <span className="text-sm px-1 hidden md:inline-block">
                     Select all
                   </span>
                 </>
@@ -275,24 +279,30 @@ export default function Logbook() {
                   grid grid-cols-6 py-4 px-2 items-center
                   transition-all duration-150
                   ${index % 2 === 0 ? 'bg-primary hover:bg-primary/75' : 'bg-gradient-to-br to-neutral-900 from-neutral-800 hover:from-neutral-800/75'} 
-                  rounded-xl
-                  `}>
-                  <span className="text-sm text-white/50 ml-2 hidden">
+                  rounded-xl cursor-pointer
+                  `}
+                  onClick={() => {
+                    navigate(`/me/logbook/${entry.id}`);
+                  }}
+                  >
+                  <span className="text-xs md:text-sm text-white/50 ml-2 hidden">
                     {parseDate(entry.date, false)}
                   </span>
-                  <span className="text-sm text-white/50 ml-2 md:block">
+                  <span className="text-xs md:text-sm text-white/50 ml-2 md:block">
                     {parseDate(entry.date, true)}
                   </span>
-                  <span className="text-sm text-white/50">{entry.aircraftRegistration || "-"}</span>
-                  <span className="text-sm text-white/50">{entry.depAd || "-"}</span>
-                  <span className="text-sm text-white/50">{entry.arrAd || "-"}</span>
-                  <span className="text-sm text-white/50">{parseTime(entry.total) || '-'}</span>
+                  <span className="text-xs md:text-sm text-white/50">{entry.aircraftRegistration || "-"}</span>
+                  <span className="text-xs md:text-sm text-white/50">{entry.depAd || "-"}</span>
+                  <span className="text-xs md:text-sm text-white/50">{entry.arrAd || "-"}</span>
+                  <span className="text-xs md:text-sm text-white/50">{parseTime(entry.total) || '-'}</span>
                   <span className="flex justify-end px-2">
 
                     {manageMode && (
                       <div className="flex items-center cursor-pointer relative mr-4">
                         <input 
                             onClick={(e) => {
+                              e.stopPropagation();
+
                               if((e.target as HTMLInputElement).checked) {
                                 if(!managedEntries.includes(entry.id)) {
                                   setManagedEntries([...managedEntries, entry.id]);
@@ -313,12 +323,14 @@ export default function Logbook() {
                       </div>
                     )}
 
-                    <Button
-                      to={`/me/logbook/${entry.id}`}
-                      text="View"
-                      styleType="small"
-                      className="text-sm"
-                    />
+                    <span className="hidden md:inline-block">
+                      <Button
+                        to={`/me/logbook/${entry.id}`}
+                        text="View"
+                        styleType="small"
+                        className="text-sm"
+                      />
+                    </span>
                   </span>
                 </div>
               ))
