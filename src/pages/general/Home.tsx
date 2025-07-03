@@ -8,10 +8,9 @@ export default function Home() {
         const button = document.getElementById("get-started-button") as HTMLButtonElement;
         if (!button) return;
 
-        // Remove existing highlight class if present
         button.classList.remove("highlight");
 
-        void button.offsetWidth; // Trigger reflow to reset animation
+        void button.offsetWidth;
 
         button.classList.add("highlight");
 
