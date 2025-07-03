@@ -20,7 +20,7 @@ Flown Records is a flight logbook platform that allows pilots to upload, analyze
 ## 📂 Tech
 ### Frontend
 - Framework: React
-- UI: TailwindCSS
+- UI: TailwindCSS, Lucide Icons
 - Electron: To package the web app as a desktop app
 
 ### Backend

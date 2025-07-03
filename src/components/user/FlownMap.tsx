@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import type { Aerodrome, User } from '../../lib/types';
 import Button from '../general/Button';
+import { Maximize2 } from 'lucide-react';
 
 type MapProps = {
   big: boolean;
@@ -220,7 +221,19 @@ const FlownMap: React.FC<MapProps> = ({ big, user }) => {
 
   return (
     <div className="w-full overflow-hidden relative">
-      <Button type="button" onClick={() => setShowModal(true)} text='Open' className='absolute bottom-4 left-4 z-[1000] bg-white text-black px-4 py-2 rounded shadow-md hover:bg-gray-200 transition' styleType='small'/>
+
+      <button 
+      onClick={() => setShowModal(true)} 
+      className="
+        absolute bottom-4 left-4 z-[1000] cursor-pointer bg-gradient-to-t 
+      from-neutral-900 to-neutral-800 text-white ring-2 ring-white/25
+        hover:opacity-75 transition duration-150 p-2 rounded-lg text-center text-sm
+        ">
+        <span className='hidden md:inline px-2'>
+          Open
+        </span>
+        <Maximize2 strokeWidth={1.25} className="h-6 w-6 block md:hidden"/>
+      </button>
 
       <MapContainer
         center={mapCenter as any} // Use dynamic center or undefined if bounds are set
