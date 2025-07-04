@@ -10,10 +10,13 @@ import { Home, AboutUs, NotFound, Login, Register, Me, Logbook, MeEdit, LogbookE
 
 // Components
 import Navbar from './components/general/Navbar';
+import Metadata from './components/general/Metadata';
 
 function App() {
   return (
     <>
+      <Metadata/>
+      
       <Navbar/>  
         <Routes>          
           {/* GENERAL ROUTES */}          
@@ -30,6 +33,8 @@ function App() {
           <Route path="/me/edit" element={<MeEdit/>} />
           <Route path="/me/logbook" element={<Logbook/>} />
           <Route path="/me/logbook/:entryId" element={<LogbookEntry/>} />
+
+          {/* <Route path="/u/:userId" element={<Logbook/>} /> */}
 
           {/* Catch-all route for 404 Not Found */}
           <Route path="*" element={<NotFound/>} />

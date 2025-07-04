@@ -1,0 +1,21 @@
+export default function Metadata() {
+  return (
+    <>
+        <title>Flown Records</title>
+        <meta name="description" content="Flown Records is a flight logbook platform that allows pilots to upload, analyze, and visualize their flight data."/>
+
+        <meta property="og:url" content="http://flownrecords.live"/>
+        <meta property="og:type" content="website"/>
+        <meta property="og:title" content="Flown Records"/>
+        <meta property="og:description" content="Flown Records is a flight logbook platform that allows pilots to upload, analyze, and visualize their flight data."/>
+        <meta property="og:image" content="http://flownrecords.live/banner.png"/>
+
+        <meta name="twitter:card" content="summary_large_image"/>
+        <meta property="twitter:domain" content="flownrecords.live"/>
+        <meta property="twitter:url" content="http://flownrecords.live/"/>
+        <meta name="twitter:title" content="Flown Records"/>
+        <meta name="twitter:description" content="Flown Records is a flight logbook platform that allows pilots to upload, analyze, and visualize their flight data."/>
+        <meta name="twitter:image" content="http://flownrecords.live/banner.png"></meta>
+    </>
+  );
+}
