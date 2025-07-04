@@ -10,13 +10,10 @@ import { Home, AboutUs, NotFound, Login, Register, Me, Logbook, MeEdit, LogbookE
 
 // Components
 import Navbar from './components/general/Navbar';
-import Metadata from './components/general/Metadata';
 
 function App() {
   return (
     <>
-      <Metadata/>
-      
       <Navbar/>  
         <Routes>          
           {/* GENERAL ROUTES */}          

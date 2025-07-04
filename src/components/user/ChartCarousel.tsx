@@ -17,13 +17,11 @@ import {
 } from "recharts";
 import { ChartTooltip } from "./ChartTooltip";
 import { useEffect, useState } from "react";
-import Button from "../general/Button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Props = {
   logbook?: LogbookEntry[];
 };
-
 
 export function parseTime(time?: string | number | null) {
   if(!time) return "0:00";
@@ -89,14 +87,13 @@ export default function ChartCarousel({ logbook = [] }: Props) {
     const dateB = new Date(b);
     return dateA.getTime() - dateB.getTime();
   })
-  .slice(isMobile ? -3 : -6) // ⬅️ keep only the last 6 months
+  .slice(isMobile ? -4 : -6)
   .map(([month, values]) => ({
     name: month,
     time: parseFloat(values.time.toFixed(1)),
     flights: values.flights,
   }));
 
-  // Calculate most flown aircraft and get the 10 most flown
   const chartDataTWO = logbook.reduce((acc, entry) => {
     const aircraft = entry.aircraftRegistration || "Unknown";
     if (!acc[aircraft]) acc[aircraft] = { name: aircraft, flights: 0 };
@@ -145,7 +142,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
     const dateA = new Date(a.name)
     const dateB = new Date(b.name)
     return dateA.getTime() - dateB.getTime()
-  }).slice(isMobile ? -3 : -6);
+  }).slice(isMobile ? -4 : -6);
 
   return (
     <div className="relative">
@@ -209,11 +206,11 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
           <ResponsiveContainer width="100%" height={chartHeight}>
             <BarChart data={Object.values(sortedAircraft)} margin={{
-              left: -40,
+              left: -30,
             }}>
               <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
 
-              <XAxis dataKey="name" stroke="#fff" label={''} angle={isMobile ? -45 : 0} fontSize={isMobile ? 8 : 12} textAnchor="end" padding={{ left: 0, right: 0 }}/>
+              <XAxis dataKey="name" stroke="#fff" label={''} angle={isMobile ? -45 : 0} fontSize={isMobile ? 8 : 12} textAnchor={isMobile ? "end" : "middle"} padding={{ left: 0, right: 0 }}/>
               <YAxis style={{padding: 0}} fontSize={isMobile ? 10 : 12}/>
 
               <Tooltip cursor={{ fill: "rgba(255, 255, 255, 0.01)" }} content={<ChartTooltip/>}/>
@@ -284,7 +281,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
             }}>
               <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25}/>
               <XAxis dataKey="name" fontSize={isMobile ? 12 : 14}/>
-              <YAxis fontSize={isMobile ? 12 : 14}/>
+              <YAxis fontSize={isMobile ? 10 : 12}/>
               <Tooltip cursor={{ fill: "rgba(255, 255, 255, 0.01)" }}  content={<ChartTooltip/>}/>
               <Bar dataKey="landings" name="Landings" fill="#62BF58" radius={[5, 5, 0, 0]} />
             </BarChart>
@@ -294,26 +291,19 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         
       </div>
 
-      <div className="w-3/4 flex mx-auto gap-4 mt-4 opacity-50">
-        <button onClick={() => slider.current?.prev()} className="inline-flex w-full text-center
-          cursor-pointer bg-gradient-to-t 
-          from-neutral-900 to-neutral-800 
-          hover:opacity-75 transition duration-150
-          text-white
-          py-1 md:py-2 px-4 md:px-6 
-          rounded-lg
-          ring-2 ring-white/25 justify-center">
+      <div className="w-3/4 flex mx-auto gap-4 mt-4">
+        <button onClick={() => {
+          slider.current?.prev()
+        }} className="inline-flex w-full text-center hover:opacity-75
+          cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800  
+          transition duration-150 text-white py-1 px-4 md:px-6 rounded-lg ring-2 ring-white/25 justify-center">
           <ChevronLeft/>
         </button>
 
-        <button onClick={() => slider.current?.next()} className="inline-flex w-full text-center
-          cursor-pointer bg-gradient-to-t 
-          from-neutral-900 to-neutral-800 
-          hover:opacity-75 transition duration-150
-          text-white
-          py-1 md:py-2 px-4 md:px-6 
-          rounded-lg
-          ring-2 ring-white/25 justify-center">
+        <button onClick={() => slider.current?.next()} 
+        className="inline-flex w-full text-center hover:opacity-75
+          cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800  
+          transition duration-150 text-white py-1 px-4 md:px-6 rounded-lg ring-2 ring-white/25 justify-center">
           <ChevronRight/>
         </button>
       </div>

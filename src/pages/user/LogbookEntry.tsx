@@ -25,8 +25,6 @@ export default function LogbookEntry() {
 
     const addCrewMemberRef = useRef<HTMLInputElement>(null);
 
-    
-
     useEffect(() => {
         if(!localStorage.getItem("accessToken")) {
             navigate("/login");
