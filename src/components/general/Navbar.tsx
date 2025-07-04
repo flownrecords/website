@@ -3,12 +3,14 @@ import { useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 
 import Icon from "../../assets/images/icon.png";
+import { ChevronDown } from "lucide-react";
 
 export default function Navbar() {
   const [mobileMenu, toggleMobileMenu] = useState(false);
+  const [ toolsOpen, setToolsOpen ] = useState(false);
 
   const { user, logout } = useAuth();
-
+  
   return (
     <>
         <nav className="bg-secondary px-4 py-2 m-4 rounded-lg ring-2 ring-white/25">
@@ -16,12 +18,45 @@ export default function Navbar() {
           <div className="hidden md:flex container mx-auto justify-between items-center">
               <div className="flex space-x-4 items-center">
 
-                <Link to="/" className="text-lg font-semibold">Flown Records</Link>
+                <Link to="/" className="text-lg font-semibold">
+                  Flown Records
+                </Link>
 
                 <ul className="flex space-x-6 mx-10">
-                  <li><Link to="/getstarted" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Get started</Link></li>
-                  <li><Link to="/tools" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Tools</Link></li>
-                  <li><Link to="/about" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">About Us</Link></li>
+                  <li>
+                    <Link to="/getstarted" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">
+                      Get started
+                    </Link>
+                  </li>
+                  <li
+                    className="relative"
+                    onMouseEnter={() => setToolsOpen(true)}
+                    onMouseLeave={() => setToolsOpen(false)}>
+                    <Link to="/tools" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 inline-flex items-center">
+                      Tools <ChevronDown className="ml-1 mt-0.5 h-4 w-4"/> 
+                    </Link>
+
+                    {toolsOpen && (
+                      <ul className="absolute top-full left-0 w-48 bg-secondary shadow-xl rounded-lg ring-2 ring-white/25 z-50 overflow-hidden p-4 space-y-2">
+                        <li>
+                          <Link to="/tools/planner" className="flex items-center decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">
+                            Flight Planner
+                          </Link>
+                        </li>
+
+                        <li>
+                          <Link to="/tools/planner" className="flex items-center decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">
+                            Question Database
+                          </Link>
+                        </li>
+                      </ul>
+                    )}
+                  </li>
+                  <li>
+                    <Link to="/about" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">
+                      About Us
+                    </Link>
+                  </li>
                 </ul>
               </div>
 
