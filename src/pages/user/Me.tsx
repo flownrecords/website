@@ -8,10 +8,12 @@ import ChartCarousel from "../../components/user/ChartCarousel";
 import Map from "../../components/user/FlownMap";
 import Footer from "../../components/general/Footer";
 import { Book, Forward, PencilLine } from "lucide-react";
+import useAlert from "../../components/alert/useAlert";
 
 export default function Me() {
   const API = import.meta.env.VITE_API_URL;
 
+  const alert = useAlert();
   const navigate = useNavigate();
   const [user, setUser] = useState<User>(null);
   const [localWeather, setLocalWeather] = useState<{
@@ -133,6 +135,17 @@ export default function Me() {
 
 		return mostFlownAcft || "None";
 	};
+
+  function share() {
+    navigator.share({
+      title: `Flight Records - ${user?.firstName || `@${user?.username}`}`,
+      text: `Check out my flight records on Flight Records!`,
+      url: `${import.meta.env.VITE_WEBSITE_URL}/u/${user?.username}`,
+    })
+    .catch(()=> {
+      return alert("Not supported", "Sharing is not supported in this browser.");
+    })
+  }
 
   /*const parseTime = (time?: string | number | null) => {
     if(!time) return "0:00";
@@ -266,7 +279,7 @@ export default function Me() {
                 <Book strokeWidth={1.25} className="h-6 w-6"/>
               </Link>
 
-              <button onClick={() => {}}
+              <button onClick={share}
               className="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 ring-2 ring-white/25 
               hover:opacity-75 transition duration-150 text-white p-2 rounded-lg text-center flex justify-center items-center">
                 <Forward strokeWidth={1.25} className="h-6 w-6"/>
@@ -286,7 +299,7 @@ export default function Me() {
               <hr className="bg-transparent border-b-2 border-white/25 rounded-lg"/>
               <Button text="Logbook" to="/me/logbook"/>
               
-              <Button text="Share" onClick={() => {}} type="button"/>
+              <Button text="Share" onClick={share} type="button"/>
             </div>
           </div>
 
