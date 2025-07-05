@@ -108,7 +108,7 @@ const questions = [
         answer: "The maximum takeoff weight of a C172 is 2550 lbs.",
         viewCount: 6,
         upVoteCount: 0,
-        tags: [2]
+        tags: [1,2]
     },
     {
         id: 2,
@@ -117,7 +117,7 @@ const questions = [
         answer: "The stall speed of a C152 is approximately 47 knots.",
         viewCount: 5,
         upVoteCount: 0,
-        tags: [3]
+        tags: [1,3]
     },
     {
         id: 3,
@@ -126,7 +126,7 @@ const questions = [
         answer: "The fuel capacity of a C172 is 56 gallons.",
         viewCount: 12,
         upVoteCount: 0,
-        tags: [2]
+        tags: [1,2]
     },
     {
         id: 4,
@@ -135,7 +135,7 @@ const questions = [
         answer: "The maximum speed of a C152 is approximately 107 knots.",
         viewCount: 123,
         upVoteCount: 0,
-        tags: [3]
+        tags: [1,3]
     },
     {
         id: 5,
@@ -144,7 +144,7 @@ const questions = [
         answer: "The climb rate of a C172 is approximately 730 feet per minute.",
         viewCount: 8,
         upVoteCount: 0,
-        tags: [2]
+        tags: [1,2]
     }
 ]
 
@@ -162,20 +162,21 @@ export default function Questions() {
     const hasTags = selectedTags.length > 0;
 
     function getRelevanceScore(q: Question): number {
-    let score = 0;
+        let score = 0;
 
-    if (hasQuery) {
-        if (q.question.toLowerCase().includes(lowerSearch)) score += 5;
-        if (q.answer.toLowerCase().includes(lowerSearch)) score += 3;
-        if (q.question.toLowerCase().startsWith(lowerSearch)) score += 2;
-    }
+        if (hasTags) {
+            const hasAllTags = selectedTags.every(tag => q.tags.includes(tag as TagID));
+            if (!hasAllTags) return 0;
+            score += selectedTags.length * 2;
+        }
 
-    if (hasTags) {
-        const tagMatches = q.tags.filter(tag => selectedTags.includes(tag as TagID)).length;
-        score += tagMatches * 2;
-    }
+        if (hasQuery) {
+            if (q.question.toLowerCase().includes(lowerSearch)) score += 5;
+            if (q.answer.toLowerCase().includes(lowerSearch)) score += 3;
+            if (q.question.toLowerCase().startsWith(lowerSearch)) score += 2;
+        }
 
-    return score;
+        return score;
     }
 
     const allQuestions = questions
@@ -458,6 +459,7 @@ export default function Questions() {
                                 <Button text='Publish' styleType='small' type='button' className='mt-4' onClick={() => {}}/>
                                 <Button text='Close' styleType='small' type='button' className='mt-4' onClick={() => {
                                     setQuestionModal(false);
+                                    editPubQuestionTags([]);
                                 }}/>
                             </div>
                         </div>
