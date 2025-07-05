@@ -39,7 +39,7 @@ export default function Navbar() {
                     {toolsOpen && (
                       <ul className="absolute top-full left-0 w-48 bg-secondary shadow-xl rounded-lg ring-2 ring-white/25 z-50 overflow-hidden p-4 space-y-2">
                         <li>
-                          <Link to="/planner" className="flex items-center decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">
+                          <Link to="/questions" className="flex items-center decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">
                             Question Database
                           </Link>
                         </li>

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Splash from "../../components/general/Splash";
+import Footer from "../../components/general/Footer";
 
 export default function Home() {
     let highlightTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -63,6 +64,8 @@ export default function Home() {
                     </button>
                 </Link>
             </div>
+
+            <Footer/>
         </>
     )
 }

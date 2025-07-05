@@ -125,6 +125,26 @@ export type Organization = {
   members: User[]
 }
 
+export type Question = {
+  id: number
+  question: string
+  answer: string
+  viewCount: number
+  upVoteCount: number
+  tags: TagID[]
+}
+
+export type QuestionTag = {
+  id: TagID
+  text: string
+  colorScheme?: {
+    text: string
+    bg: string
+    ring: string
+  }
+}
+
+export type TagID = number | string;
 export type OrganizationType = 'SCHOOL' | 'COMPANY' | 'COMMUNITY' | 'CLUB' | 'OTHER';
 export type UserOrganizationRole = 'GUEST' | 'STUDENT' | 'PILOT' | 'OPS' | 'FI' | 'TKI' | 'MAIN' | 'OFFICE' | 'SUPERVISOR' | 'ADMIN' | 'OTHER';
 export type UserPermissions = 'USER' | 'SUPPORT' | 'QUESTIONS_MANAGER' | 'FPL_MANAGER' | 'LOGBOOK_MANAGER' | 'MANAGER' | 'ADMIN';
