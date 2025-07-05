@@ -1,4 +1,4 @@
-import { Minus, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, Minus, Plus } from "lucide-react";
 import Button from "../../../components/general/Button";
 import Splash from "../../../components/general/Splash";
 import QuestionBlock from "../../../components/questions/QuestionBlock";
@@ -10,7 +10,7 @@ import { useAuth } from "../../../components/auth/AuthContext";
 const tags = [
     {
         id: 1,
-        text: "C152",
+        text: "Aircraft Specific",
         colorScheme: {
             text: "text-white",
             bg: "bg-accent/25",
@@ -26,110 +26,172 @@ const tags = [
             ring: "ring-second-accent"
         }
     },
+    {
+        id: 3,
+        text: "C152",
+        colorScheme: {
+            text: "text-white",
+            bg: "bg-[#916530]/25",
+            ring: "ring-[#916530]"
+        }
+    },
+    {
+        id: 4,
+        text: "P06T",
+        colorScheme: {
+            text: "text-white",
+            bg: "bg-[#309138]/25",
+            ring: "ring-[#309138]"
+        }
+    },
+    {
+        id: 5,
+        text: "POF",
+        colorScheme: {
+            text: "text-white",
+            bg: "bg-[#573091]/25",
+            ring: "ring-[#573091]"
+        }
+    },
+    {
+        id: 6,
+        text: "Air Law",
+        colorScheme: {
+            text: "text-white",
+            bg: "bg-[#b51583]/25",
+            ring: "ring-[#b51583]"
+        }
+    },
+    {
+        id: 7,
+        text: "Meteorology",
+        colorScheme: {
+            text: "text-white",
+            bg: "bg-[#309174]/25",
+            ring: "ring-[#309174]"
+        }
+    },
+    {
+        id: 8,
+        text: "Performance",
+        colorScheme: {
+            text: "text-white",
+            bg: "bg-[#303a91]/25",
+            ring: "ring-[#303a91]"
+        }
+    },
+    {
+        id: 9,
+        text: "AGK",
+        colorScheme: {
+            text: "text-white",
+            bg: "bg-[#6469fa]/25",
+            ring: "ring-[#6469fa]"
+        }
+    },
+    {
+        id: 10,
+        text: "Radio Navigation",
+        colorScheme: {
+            text: "text-white",
+            bg: "bg-[#9e2c3b]/25",
+            ring: "ring-[#9e2c3b]"
+        }
+    },
 ]
 
 const questions = [
     {
         id: 1,
         authorId: 1,
-        question: "What is the capital of France?",
-        answer: "",
-        viewCount: 1000,
-        upVoteCount: 50,
+        question: "What is the maximum takeoff weight of a C172?",
+        answer: "The maximum takeoff weight of a C172 is 2550 lbs.",
+        viewCount: 6,
+        upVoteCount: 0,
         tags: [2]
     },
     {
         id: 2,
         authorId: 1,
-        question: "What is the capital of Germany?",
-        answer: "",
-        viewCount: 800,
-        upVoteCount: 30,
-        tags: [1]
+        question: "What is the stall speed of a C152?",
+        answer: "The stall speed of a C152 is approximately 47 knots.",
+        viewCount: 5,
+        upVoteCount: 0,
+        tags: [3]
     },
     {
         id: 3,
         authorId: 1,
-        question: "What is the capital of Spain?",
-        answer: "",
-        viewCount: 600,
-        upVoteCount: 20,
-        tags: [1]
+        question: "What is the fuel capacity of a C172?",
+        answer: "The fuel capacity of a C172 is 56 gallons.",
+        viewCount: 12,
+        upVoteCount: 0,
+        tags: [2]
     },
     {
         id: 4,
         authorId: 1,
-        question: "What is the capital of Italy?",
-        answer: "",
-        viewCount: 400,
-        upVoteCount: 10,
-        tags: [1]
+        question: "What is the maximum speed of a C152?",
+        answer: "The maximum speed of a C152 is approximately 107 knots.",
+        viewCount: 123,
+        upVoteCount: 0,
+        tags: [3]
     },
     {
         id: 5,
         authorId: 1,
-        question: "What is the capital of Portugal?",
-        answer: "",
-        viewCount: 200,
-        upVoteCount: 5,
-        tags: [1]
-    },
-    {
-        id: 6,
-        authorId: 1,
-        question: "What is the capital of Netherlands?",
-        answer: "",
-        viewCount: 150,
-        upVoteCount: 3,
-        tags: [1,2]
+        question: "What is the climb rate of a C172?",
+        answer: "The climb rate of a C172 is approximately 730 feet per minute.",
+        viewCount: 8,
+        upVoteCount: 0,
+        tags: [2]
     }
 ]
 
 export default function Questions() {
-
     const { user } = useAuth();
 
     const [ questionModal, setQuestionModal ] = useState(false);
     const [ selectedTags, editSelectedTags ] = useState<TagID[]>([]);
     const [ searchQuery, setSearchQuery ] = useState('');
     const [ pubQuestionTags, editPubQuestionTags] = useState<TagID[]>([]);
+    const [ sortByPop, setSortByPop ] = useState<0 | 1 | 2>(0);
 
-    const lowerSearch = searchQuery.toLowerCase();
-    const hasQuery = lowerSearch.trim().length > 0;
+    const lowerSearch = searchQuery.toLowerCase().trim();
+    const hasQuery = lowerSearch.length > 0;
     const hasTags = selectedTags.length > 0;
 
-    const matchesTags = (q: Question) =>
-    !hasTags || q.tags.some(tag => selectedTags.includes(tag as TagID));
+    function getRelevanceScore(q: Question): number {
+    let score = 0;
 
-    const matchesSearch = (q: Question) =>
-    !hasQuery || (
-        q.question.toLowerCase().includes(lowerSearch) ||
-        q.answer.toLowerCase().includes(lowerSearch)
-    );
+    if (hasQuery) {
+        if (q.question.toLowerCase().includes(lowerSearch)) score += 5;
+        if (q.answer.toLowerCase().includes(lowerSearch)) score += 3;
+        if (q.question.toLowerCase().startsWith(lowerSearch)) score += 2;
+    }
 
-    const mostPopularQuestions = questions
-    .filter(q =>
-        (!hasTags && !hasQuery) || (matchesTags(q) && matchesSearch(q))
-    )
-    .sort((a, b) => b.upVoteCount - a.upVoteCount || b.viewCount - a.viewCount)
-    .slice(0, 5);
+    if (hasTags) {
+        const tagMatches = q.tags.filter(tag => selectedTags.includes(tag as TagID)).length;
+        score += tagMatches * 2;
+    }
+
+    return score;
+    }
 
     const allQuestions = questions
-    .filter(q =>
-        (!hasTags && !hasQuery) || (matchesTags(q) && matchesSearch(q))
-    )
-    .filter(q => !mostPopularQuestions.some(mq => mq.id === q.id))
-    .sort((a, b) => b.viewCount - a.viewCount || b.upVoteCount - a.upVoteCount);
-
-    const searchResults = questions
-    .filter(q =>
-        (!hasTags && !hasQuery) || (matchesTags(q) && matchesSearch(q))
-    )
-    .sort((a, b) => b.viewCount - a.viewCount || b.upVoteCount - a.upVoteCount);
+    .map(q => ({ ...q, score: getRelevanceScore(q) }))
+    .filter(q => q.score > 0 || (!hasQuery && !hasTags)) 
+    .sort((a, b) => {
+        if (sortByPop === 0) return 0;
+        if (sortByPop === 1) return b.viewCount - a.viewCount;
+        if (sortByPop === 2) return a.viewCount - b.viewCount;
+        return 0;
+    })
+    .sort((a, b) => b.score - a.score);
 
     return (
         <>
-            <Splash uppertext="Flight & Tests preparation" title="Question Database"/>
+            <Splash uppertext="Flight & Tests preparation" title="Questions"/>
             <div className="container mx-auto max-w-6xl p-4">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
                     <div className="col-span-4 p-4 ring-2 ring-white/25 rounded-lg block lg:hidden">
@@ -186,39 +248,64 @@ export default function Questions() {
                         </div>
                     </div>
 
-                    { searchQuery.length > 0 && 
-                        <div className="col-span-4 lg:col-span-3 p-4 ring-2 ring-white/25 rounded-lg">
-                            <h2 className="font-semibold text-white/75 mb-2">Search Query</h2>
-                            {
-                                searchResults.length === 0 
-                                ? 
-                                <div>
-                                    <p className="text-white/50">
-                                        No results found for "{searchQuery}" { selectedTags.length > 0 ? `using tags: ${selectedTags.map(t => tags.find(tag => tag.id === t)?.text).join(', ')}` : '' }
-                                    </p>
+
+                    { allQuestions.length > 0 ? (
+                        <div className="col-span-4 lg:col-span-3 p-4 ring-2 ring-white/25 rounded-lg" id="all-questions">
+                            <div className="grid grid-cols-9">
+                                <h2 className="col-span-6 font-semibold text-white/75 mb-2">
+                                {
+                                    hasQuery 
+                                    ? `Search results for "${searchQuery}"` 
+                                    : hasTags 
+                                    ? `Questions with selected tags` 
+                                    : `All Questions`
+                                }
+                                </h2>
+                                <div 
+                                className="col-span-2 text-center text-sm cursor-pointer text-white/75 decoration-accent decoration-2 hover:underline hover:text-white/50 transition-all duration-300" 
+                                onClick={() => {
+                                    if (sortByPop === 0) {
+                                        setSortByPop(1);
+                                    } else if (sortByPop === 1) {
+                                        setSortByPop(2);
+                                    } else {
+                                        setSortByPop(0);
+                                    }
+                                }}>
+                                    Sort by popularity 
+                                    {
+                                        sortByPop === 0 &&  <Minus className="h-5 w-5 inline cursor-pointer"/>
+                                    }
+                                    {
+                                        sortByPop === 1 &&  <ChevronDown className="h-5 w-5 inline cursor-pointer"/>
+                                    }
+                                    {
+                                        sortByPop === 2 &&  <ChevronUp className="h-5 w-5 inline cursor-pointer"/>
+                                    }
                                 </div>
-                                : searchResults.map((q, i) => {
+                            </div>
+                            {
+                                allQuestions
+                                .map((q, i) => {
                                     return (
                                         <QuestionBlock question={q} index={i} tags={tags}/>
                                     )
                                 })
                             }
                         </div> 
-                    }
-
-                    { searchQuery.length === 0 && mostPopularQuestions.length > 0 && 
-                        <div className="col-span-4 lg:col-span-3 p-4 ring-2 ring-white/25 rounded-lg">
-                        <h2 className="font-semibold text-white/75 mb-2">Most Popular Questions</h2>
-
-                        {
-                            mostPopularQuestions
-                            .map((q, i) => {
-                                return (
-                                    <QuestionBlock question={q} index={i} tags={tags}/>
-                                )
-                            })
-                        }
-                        </div> 
+                        ) : (
+                            <div className="col-span-4 lg:col-span-3 p-4 ring-2 ring-white/25 rounded-lg" id="all-questions">
+                                <h2 className="font-semibold text-white/75 mb-2">
+                                    {
+                                        hasQuery 
+                                        ? `No results found for "${searchQuery}"` 
+                                        : hasTags 
+                                        ? `No questions found with selected tags` 
+                                        : `No questions available`
+                                    }
+                                </h2>
+                            </div>
+                        )
                     }
 
                     <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg hidden lg:block">
@@ -308,19 +395,7 @@ export default function Questions() {
 
                     </div>
 
-                    { searchQuery.length === 0 && allQuestions.length > 0 && 
-                        <div className="col-span-4 lg:col-span-3 p-4 ring-2 ring-white/25 rounded-lg" id="all-questions">
-                            <h2 className="font-semibold text-white/75 mb-2">All questions</h2>
-                            {
-                                allQuestions
-                                .map((q, i) => {
-                                    return (
-                                        <QuestionBlock question={q} index={i} tags={tags}/>
-                                    )
-                                })
-                            }
-                        </div> 
-                    }
+                    
                 </div>
             </div>
             <Footer/>
