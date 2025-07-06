@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import { Routes, Route } from 'react-router-dom';
 
 // Pages
-import { Home, AboutUs, NotFound, Login, Register, Me, Logbook, MeEdit, LogbookEntry, Tools, Questions, ManageQuestions, ViewQuestion } from './pages';
+import { Home, AboutUs, NotFound, Login, Register, Me, Logbook, MeEdit, LogbookEntry, Tools, Questions, ManageQuestions, ViewQuestion, Planner } from './pages';
 
 // Components
 import Navbar from './components/general/Navbar';
@@ -29,6 +29,8 @@ function App() {
           <Route path="/questions" element={<Questions/>} />
           <Route path="/q/manage" element={<ManageQuestions/>} />
           <Route path="/q/:questionId" element={<ViewQuestion/>} />
+          
+          <Route path="/planner" element={<Planner/>} />
 
           {/* USER ROUTES */}
           <Route path="/me" element={<Me/>} />
