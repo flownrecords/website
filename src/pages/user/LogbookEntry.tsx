@@ -2,11 +2,12 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 
 import axios from 'axios';
-import LogbookEntryMap from '../../components/Logbook/LogbookEntryMap';
+
 import type  { LogbookEntry,  User } from '../../lib/types';
 import Button from '../../components/general/Button';
 import Footer from '../../components/general/Footer';
 import useAlert from '../../components/alert/useAlert';
+import RouteMap from '../../components/maping/RouteMap';
 
 export default function LogbookEntry() {
     const API = import.meta.env.VITE_API_URL;
@@ -200,7 +201,7 @@ export default function LogbookEntry() {
                 <div className='ring-2 ring-white/25 rounded-lg overflow-hidden'>
                     {
                         entry &&
-                        <LogbookEntryMap user={user} entry={entry}/>
+                        <RouteMap type="ENTRY" user={user} entryId={entry.id}/>
                     }
                 </div>
                 

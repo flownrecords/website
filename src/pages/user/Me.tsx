@@ -9,6 +9,7 @@ import Map from "../../components/user/FlownMap";
 import Footer from "../../components/general/Footer";
 import { Book, Forward, PencilLine } from "lucide-react";
 import useAlert from "../../components/alert/useAlert";
+import RouteMap from "../../components/maping/RouteMap";
 
 export default function Me() {
   const API = import.meta.env.VITE_API_URL;
@@ -147,24 +148,6 @@ export default function Me() {
     })
   }
 
-  /*const parseTime = (time?: string | number | null) => {
-    if(!time) return "0:00";
-    const total = typeof time === 'string' ? parseFloat(time) : time;
-    if(isNaN(total)) return "0:00";
-    if(total < 0) return "0:00";
-    if(total === 0) return "0:00";
-    if(total < 1) {
-      const minutes = Math.round(total * 60);
-      return `0:${minutes < 10 ? '0' + minutes : minutes}`;
-    }
-
-    const hours = total.toFixed(0);
-		const minutes = Math.round((total % 1) * 60);
-		return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-  }
-
-  const truncateString = (str: string, max: number) =>  str.length > max ? `${str.substring(0, max).trim()}…` : str;*/
-
   return (
     
   
@@ -289,7 +272,7 @@ export default function Me() {
           </div>
 
           <div className="col-span-1 lg:col-span-3 ring-2 ring-white/25 rounded-lg overflow-hidden">
-            <Map user={user} big={false}/>
+            <RouteMap type="OVERVIEW" user={user} dimensions={{ height: "400px" }}/>
           </div>
 
           <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg hidden lg:block">
