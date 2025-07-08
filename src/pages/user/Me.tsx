@@ -5,7 +5,6 @@ import Button from "../../components/general/Button";
 
 import type { User } from "../../lib/types";
 import ChartCarousel from "../../components/user/ChartCarousel";
-import Map from "../../components/user/FlownMap";
 import Footer from "../../components/general/Footer";
 import { Book, Forward, PencilLine } from "lucide-react";
 import useAlert from "../../components/alert/useAlert";

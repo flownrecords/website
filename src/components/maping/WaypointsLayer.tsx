@@ -1,5 +1,5 @@
 import { CircleMarker, Popup } from "react-leaflet";
-import type { Aerodrome, User, Waypoint } from "../../lib/types";
+import type { User, Waypoint } from "../../lib/types";
 
 export const WaypointsLayer = (
 
@@ -8,7 +8,7 @@ export const WaypointsLayer = (
             
         },
         navdata,
-        user
+        // user
     }: 
 
     { 
