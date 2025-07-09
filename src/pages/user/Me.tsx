@@ -70,7 +70,7 @@ export default function Me() {
   const fetchLocalWeather = async (homeAirport?: string) => {
     if(!homeAirport) return;
 
-    const response = (await axios.get(API + '/gen/wx/' + homeAirport)).data
+    const response = (await axios.get(`${API}/wx/ad?icao=${homeAirport}`))
     setLocalWeather({
       metar: response.data.rawOb,
       taf: response.data.rawTaf,

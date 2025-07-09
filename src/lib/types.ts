@@ -165,3 +165,13 @@ export type Coordinates = {
     lat: number;
     long: number;
 }
+
+export interface FIR {
+    fir: string; // ICAO code of the FIR
+    waypoints: {
+        vfr: Waypoint[] | null; // VFR waypoints, null if not available
+        ifr: Waypoint[] | null; // IFR waypoints, null if not available
+    };
+    ad: Aerodrome[] | null; // Airport data, null if not available
+    navaid: any[] | null; // Navaids, null if not available
+}

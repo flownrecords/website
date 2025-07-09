@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { User } from "../../lib/types";
+import type { FIR, User } from "../../lib/types";
 import { MapContainer, TileLayer } from "react-leaflet";
 import axios from "axios";
 import { AerodromesLayer } from "./AerodromesLayer";
@@ -52,13 +52,15 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0 }) =
     fetchNavdata();
 
     async function fetchNavdata() {
-      const [ad_promise, wpt_promise] = await Promise.all([
-        axios.get(API + "/data/nav/ad"),
-        axios.get(API + "/data/nav/wpt"),
+      const [ navdata ] = await Promise.all([
+        axios.get(API + "/navdata"),
       ]);
 
-      const ads = ad_promise.data;
-      const wpts = wpt_promise.data.flatMap((fir: any) => [...fir.vfr, ...fir.ifr]);
+      const ads = (navdata.data as FIR[]).flatMap((f) => f.ad);
+      const wpts = (navdata.data as FIR[]).flatMap((f) => [
+        ...(f.waypoints.vfr ?? []),
+        ...(f.waypoints.ifr ?? []),
+      ]);
 
       setAerodromes(ads);
       setWaypoints(wpts);
