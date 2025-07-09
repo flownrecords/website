@@ -6,7 +6,7 @@ import Splash from "../../../components/general/Splash";
 export default function Planner() {
 
   const [ showExtra, extraToggle]  = useState(false);
-  const flightPlans = [];
+  //const flightPlans = [];
 
   const [legs, editLegs ] = useState<any[]>([]);
 
