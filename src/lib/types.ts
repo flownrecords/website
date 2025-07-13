@@ -157,6 +157,7 @@ export type Waypoint = {
 }
 
 export type Aerodrome = {
+    name?: string;
     icao: string;
     coords: Coordinates;
 }

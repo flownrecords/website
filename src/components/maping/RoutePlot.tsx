@@ -27,7 +27,7 @@ export const RoutePlot = ({
   }
 }) => {
 
-  const coords: {type: CoordType, data: [number, number]}[] = [];
+  const coords: {id: string, type: CoordType, data: [number, number]}[] = [];
 
   const entries = options.singleEntry ? user?.logbookEntries.filter((entry) => entry.id === options.singleEntryId) : user?.logbookEntries;
 
@@ -36,8 +36,10 @@ export const RoutePlot = ({
     const arr = navdata.aerodromes.find((ad: any) => ad.icao === (entry.plan?.arrAd || entry.arrAd));
 
     const route = extractRoutePoints(entry.plan?.route || "").map((wpt) => {
+
       const fix = navdata.waypoints.find((w) => w.id === wpt) || 
       navdata.aerodromes.find((ad) => ad.icao === wpt);
+
       if (fix) {
         return {...fix, type: navdata.aerodromes.find((ad) => ad.icao === wpt) ? "AD" : "WPT"};
       } else {
@@ -48,6 +50,7 @@ export const RoutePlot = ({
     
     if(dep) {
       coords.push({
+        id: dep.icao,
         type: "AD",
         data: [ dep.coords.lat, dep.coords.long ],
       });
@@ -55,7 +58,9 @@ export const RoutePlot = ({
 
     route.forEach((fix) => {
       if (fix) {
+        let id = 'icao' in fix ? fix.icao : fix.id;
         coords.push({
+          id: id,
           type: fix.type === "AD" ? "AD" : "WPT",
           data: [fix.coords.lat, fix.coords.long],
         });
@@ -64,6 +69,7 @@ export const RoutePlot = ({
 
     if(arr) {
       coords.push({
+        id: arr.icao,
         type: "AD",
         data: [ arr.coords.lat, arr.coords.long ]
       });
@@ -77,7 +83,7 @@ export const RoutePlot = ({
         <Polyline
           positions={coords.map((c) => c.data)}
           pathOptions={{ color: colors.base }}
-          weight={1}
+          weight={1.5}
           noClip={true}
           opacity={0.75}
         />
@@ -93,7 +99,26 @@ export const RoutePlot = ({
           weight={0}
           stroke={true}
         >
-          <Popup>Fix {idx + 1}</Popup>
+          <Popup className="route-popup">
+            {
+              pos.type === "AD" ? (
+                <div>
+                  <strong>{pos.id}</strong><br />
+                  { 
+                    navdata.aerodromes.find((ad) => ad.icao === pos.id)?.name 
+                    || "Unknown name"
+                  }
+                </div>
+              ) : (
+                <div>
+                  <strong>{pos.id}</strong><br />
+                  {
+                    navdata.waypoints.find((wpt) => wpt.id === pos.id)?.name || "Unknown name"
+                  }
+                </div>
+              )
+            }
+          </Popup>
         </CircleMarker>
       )) }
     </>
