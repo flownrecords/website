@@ -6,7 +6,7 @@ import Button from "../../components/general/Button";
 import type { User } from "../../lib/types";
 import ChartCarousel from "../../components/user/ChartCarousel";
 import Footer from "../../components/general/Footer";
-import { Book, Forward, PencilLine } from "lucide-react";
+import { Book, FileText, Forward, PencilLine } from "lucide-react";
 import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
 
@@ -247,7 +247,7 @@ export default function Me() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
 
-          <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg block md:hidden">
+          <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg block lg:hidden">
             <div className="grid grid-cols-4 gap-4">
               <Link to="/me/edit" 
               className="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 ring-2 ring-white/25 
@@ -260,6 +260,14 @@ export default function Me() {
               hover:opacity-75 transition duration-150 text-white p-2 rounded-lg text-center flex justify-center items-center">
                 <Book strokeWidth={1.25} className="h-6 w-6"/>
               </Link>
+
+              <button onClick={() => {
+                alert("Coming soon", "This feature is not yet implemented.");
+              }}
+              className="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 ring-2 ring-white/25 
+              hover:opacity-75 transition duration-150 text-white p-2 rounded-lg text-center flex justify-center items-center">
+                <FileText strokeWidth={1.25} className="h-6 w-6"/>
+              </button>
 
               <button onClick={share}
               className="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 ring-2 ring-white/25 
