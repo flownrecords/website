@@ -280,6 +280,10 @@ export default function Me() {
               
               <hr className="bg-transparent border-b-2 border-white/25 rounded-lg"/>
               <Button text="Logbook" to="/me/logbook"/>
+
+              <Button text="Generate Report" onClick={() => {
+                alert("Coming soon", "This feature is not yet implemented.");
+              }}/>
               
               <Button text="Share" onClick={share} type="button"/>
             </div>
