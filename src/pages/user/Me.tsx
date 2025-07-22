@@ -87,6 +87,7 @@ export default function Me() {
     
 		const total = user.logbookEntries
 		.map((entry) => {
+      if(!entry.includeInFt) return 0;
       return entry.includeInFt ? Number(typeof entry.total === 'number' && entry.total > 0 ? entry.total : entry.simTime) : 0;
     })
 		.reduce((acc, entry) => acc + entry, 0);
