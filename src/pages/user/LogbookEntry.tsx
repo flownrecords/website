@@ -234,14 +234,14 @@ export default function LogbookEntry() {
                         <div>
                             <h1 className='mb-1'>Departure</h1>
                             <div className='rounded-lg bg-secondary p-2'>
-                                {entry ? entry.depAd : 'N/A'}
+                                {entry?.depAd && entry.depAd.length > 0 ? entry.depAd : 'N/A'}
                             </div>
                         </div>
 
                         <div>
                             <h1 className='mb-1'>Arrival</h1>
                             <div className='rounded-lg bg-secondary p-2'>
-                                {entry ? entry.arrAd : 'N/A'}
+                                {entry?.arrAd && entry.arrAd.length > 0 ? entry.arrAd : 'N/A'}
                             </div>
                         </div>
 
@@ -274,9 +274,11 @@ export default function LogbookEntry() {
                         </div>
 
                         <div>
-                            <h1 className='mb-1'>Flight Time</h1>
+                            <h1 className='mb-1'>
+                                {entry && typeof entry.total === 'number' && entry.total > 0 ? '' : 'Synthetic' } Flight Time
+                            </h1>
                             <div className='rounded-lg bg-secondary p-2'>
-                                {entry ? parseDuration(entry.total) : '00h00'}
+                                {entry ? parseDuration(typeof entry.total === 'number' && entry.total > 0 ? entry.total : entry.simTime) : '00h00'}
                             </div>
                         </div>
 

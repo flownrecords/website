@@ -119,8 +119,10 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0 }) =
         </MapContainer>
       </div>
     ) : (
-        <div className="w-full overflow-hidden relative" style={{ height: dimensions?.height ?? "400px" }}>
-            
+        <div className="w-full overflow-hidden relative flex items-center justify-center" style={{ height: dimensions?.height ?? "400px" }}>
+            <h1 className="font-bold text-3xl text-white/15">
+              Map not available
+            </h1>
         </div>
     ))
   );

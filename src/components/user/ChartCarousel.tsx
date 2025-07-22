@@ -76,7 +76,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
     });
 
     if (!acc[key]) acc[key] = { time: 0, flights: 0 };
-    acc[key].time += Number(entry.total) || 0;
+    acc[key].time += Number(typeof entry.total === 'number' && entry.total > 0 ? entry.total : entry.simTime) || 0;
     acc[key].flights += 1;
     return acc;
   }, {} as Record<string, { time: number; flights: number }>);

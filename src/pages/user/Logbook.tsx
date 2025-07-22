@@ -294,7 +294,7 @@ export default function Logbook() {
                   <span className="text-xs md:text-sm text-white/50">{entry.aircraftRegistration || "-"}</span>
                   <span className="text-xs md:text-sm text-white/50">{entry.depAd || "-"}</span>
                   <span className="text-xs md:text-sm text-white/50">{entry.arrAd || "-"}</span>
-                  <span className="text-xs md:text-sm text-white/50">{parseTime(entry.total) || '-'}</span>
+                  <span className="text-xs md:text-sm text-white/50">{parseTime(typeof entry.total === 'number' && entry.total > 0 ? entry.total : entry.simTime) || '-'}</span>
                   <span className="flex justify-end px-2">
 
                     {manageMode && (

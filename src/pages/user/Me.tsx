@@ -83,9 +83,13 @@ export default function Me() {
 			return "0h00";
 		}
 
+
+    
 		const total = user.logbookEntries
-		.map((entry: any) => entry.includeInFt ? Number(entry.total) : 0)
-		.reduce((acc: number, entry: any) => acc + entry, 0);
+		.map((entry) => {
+      return entry.includeInFt ? Number(typeof entry.total === 'number' && entry.total > 0 ? entry.total : entry.simTime) : 0;
+    })
+		.reduce((acc, entry) => acc + entry, 0);
 
 		const hours = total.toFixed(0);
 		const minutes = Math.round((total % 1) * 60);
