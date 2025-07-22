@@ -180,21 +180,35 @@ export default function LogbookEntry() {
     return (
         <>
             <div className="text-center mt-24 mb-4">
-                <div>
-                    <h3 className="text-2xl md:text-3xl font-bold text-white/50">
-                        {entry?.aircraftRegistration ?? ''}
-                    </h3>
-                    <h1 className="block text-7xl md:text-8xl font-bold">
-                        {entry?.depAd} <span className='text-white/5'>to</span> {entry?.arrAd}
-                    </h1>
-                    
+                { typeof entry?.total === 'number' && entry.total > 0 && entry?.depAd && entry?.arrAd ? (
+                    <div>
+                        <h3 className="text-2xl md:text-3xl font-bold text-white/50">
+                            {entry?.aircraftRegistration ?? ''}
+                        </h3>
+                        <h1 className="block text-7xl md:text-8xl font-bold">
+                            {entry?.depAd} <span className='text-white/15'>to</span> {entry?.arrAd}
+                        </h1>
                         <h3 className="font-semibold text-white/50">
                             {
                                 entry ? parseDate(entry.offBlock) : 'N/A'
                             }
                         </h3>
-                    
-                </div>
+                    </div>
+                ) : (
+                    <div>
+                        <h3 className="text-2xl md:text-3xl font-bold text-white/50">
+                            {entry?.aircraftRegistration ?? ''}
+                        </h3>
+                        <h1 className="block text-7xl md:text-8xl font-bold">
+                            <span className='text-white/15'>Simulator</span>
+                        </h1>
+                        <h3 className="font-semibold text-white/50">
+                            {
+                                entry ? parseDate(entry.offBlock) : 'N/A'
+                            }
+                        </h3>
+                    </div>
+                ) }
             </div>
 
             <div className="container mx-auto max-w-6xl p-4">
