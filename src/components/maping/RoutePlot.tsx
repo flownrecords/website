@@ -93,11 +93,14 @@ export const RoutePlot = ({
         <CircleMarker
           key={`polyline-${idx}`}
           center={pos.data}
+          pathOptions={{
+              fillColor: pos.type === "AD" ? colors.accent : colors.base,
+              color: pos.type === "AD" ? colors.accent : colors.base,
+              fillOpacity: 1,
+              weight: 0,
+          }}
           radius={1.5}
-          fillColor={pos.type === "AD" ? colors.accent : colors.base} // 360x, 361x, 362x, 365x
-          fillOpacity={1}
-          weight={0}
-          stroke={true}
+          stroke={false}
         >
           <Popup className="route-popup">
             {

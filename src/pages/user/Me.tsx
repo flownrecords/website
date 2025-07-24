@@ -299,16 +299,17 @@ export default function Me() {
               <Button text="Logbook" to="/me/logbook"/>
 
               <button className="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 ring-2 ring-white/25 
-              hover:opacity-75 transition duration-150 text-white p-2 rounded-lg text-center flex justify-center items-center"
-              onClick={(e) => {
+              hover:opacity-75 transition duration-150 text-white p-2 rounded-lg text-center flex justify-center items-center "
+              onClick={() => {
                 setReportLoading(true);
                 requestReport();
                 setTimeout(() => {
                   setReportLoading(false);
                 }, 5000);
               }}>
-                { reportLoading && <Loader className="animate-spin w-4 h-4 text-white mr-1" /> }
-                <span className={!reportLoading ? "ml-5" : ""}>
+                
+                <span className="relative">
+                  { reportLoading && <Loader className="animate-spin w-4 h-4 text-white absolute -left-6 top-1/2 transform -translate-y-1/2" /> }
                   Generate Report
                 </span>
               </button>

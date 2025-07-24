@@ -108,7 +108,7 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0 }) =
           )}
 
           {aerodromes.length > 0 && (
-            <AerodromesLayer navdata={aerodromes} user={user} options={{ highlightVisited: true }} />
+            <AerodromesLayer navdata={aerodromes} user={user} options={{ highlightVisited: true, type: type,  }} />
           )}
 
           {

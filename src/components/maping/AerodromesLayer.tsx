@@ -5,7 +5,9 @@ export const AerodromesLayer = (
 
     { 
         options: { 
-            highlightVisited = false 
+            highlightVisited = false,
+            type = "OVERVIEW",
+            entryId
         },
         navdata,
         user
@@ -13,7 +15,9 @@ export const AerodromesLayer = (
 
     { 
         options: {
-            highlightVisited?: boolean
+            highlightVisited?: boolean,
+            type: "OVERVIEW" | "PLANNING" | "ENTRY",
+            entryId?: number
         }
         navdata: Aerodrome[] 
         user: User
@@ -28,7 +32,12 @@ export const AerodromesLayer = (
 
     const visitedAd: string[] = [];
 
-    user?.logbookEntries.map((entry) => {
+    user?.logbookEntries.filter((entry) => {
+        if(type === "ENTRY") {
+            return entry.id === entryId;
+        }
+        return true;
+    }).map((entry) => {
         if(entry.depAd) {
             visitedAd.push(entry.depAd.toUpperCase());
         }
