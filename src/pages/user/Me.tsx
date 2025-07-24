@@ -172,7 +172,7 @@ export default function Me() {
 
             <div>
               <h1 className="text-3xl md:text-4xl font-bold capitalize">
-                { (user?.firstName ?? `@${user?.username}`)?.substring(0,9) }
+                { (user?.firstName ? `${user?.firstName} ${user?.lastName}` : `@${user?.username}`).substring(0, 20) }
               </h1>
               <div>
                 <div className="font-semibold text-lg">
@@ -186,7 +186,7 @@ export default function Me() {
 
                   { user?.organizationId && 
                     <Link to={`/org/${user.organizationId}`} className="text-white/50 capitalize">
-                      { user?.organizationId }
+                      { user?.organization?.name ?? user?.organizationId }
                     </Link>
                   }
                 </div>
