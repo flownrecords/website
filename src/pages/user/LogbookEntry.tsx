@@ -57,8 +57,9 @@ export default function LogbookEntry() {
         })
         .then(response => {   
             if(response.status === 200) {
-                let e = response.data?.find((entry: LogbookEntry) => entry.id === Number(entryId));
-                setEntry(e);
+                let entry = response.data?.find((entry: LogbookEntry) => entry.id === Number(entryId));
+                if(!entry) return navigate("/me/logbook");
+                setEntry(entry);
             }
         })
         .catch(error => {
