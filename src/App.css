@@ -69,3 +69,10 @@ html {
         outline-offset: 5px;
     }
 }
+
+.leaflet-control-attribution {
+    opacity: 0.5 !important;
+    background: rgba(0, 0, 0, 0.25) !important;
+    border-radius: 5px 0px 0px 0px !important;
+    color: rgba(255, 255, 255, 0.5) !important;
+}
