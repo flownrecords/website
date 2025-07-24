@@ -80,22 +80,22 @@ export default function Me() {
     return response;
   }
 
-  const totalFlightTime = () => {
-		if (!user?.logbookEntries || user.logbookEntries.length === 0) {
-			return "0h00";
-		}
+    const totalFlightTime = () => {
+    if (!user?.logbookEntries || user.logbookEntries.length === 0) {
+      return "0h00";
+    }
 
-		const total = user.logbookEntries
-		.map((entry) => {
-      if(!entry.includeInFt) return 0;
-      return entry.includeInFt ? Number(typeof entry.total === 'number' && entry.total > 0 ? entry.total : entry.simTime) : 0;
-    })
-		.reduce((acc, entry) => acc + entry, 0);
+    const total = user.logbookEntries
+      .map((entry) => {
+        if (!entry.includeInFt) return 0;
+        return Number(typeof entry.total === 'number' && entry.total > 0 ? entry.total : entry.simTime);
+      })
+      .reduce((acc, entry) => acc + entry, 0);
 
-		const hours = total.toFixed(0);
-		const minutes = Math.round((total % 1) * 60);
-		return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
-	};
+    const hours = Math.floor(total);
+    const minutes = Math.round((total % 1) * 60);
+    return `${hours}h${minutes < 10 ? '0' + minutes : minutes}`;
+  };
 
   const mostVisitedAirport = () => {
 		if(!user?.logbookEntries || user.logbookEntries.length === 0) {

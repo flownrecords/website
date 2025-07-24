@@ -90,7 +90,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
   .slice(isMobile ? -4 : -6)
   .map(([month, values]) => ({
     name: month,
-    time: parseFloat(values.time.toFixed(1)),
+    time: values.time,
     flights: values.flights,
   }));
 
