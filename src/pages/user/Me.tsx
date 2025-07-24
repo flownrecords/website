@@ -6,7 +6,7 @@ import Button from "../../components/general/Button";
 import type { User } from "../../lib/types";
 import ChartCarousel from "../../components/user/ChartCarousel";
 import Footer from "../../components/general/Footer";
-import { Book, FileText, Forward, Loader, PencilLine } from "lucide-react";
+import { AtSign, Book, Cloudy, FileText, Forward, Globe, GlobeLock, Loader, MapPin, PencilLine } from "lucide-react";
 import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
 
@@ -164,7 +164,11 @@ export default function Me() {
         <div className="px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-4 ring-2 ring-white/25 rounded-lg">
           <div className="flex flex-row items-center space-x-4 lg:col-span-3">
 
-            <img className="h-18 w-18 md:h-28 md:w-28 rounded-full ring-2 ring-white/25" draggable="false" src={user?.profilePictureUrl ?? 'https://placehold.co/512x512'} alt="User profile icon"/>
+            <img 
+            className="h-18 w-18 md:h-28 md:w-28 rounded-full ring-2 ring-white/25" 
+            draggable="false" 
+            src={user?.profilePictureUrl ?? `https://placehold.co/512/09090B/313ED8?font=roboto&text=${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}`} 
+            alt="User profile icon"/>
 
             <div>
               <h1 className="text-3xl md:text-4xl font-bold capitalize">
@@ -192,16 +196,22 @@ export default function Me() {
                 <span
                   className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block"
                 >
-                  @{ user?.username }
+                  <AtSign className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/15 opacity-50"/>
+                  { user?.username }
                 </span>
                 {user?.location && 
                   <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block">
+                    <MapPin className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50"/>
                     { user?.location?.substring(0, 24) }
                   </span>
                 }
                 <span
-                  className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 hidden lg:inline-block"
+                  className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 hidden lg:inline-block relative"
                 >
+                  { user?.publicProfile ? 
+                  <Globe className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" /> : 
+                  <GlobeLock className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />}
+                  
                   { user?.publicProfile  ? 'Public' : 'Private' }
                 </span>
               </div>
@@ -330,28 +340,26 @@ export default function Me() {
 
           <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg hidden lg:block">
             <div className="flex justify-between mb-2">
-              <h1 className="font-semibold text-white/75">Local Weather</h1> <span title="Home Airport">{ user?.homeAirport }</span>
+              <h1 className="font-semibold text-white/75">
+                <Cloudy strokeWidth={2} className="h-5 w-5 inline-block mr-2 top-1/2 transform -translate-y-1/10 opacity-75"/>Local Weather
+              </h1> 
+              <span title="Home Airport">{ user?.homeAirport }</span>
             </div>
             <div className="space-y-2">
               
               <div className="text-sm">
-                <span className="font-semibold">METAR</span>
-                { localWeather.metar ? (
-                  <p className="text-sm text-white/75">{localWeather.metar?.replace(/[A-Z]{4}/, '')}</p>
-                ) : (
-                  <p className="text-sm text-white/75">No METAR available</p>
-                ) }
+                <span className="text-white/50">METAR</span>
+                <p className="text-sm text-white/75">
+                  {localWeather.metar ? localWeather.metar?.replace(/[A-Z]{4}/, '') : 'No METAR available'}
+                </p>
               </div>
               
               <div className="text-sm">
-                <span className="font-semibold">TAF</span>
-                { localWeather.taf ? (
-                  <p className="text-sm text-white/75">{localWeather.taf?.replace(/TAF [A-Z]{4}/, '')}</p>
-                ) : (
-                  <p className="text-sm text-white/75">No TAF available</p>
-                ) }
+                <span className="text-white/50">TAF</span>
+                <p className="text-sm text-white/75">
+                  { localWeather.taf ? localWeather.taf?.replace(/TAF [A-Z]{4}/, '') : 'No TAF available'}
+                </p>
               </div>
-              
             </div>
           </div>
         </div>

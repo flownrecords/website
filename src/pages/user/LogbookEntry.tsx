@@ -305,7 +305,7 @@ export default function LogbookEntry() {
                                         return (
                                             <div className={`inline-block hover:mr-2 ${i !== 0 ? '-ml-1 hover:ml-1' : ''} transition-all duration-500`} key={i}>
                                                 <Link to={'/users/' + m?.id} className='inline-block' title={m?.firstName ? `${m?.firstName} ${m?.lastName ? m?.lastName : ''}` : `@${m?.username}`}>
-                                                    <img src={ m?.profilePictureUrl ?? "https://placehold.co/128x128" } className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"/>
+                                                    <img src={ m?.profilePictureUrl ?? `https://placehold.co/512/09090B/313ED8?font=roboto&text=${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}` } className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"/>
                                                 </Link>
                                             </div>
                                         )
