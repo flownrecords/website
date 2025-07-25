@@ -361,7 +361,7 @@ export default function Logbook() {
                                             {parseDate(entry.date, true)}
                                         </span>
                                         <span className="text-xs md:text-sm text-white/50">
-                                            {entry.aircraftRegistration || "-"}
+                                            {entry.aircraftRegistration ? entry.aircraftRegistration.split(' ')[0] : "-"}
                                         </span>
                                         <span className="text-xs md:text-sm text-white/50">
                                             {entry.depAd || "-"}
