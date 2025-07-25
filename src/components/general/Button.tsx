@@ -1,23 +1,23 @@
 import { Link } from "react-router-dom";
 
 type ButtonProps = {
-  text?: string;
-  to?: string;
-  className?: string;
-  onClick?: React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>;
-  type?: "button" | "submit" | "reset";
-  styleType?: "normal" | "small"
+    text?: string;
+    to?: string;
+    className?: string;
+    onClick?: React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>;
+    type?: "button" | "submit" | "reset";
+    styleType?: "normal" | "small";
 };
 
 const Button: React.FC<ButtonProps> = ({
-  text = "Click me",
-  to,
-  className = "",
-  onClick,
-  type = "button",
-  styleType= "normal"
+    text = "Click me",
+    to,
+    className = "",
+    onClick,
+    type = "button",
+    styleType = "normal",
 }) => {
-  const style = `
+    const style = `
     ${className}
     ${styleType === "small" ? "text-sm" : "text-base"}
     ${styleType === "small" ? "py-1" : ""}
@@ -31,15 +31,15 @@ const Button: React.FC<ButtonProps> = ({
     ring-2 ring-white/25 
   `;
 
-  return to ? (
-    <Link to={to} onClick={onClick} className={style}>
-      {text}
-    </Link>
-  ) : (
-    <button onClick={onClick} className={style} type={type}>
-      {text}
-    </button>
-  );
+    return to ? (
+        <Link to={to} onClick={onClick} className={style}>
+            {text}
+        </Link>
+    ) : (
+        <button onClick={onClick} className={style} type={type}>
+            {text}
+        </button>
+    );
 };
 
 export default Button;

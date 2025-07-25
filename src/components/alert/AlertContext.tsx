@@ -8,27 +8,27 @@ type AlertContextType = (title: string, message: string) => Promise<void>;
 const AlertContext = createContext<AlertContextType | null>(null);
 
 export const AlertProvider = ({ children }: { children: ReactNode }) => {
-  const [alert, setAlert] = useState<AlertData>(null);
+    const [alert, setAlert] = useState<AlertData>(null);
 
-  const showAlert = (title: string, message: string) =>
-    new Promise<void>((resolve) => {
-      setAlert({
-        title,
-        message,
-        handleClose: () => {
-          resolve();
-        },
-      });
-    });
+    const showAlert = (title: string, message: string) =>
+        new Promise<void>((resolve) => {
+            setAlert({
+                title,
+                message,
+                handleClose: () => {
+                    resolve();
+                },
+            });
+        });
 
-  const closeAlert = () => setAlert(null);
+    const closeAlert = () => setAlert(null);
 
-  return (
-    <AlertContext.Provider value={showAlert}>
-      {children}
-      <CustomAlert alert={alert} closeAlert={closeAlert} />
-    </AlertContext.Provider>
-  );
+    return (
+        <AlertContext.Provider value={showAlert}>
+            {children}
+            <CustomAlert alert={alert} closeAlert={closeAlert} />
+        </AlertContext.Provider>
+    );
 };
 
 export default AlertContext;

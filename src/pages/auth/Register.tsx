@@ -9,30 +9,30 @@ import { useAuth } from "../../components/auth/AuthContext";
 type Role = {
     id: string;
     label: string;
-}
+};
 
 type Organization = {
     id: string;
     name: string;
     logo?: string;
-}
+};
 
 export default function Register() {
     const API = import.meta.env.VITE_API_URL;
 
-	const alert = useAlert();
-	const navigate = useNavigate();
+    const alert = useAlert();
+    const navigate = useNavigate();
 
-	const { login } = useAuth();
-	const [termsAccepted, setTermsAccepted] = useState(false);
+    const { login } = useAuth();
+    const [termsAccepted, setTermsAccepted] = useState(false);
 
-	const name = useRef<HTMLInputElement>(null);
-	const username = useRef<HTMLInputElement>(null);
-	const email = useRef<HTMLInputElement>(null);
-	const password = useRef<HTMLInputElement>(null);
-	const role = useRef<HTMLSelectElement>(null);
-	const organization = useRef<HTMLSelectElement>(null);
-	const terms = useRef<HTMLInputElement>(null);
+    const name = useRef<HTMLInputElement>(null);
+    const username = useRef<HTMLInputElement>(null);
+    const email = useRef<HTMLInputElement>(null);
+    const password = useRef<HTMLInputElement>(null);
+    const role = useRef<HTMLSelectElement>(null);
+    const organization = useRef<HTMLSelectElement>(null);
+    const terms = useRef<HTMLInputElement>(null);
 
     const roles: Role[] = [
         { id: "PILOT", label: "Pilot" },
@@ -53,126 +53,144 @@ export default function Register() {
     ];
 
     const organizations: Organization[] = [
-        { id: 'none', name: "None" },
-        { id: 'nortavia', name: "Nortávia", logo: "https://i.imgur.com/Fl9IgTt.jpeg" },
-	    { id: 'sevenair', name: "SevenAir" },
-	    { id: 'ifa', name: "IFA" },
+        { id: "none", name: "None" },
+        { id: "nortavia", name: "Nortávia", logo: "https://i.imgur.com/Fl9IgTt.jpeg" },
+        { id: "sevenair", name: "SevenAir" },
+        { id: "ifa", name: "IFA" },
     ];
 
     useEffect(() => {
-		autoLogin();
+        autoLogin();
 
-		const handleChange = () => {
-			setTermsAccepted(terms.current?.checked ?? false);
-		};
+        const handleChange = () => {
+            setTermsAccepted(terms.current?.checked ?? false);
+        };
 
-		const el = terms.current;
-		el?.addEventListener("change", handleChange);
-		return () => el?.removeEventListener("change", handleChange);
-	}, []);
+        const el = terms.current;
+        el?.addEventListener("change", handleChange);
+        return () => el?.removeEventListener("change", handleChange);
+    }, []);
 
     async function autoLogin() {
-		const token = localStorage.getItem("accessToken");
-		if (!token) return console.log("No access token found, skipping auto-login.");
-		try {
-			const request = await axios
-				.get(API + "/users/me", {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				})
-				.catch((e) => {
-					if (e.response?.status === 401) {
-						console.log("Unauthorized access, token may be invalid.");
-						localStorage.removeItem("accessToken");
-						return;
-					}
-				});
+        const token = localStorage.getItem("accessToken");
+        if (!token) return console.log("No access token found, skipping auto-login.");
+        try {
+            const request = await axios
+                .get(API + "/users/me", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+                .catch((e) => {
+                    if (e.response?.status === 401) {
+                        console.log("Unauthorized access, token may be invalid.");
+                        localStorage.removeItem("accessToken");
+                        return;
+                    }
+                });
 
-			if (request) {
-				return navigate("/me");
-			}
-		} catch (e) {
-			console.error("Error during auto-login:", e);
-			alert("Error", "An error occurred while trying to log in automatically. Please try again later.");
-			return;
-		}
-	}
+            if (request) {
+                return navigate("/me");
+            }
+        } catch (e) {
+            console.error("Error during auto-login:", e);
+            alert(
+                "Error",
+                "An error occurred while trying to log in automatically. Please try again later.",
+            );
+            return;
+        }
+    }
 
-	async function signUp() {
-		if (!name.current || !username.current || !email.current || !password.current || !role.current) {
-			alert("Error", "Please fill in all fields.");
-			return;
-		}
+    async function signUp() {
+        if (
+            !name.current ||
+            !username.current ||
+            !email.current ||
+            !password.current ||
+            !role.current
+        ) {
+            alert("Error", "Please fill in all fields.");
+            return;
+        }
 
-		if (!termsAccepted) {
-			alert("Error", "You must accept the terms and conditions.");
-			return;
-		}
+        if (!termsAccepted) {
+            alert("Error", "You must accept the terms and conditions.");
+            return;
+        }
 
-		const formData = {
-			name: name.current.value,
-			username: username.current.value,
-			email: email.current.value,
-			password: password.current.value,
-			role: role.current.value,
-			organization:
-				!organization.current?.value || organization.current?.value === "none"
-					? undefined
-					: organization.current?.value,
-		};
+        const formData = {
+            name: name.current.value,
+            username: username.current.value,
+            email: email.current.value,
+            password: password.current.value,
+            role: role.current.value,
+            organization:
+                !organization.current?.value || organization.current?.value === "none"
+                    ? undefined
+                    : organization.current?.value,
+        };
 
-		if (!formData.name || !formData.username || !formData.email || !formData.password) {
-			return;
-		}
+        if (!formData.name || !formData.username || !formData.email || !formData.password) {
+            return;
+        }
 
-		const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
-		if (!isValidEmail) return;
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+        if (!isValidEmail) return;
 
-		if (formData.password.length < 8 || formData.password.length > 18) return;
+        if (formData.password.length < 8 || formData.password.length > 18) return;
 
-		try {
-			const response = await axios.post(API + "/auth/signup", formData, {
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
+        try {
+            const response = await axios.post(API + "/auth/signup", formData, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
 
-			if (response.status === 200) {
-				const token = response.data.accessToken;
-				if (!token) {
-					alert("Error", "An error occurred while creating your account. Please try again later. [1]");
-					return;
-				}
+            if (response.status === 200) {
+                const token = response.data.accessToken;
+                if (!token) {
+                    alert(
+                        "Error",
+                        "An error occurred while creating your account. Please try again later. [1]",
+                    );
+                    return;
+                }
 
-				login(token);
-				return navigate("/me");
-			} else {
-				alert("Error", "An error occurred while creating your account. Please try again later. [2]");
-			}
-		} catch (e) {
-			console.error("Error sending registration data:", e);
-			alert("Error", "An error occurred while submitting your registration. Please try again later. [3]");
-		}
-	}
+                login(token);
+                return navigate("/me");
+            } else {
+                alert(
+                    "Error",
+                    "An error occurred while creating your account. Please try again later. [2]",
+                );
+            }
+        } catch (e) {
+            console.error("Error sending registration data:", e);
+            alert(
+                "Error",
+                "An error occurred while submitting your registration. Please try again later. [3]",
+            );
+        }
+    }
 
-	function handleSubmit(e: React.FormEvent) {
-		e.preventDefault();
-		signUp();
-	}
+    function handleSubmit(e: React.FormEvent) {
+        e.preventDefault();
+        signUp();
+    }
 
     return (
         <>
-            <Splash/>
+            <Splash />
 
             <div className="container mx-auto max-w-4xl p-4 lg:px-0">
-                <form 
-                className="grid grid-cols-1  xl:grid-cols-2 gap-4" 
-                autoComplete="off" 
-                spellCheck="false" 
-                autoCorrect="off" 
-                autoCapitalize="off"
-                onSubmit={handleSubmit}
+                <form
+                    className="grid grid-cols-1  xl:grid-cols-2 gap-4"
+                    autoComplete="off"
+                    spellCheck="false"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    onSubmit={handleSubmit}
                 >
                     <div>
                         <label className="inline-block text-sm text-white/75 mb-1">name</label>
@@ -188,7 +206,9 @@ export default function Register() {
                     <div>
                         <label className="inline-block text-sm text-white/75 mb-1">username</label>
                         <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50">@</span>
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/50">
+                                @
+                            </span>
                             <input
                                 autoComplete="new-username"
                                 ref={username}
@@ -224,58 +244,78 @@ export default function Register() {
                         />
                     </div>
 
-                    <hr className="col-span-1 lg:col-span-2 mt-2 h-0 border-t-2 border-white/25 rounded-sm"/>
+                    <hr className="col-span-1 lg:col-span-2 mt-2 h-0 border-t-2 border-white/25 rounded-sm" />
 
                     <div>
-                        <label className="inline-block text-sm text-white/75 mb-1">organization</label>
-                        <select 
+                        <label className="inline-block text-sm text-white/75 mb-1">
+                            organization
+                        </label>
+                        <select
                             ref={organization}
                             className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 w-full"
                             required
                         >
-                            {organizations.map(org => (
-                                <option key={org.id} value={org.id}>{org.name}</option>
+                            {organizations.map((org) => (
+                                <option key={org.id} value={org.id}>
+                                    {org.name}
+                                </option>
                             ))}
                         </select>
                     </div>
 
                     <div>
                         <label className="inline-block text-sm text-white/75 mb-1">role</label>
-                        <select 
+                        <select
                             ref={role}
                             className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 w-full"
                             required
                         >
-                            {roles.map(role => (
-                                <option key={role.id} value={role.id}>{role.label}</option>
+                            {roles.map((role) => (
+                                <option key={role.id} value={role.id}>
+                                    {role.label}
+                                </option>
                             ))}
                         </select>
                     </div>
 
                     <div className="col-span-1 lg:col-span-2 flex justify-start lg:justify-end items-center space-x-2">
                         <div className="flex items-center cursor-pointer relative">
-                            <input 
+                            <input
                                 ref={terms}
-                                type="checkbox" 
+                                type="checkbox"
                                 id="terms"
                                 required
                                 className="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded border border-white/25 checked:bg-second-accent/25 checked:border-second-accent"
                             />
                             <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" strokeWidth="1">
-                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-3.5 w-3.5"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    stroke="currentColor"
+                                    strokeWidth="1"
+                                >
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                        clipRule="evenodd"
+                                    />
                                 </svg>
                             </span>
                         </div>
                         <label htmlFor="terms" className="text-sm text-white/75">
-                            I agree to the <Link to="#" className="text-second-accent">terms and conditions</Link>
+                            I agree to the{" "}
+                            <Link to="#" className="text-second-accent">
+                                terms and conditions
+                            </Link>
                         </label>
                     </div>
 
                     <div className="col-span-1 lg:col-span-2 block lg:flex lg:justify-end">
                         <button
-                        type="submit"
-                        className={`
+                            type="submit"
+                            className={`
                         ${!termsAccepted ? "opacity-50 cursor-default hover:opacity-50" : "cursor-pointer hover:opacity-75"}
                             inline-block
                             bg-gradient-to-t 
@@ -287,7 +327,7 @@ export default function Register() {
                             ring-2 ring-white/25
                             w-full lg:w-auto
                         `}
-                        disabled={!termsAccepted}
+                            disabled={!termsAccepted}
                         >
                             Create my account
                         </button>
@@ -295,5 +335,5 @@ export default function Register() {
                 </form>
             </div>
         </>
-    )
+    );
 }
