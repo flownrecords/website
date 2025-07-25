@@ -40,6 +40,7 @@ export default function Footer() {
                                 <img
                                     className="rounded-sm"
                                     src="https://img.shields.io/github/package-json/v/flownrecords/website?style=flat-square&color=313ED8"
+                                    draggable="false"
                                     alt="Github Repository Version"
                                 />
                             </div>
