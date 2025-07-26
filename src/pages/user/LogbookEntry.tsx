@@ -8,6 +8,7 @@ import Button from "../../components/general/Button";
 import Footer from "../../components/general/Footer";
 import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
+import ProfileCard from "../../components/user/ProfileCard";
 
 export default function LogbookEntry() {
     const API = import.meta.env.VITE_API_URL;
@@ -344,33 +345,55 @@ export default function LogbookEntry() {
 
                         <div>
                             <h1 className="mb-1">Crew</h1>
-                            <div className="rounded-lg bg-secondary p-2 ">
-                                {entry?.crew && entry?.crew?.length > 0 ? (
-                                    entry?.crew?.map((m: User, i) => {
-                                        return (
-                                            <div
-                                                className={`inline-block hover:mr-2 ${i !== 0 ? "-ml-1 hover:ml-1" : ""} transition-all duration-500`}
-                                                key={i}
+                            <div className="rounded-lg bg-secondary p-2">
+                                {entry?.crew && entry.crew.length > 0 ? (
+                                    entry.crew.map((m: User, i) => {
+                                    const fullName = m?.firstName
+                                        ? `${m.firstName} ${m.lastName ?? ""}`
+                                        : `@${m?.username}`;
+
+                                    return (
+                                        <div
+                                        className={`inline-block hover:mr-2 ${
+                                            i !== 0 ? "-ml-1 hover:ml-1" : ""
+                                        } transition-all duration-500`}
+                                        key={i}
+                                        >
+                                        <div className="relative group inline-block">
+                                            <Link
+                                            to={"/users/" + m?.id}
+                                            className="inline-block"
+                                            title={fullName} // still useful for screen readers
                                             >
-                                                <Link
-                                                    to={"/users/" + m?.id}
-                                                    className="inline-block"
-                                                    title={
-                                                        m?.firstName
-                                                            ? `${m?.firstName} ${m?.lastName ? m?.lastName : ""}`
-                                                            : `@${m?.username}`
-                                                    }
-                                                >
-                                                    <img
-                                                        src={
-                                                            m?.profilePictureUrl ??
-                                                            `https://placehold.co/512/09090B/313ED8?font=roboto&text=${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}`
-                                                        }
-                                                        className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"
-                                                    />
-                                                </Link>
+                                            <img
+                                                src={
+                                                m?.profilePictureUrl ??
+                                                `https://placehold.co/512/09090B/313ED8?font=roboto&text=${
+                                                    m?.firstName?.charAt(0) || ""
+                                                }${m?.lastName?.charAt(0) || ""}`
+                                                }
+                                                className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"
+                                            />
+                                            </Link>
+
+                                            {/* Custom tooltip */}
+                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 whitespace-nowrap text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 shadow-xl">
+                                                <ProfileCard data={{
+                                                    profilePictureUrl: m?.profilePictureUrl ?? '',
+                                                    firstName: m?.firstName ?? null,
+                                                    lastName: m?.lastName ?? '',
+                                                    username: m?.username ?? null,
+                                                    location: m?.location ?? null,
+                                                    publicProfile: m?.publicProfile ?? false,
+                                                    bio: m?.bio ?? null,
+                                                    organizationId: m?.organizationId ?? '',
+                                                    organizationRole: m?.organizationRole ?? '',
+                                                    organization: m?.organization
+                                                }} roles={[]}/>
                                             </div>
-                                        );
+                                        </div>
+                                        </div>
+                                    );
                                     })
                                 ) : (
                                     <span>No crew assigned</span>

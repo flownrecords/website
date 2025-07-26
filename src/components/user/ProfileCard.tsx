@@ -26,7 +26,7 @@ export default function ProfileCard(props: { data: ProfileCardData, roles: { id:
 
     return (
         <>
-            <div className="bg-secondary rounded-lg p-4">
+            <div className="bg-secondary rounded-lg p-4 min-w-[300px]">
                 <div className="flex flex-row items-center space-x-4">
                     <img
                         className="h-9 w-9 md:h-14 md:w-14 rounded-full ring-2 ring-white/25 object-cover"
@@ -81,10 +81,10 @@ export default function ProfileCard(props: { data: ProfileCardData, roles: { id:
                         <AtSign className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/15 opacity-50" />
                         {data.username ? data?.username : <Skeleton type="span" />}
                     </span>
-                    <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-2 py-0.5 inline-block">
+                    { data?.location && <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-2 py-0.5 inline-block">
                         <MapPin className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
-                        { data?.location ? data?.location?.substring(0, 24) : <Skeleton type="span" /> }
-                    </span>
+                        { data.location.substring(0, 24) }
+                    </span> }
                     <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-2 py-0.5 hidden lg:inline-block relative">
                         { data.publicProfile ? (
                             <Globe className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
