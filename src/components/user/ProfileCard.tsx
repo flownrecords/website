@@ -42,7 +42,7 @@ export default function ProfileCard(props: { data: ProfileCardData, roles: { id:
                     <div>
                         <h1 className="text-xl lg:text-2xl font-bold capitalize">
                             {data?.firstName || data.lastName || data.username ? (data?.firstName
-                                ? `${data?.firstName} ${data?.lastName}`
+                                ? `${data?.firstName} ${data?.lastName ?? ""}`
                                 : `@${data?.username}`
                             ).substring(0, 20) : <Skeleton type="h1"/>}
                         </h1>
