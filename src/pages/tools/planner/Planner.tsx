@@ -13,7 +13,7 @@ export default function Planner() {
     return (
         <>
             <Splash uppertext="Flown Records" title="Flight Planner" />
-            <div className="container mx-auto max-w-6xl p-4">
+            <div className="container mx-auto max-w-6xl p-4 lg:px-0">
                 <div className="ring-2 ring-white/25 rounded-lg p-4">
                     <div className="grid grid-cols-4 gap-4">
                         <input

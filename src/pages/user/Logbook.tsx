@@ -8,6 +8,7 @@ import Splash from "../../components/general/Splash";
 import useAlert from "../../components/alert/useAlert";
 import type { User } from "../../lib/types";
 import { Loader } from "lucide-react";
+import Footer from "../../components/general/Footer";
 
 export default function Logbook() {
     const API = import.meta.env.VITE_API_URL;
@@ -196,7 +197,7 @@ export default function Logbook() {
                 }
                 title="Logbook"
             />
-            <div className="container mx-auto max-w-6xl p-4">
+            <div className="container mx-auto max-w-6xl p-4 lg:px-0">
                 <div
                     className="
           bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2
@@ -489,6 +490,8 @@ export default function Logbook() {
                     </div>
                 </div>
             )}
+
+            <Footer />
         </>
     );
 }

@@ -193,7 +193,7 @@ export default function Questions() {
     return (
         <>
             <Splash uppertext="Flight & Tests preparation" title="Questions" />
-            <div className="container mx-auto max-w-6xl p-4">
+            <div className="container mx-auto max-w-6xl p-4 lg:px-0">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
                     <div className="col-span-4 p-4 ring-2 ring-white/25 rounded-lg block lg:hidden">
                         <h2 className="font-semibold text-white/75 mb-2">Filters</h2>

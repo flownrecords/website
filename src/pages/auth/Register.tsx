@@ -55,8 +55,6 @@ export default function Register() {
     const organizations: Organization[] = [
         { id: "none", name: "None" },
         { id: "nortavia", name: "Nortávia", logo: "https://i.imgur.com/Fl9IgTt.jpeg" },
-        { id: "sevenair", name: "SevenAir" },
-        { id: "ifa", name: "IFA" },
     ];
 
     useEffect(() => {
@@ -185,7 +183,7 @@ export default function Register() {
 
             <div className="container mx-auto max-w-4xl p-4 lg:px-0">
                 <form
-                    className="grid grid-cols-1  xl:grid-cols-2 gap-4"
+                    className="grid grid-cols-1 xl:grid-cols-2 gap-4"
                     autoComplete="off"
                     spellCheck="false"
                     autoCorrect="off"

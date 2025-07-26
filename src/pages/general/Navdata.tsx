@@ -96,7 +96,7 @@ export default function Data() {
     return (
         <>
             <Splash uppertext="Available" title="Navdata" />
-            <div className="container mx-auto max-w-6xl p-4">
+            <div className="container mx-auto max-w-6x p-4 lg:px-0">
                 <div className="p-4 rounded-lg ring-2 ring-white/25 grid lg:grid-cols-4 gap-2">
                     {data?.map((fir, i) => {
                         return (
