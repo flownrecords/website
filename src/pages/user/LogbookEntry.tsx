@@ -248,14 +248,6 @@ export default function LogbookEntry() {
                             type="button"
                             onClick={() => setCrewModal(!crewModal)}
                         />
-                        <Button text="Link Flight Recording" styleType="small" />
-                        {!entry?.plan?.id && (
-                            <Button
-                                text="Link Flight Plan"
-                                styleType="small"
-                                onClick={() => console.log(entry)}
-                            />
-                        )}
                     </div>
                 </div>
 
@@ -472,13 +464,13 @@ export default function LogbookEntry() {
                             </div>
                         </div>
                     ) : (
-                        <span>No flight plan linked to this entry.</span>
+                        <Button text="Add Flight Plan" styleType="small" />
                     )}
                 </div>
 
                 <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
                     <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Recording</h1>
-                    {recording ? <></> : <span>No flight recording linked to this entry.</span>}
+                    {recording ? <></> : <Button text="Add Flight Recording" styleType="small" />}
                 </div>
             </div>
 
