@@ -4,6 +4,7 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import axios from "axios";
 import { AerodromesLayer } from "./AerodromesLayer";
 import { RoutePlot } from "./RoutePlot";
+import { MapToolbar } from "./MapToolbar";
 
 type MapProps = {
     type: "OVERVIEW" | "PLANNING" | "ENTRY";
@@ -89,12 +90,15 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0 }) =
                 minZoom={2}
                 maxZoom={12}
                 scrollWheelZoom={true}
+                zoomControl={false}
                 maxBounds={[
                     [-90, -180],
                     [90, 180],
                 ]}
                 className="h-full w-full"
             >
+                <MapToolbar/>
+
                 <TileLayer
                     url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png"
                     attribution="&copy; OpenStreetMap & CARTO"

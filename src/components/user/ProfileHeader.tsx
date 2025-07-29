@@ -140,6 +140,8 @@ export default function ProfileHeader(
                             </span>
                         </div>
                     </div>
+
+                    
                 </div>
 
                 <div className="space-x-2 space-y-2 block md:hidden">
@@ -157,7 +159,7 @@ export default function ProfileHeader(
                         </span>
                     ) }
                 </div>
-                
+
                 <div className="lg:ml-2 lg:pl-4 space-y-1 text-md">
                     <div className="flex justify-between">
                         <span className="text-white/50">Flight Time</span>
