@@ -1,0 +1,17 @@
+export const roles = [
+    { id: "PILOT", label: "Pilot" },
+    { id: "OTHER", label: "Other" },
+    { id: "STUDENT", label: "Student Pilot" },
+    { id: "GUEST", label: "Guest" },
+    { id: "CFI", label: "Chief Flight Instructor" },
+    { id: "CTKI", label: "Chief Theoretical Knowledge Instructor" },
+    { id: "SM", label: "Safety Manager" },
+    { id: "OPS", label: "Operations" },
+    { id: "FI", label: "Flight Instructor" },
+    { id: "TKI", label: "Theoretical Knowledge Instructor" },
+    { id: "MAIN", label: "Maintenance" },
+    { id: "OFFICE", label: "Office" },
+    { id: "SUPERVISOR", label: "Supervisor" },
+    { id: "ADMIN", label: "Administrator" },
+    { id: "MANAGER", label: "Manager" }
+]

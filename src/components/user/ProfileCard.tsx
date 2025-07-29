@@ -1,6 +1,7 @@
 import { AtSign, Globe, GlobeLock, MapPin } from "lucide-react";
 import Skeleton from "../general/Skeleton";
 import type { Organization } from "../../lib/types";
+import { roles } from "../../lib/roles";
 
 type ProfileCardData = {
     profilePictureUrl?: string | null;
@@ -21,8 +22,8 @@ type ProfileCardData = {
     } | null;
 }
 
-export default function ProfileCard(props: { data: ProfileCardData, roles: { id: string, label: string }[], organizations?: { id: string, name: string }[] }) {
-    const { data, roles } = props;
+export default function ProfileCard(props: { data: ProfileCardData, organizations?: { id: string, name: string }[] }) {
+    const { data } = props;
 
     return (
         <>
@@ -46,8 +47,9 @@ export default function ProfileCard(props: { data: ProfileCardData, roles: { id:
                                 : `@${data?.username}`
                             ).substring(0, 20) : <Skeleton type="h1"/>}
                         </h1>
-                        <div>
+                        <div className="font-medium text-base">
                             {
+                                
                                 data.organizationId || data.organizationRole ? (
                                     <div className="font-medium text-base">
                                         {data?.organizationRole && (

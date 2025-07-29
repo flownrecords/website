@@ -6,6 +6,7 @@ import axios from "axios";
 import type { User } from "../../lib/types";
 import { useNavigate } from "react-router-dom";
 import useAlert from "../../components/alert/useAlert";
+import { roles } from "../../lib/roles";
 
 export default function MeEdit() {
     const API = import.meta.env.VITE_API_URL;
@@ -22,24 +23,6 @@ export default function MeEdit() {
     const [organizationRole, setOrganizationRole] = useState(user?.organizationRole ?? "");
     const [visibility, setVisibility] = useState(user?.publicProfile);
     const [base64Image, setBase64Image] = useState<string | null>(null);
-
-    const roles = [
-        { id: "PILOT", label: "Pilot" },
-        { id: "OTHER", label: "Other" },
-        { id: "STUDENT", label: "Student Pilot" },
-        { id: "GUEST", label: "Guest" },
-        { id: "CFI", label: "Chief Flight Instructor" },
-        { id: "CTKI", label: "Chief Theoretical Knowledge Instructor" },
-        { id: "SM", label: "Safety Manager" },
-        { id: "OPS", label: "Operations" },
-        { id: "FI", label: "Flight Instructor" },
-        { id: "TKI", label: "Theoretical Knowledge Instructor" },
-        { id: "MAIN", label: "Maintenance" },
-        { id: "OFFICE", label: "Office" },
-        { id: "SUPERVISOR", label: "Supervisor" },
-        { id: "ADMIN", label: "Administrator" },
-        { id: "MANAGER", label: "Manager" },
-    ];
 
     const organizations = [
         { id: "none", name: "None" },
@@ -291,7 +274,7 @@ export default function MeEdit() {
                                     organizationRole,
                                     organization: organizations.find(org => org.id === organizationId) || { id: "none", name: "None" },
                                 }
-                            } roles={roles} organizations={organizations}/>
+                            } organizations={organizations}/>
                         </div>
                     </form>
                 </div>

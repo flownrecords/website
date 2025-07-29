@@ -389,7 +389,7 @@ export default function LogbookEntry() {
                                                     organizationId: m?.organizationId ?? '',
                                                     organizationRole: m?.organizationRole ?? '',
                                                     organization: m?.organization
-                                                }} roles={[]}/>
+                                                }}/>
                                             </div>
                                         </div>
                                         </div>
