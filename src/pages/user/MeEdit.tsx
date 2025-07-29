@@ -125,17 +125,6 @@ export default function MeEdit() {
             <Splash uppertext={user?.username} title="Edit Profile"/>
             <div className="container mx-auto max-w-6xl p-4 lg:px-0">
                 <div className="rounded-lg ring-2 ring-white/25 p-4">
-                    <div className="hidden lg:grid grid-cols-4 gap-4">
-                        <Button text="Go Back" to="/me" styleType="small"/>
-                        <Button text="Save Changes" onClick={handleSave} styleType="small"/>
-                        
-                    </div>
-                    <div>
-
-                    </div>
-                </div>
-
-                <div className="mt-4 rounded-lg ring-2 ring-white/25 p-4">
                     <form
                     className="grid grid-cols-1 lg:grid-cols-3 gap-4"
                     autoComplete="off"
@@ -260,7 +249,7 @@ export default function MeEdit() {
                             />
                         </div>
 
-                        <div className="mt-6 row-span-4 order-3">
+                        <div className="mt-6 row-span-4 order-0 lg:order-3">
                             <ProfileCard data={
                                 {
                                     firstName: name.split(" ")[0],
@@ -277,6 +266,17 @@ export default function MeEdit() {
                             } organizations={organizations}/>
                         </div>
                     </form>
+                </div>
+
+                <div className="mt-4 rounded-lg ring-2 ring-white/25 p-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Button text="Go Back" to="/me" styleType="small"/>
+                        <Button text="Save Changes" onClick={handleSave} styleType="small"/>
+                        
+                    </div>
+                    <div>
+
+                    </div>
                 </div>
             </div>
         </>

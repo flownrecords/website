@@ -2,28 +2,11 @@ import { AtSign, Globe, GlobeLock, MapPin } from "lucide-react";
 import type { User } from "../../lib/types"
 import { Link } from "react-router-dom";
 import Skeleton from "../general/Skeleton";
-
-const roles = [
-        { id: "GUEST", label: "Guest" },
-        { id: "STUDENT", label: "Student Pilot" },
-        { id: "PILOT", label: "Pilot" },
-        { id: "CFI", label: "Chief Flight Instructor" },
-        { id: "CTKI", label: "Chief Theoretical Knowledge Instructor" },
-        { id: "SM", label: "Safety Manager" },
-        { id: "OPS", label: "Operations" },
-        { id: "FI", label: "Flight Instructor" },
-        { id: "TKI", label: "Theoretical Knowledge Instructor" },
-        { id: "MAIN", label: "Maintenance" },
-        { id: "OFFICE", label: "Office" },
-        { id: "SUPERVISOR", label: "Supervisor" },
-        { id: "ADMIN", label: "Administrator" },
-        { id: "MANAGER", label: "Manager" },
-        { id: "OTHER", label: "Other" },
-    ];
+import { roles } from "../../lib/roles";
 
 export default function ProfileHeader(
     props: {
-        user: User | null
+        user: User | null,
     }
 ) {
     const { user } = props;

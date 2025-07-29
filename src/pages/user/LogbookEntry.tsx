@@ -240,7 +240,7 @@ export default function LogbookEntry() {
                 </div>
 
                 <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
-                    <div className="hidden lg:grid grid-cols-4 gap-4">
+                    <div className="flex flex-col lg:grid grid-cols-4 gap-4">
                         <Button text="Go Back" styleType="small" to="/me/logbook" />
                         <Button
                             text="Edit Crew"
@@ -256,16 +256,6 @@ export default function LogbookEntry() {
                                 onClick={() => console.log(entry)}
                             />
                         )}
-                    </div>
-                    <div className="flex flex-col space-y-4 lg:hidden">
-                        <Button
-                            text="Edit Crew"
-                            styleType="small"
-                            type="button"
-                            onClick={() => setCrewModal(!crewModal)}
-                        />
-                        <Button text="Link Flight Recording" styleType="small" />
-                        {!entry?.plan?.id && <Button text="Link Flight Plan" styleType="small" />}
                     </div>
                 </div>
 

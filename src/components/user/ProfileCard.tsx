@@ -78,7 +78,7 @@ export default function ProfileCard(props: { data: ProfileCardData, organization
                     </div>
                 </div>
 
-                <div className="mt-4 space-x-2 space-y-2 md:block hidden">
+                <div className="mt-4 space-x-2 space-y-2 block">
                     <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-2 py-0.5 inline-block">
                         <AtSign className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/15 opacity-50" />
                         {data.username ? data?.username : <Skeleton type="span" />}
