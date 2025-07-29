@@ -59,12 +59,16 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
     const chartHeight = isMobile ? 350 : 400;
 
+    const [currentSlide, setCurrentSlide] = useState(0);
     const [sliderRef, slider] = useKeenSlider<HTMLDivElement>({
         loop: false,
         mode: "snap",
         slides: {
             perView: 1,
             spacing: 16,
+        },
+        slideChanged(s) {
+            setCurrentSlide(s.track.details.rel);
         },
     });
 
@@ -170,6 +174,15 @@ export default function ChartCarousel({ logbook = [] }: Props) {
             return dateA.getTime() - dateB.getTime();
         })
         .slice(isMobile ? -4 : -6);
+
+    const STYLE = 
+    `inline-flex w-full text-center hover:opacity-75
+    cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800  
+    transition duration-150 text-white py-1 px-4 md:px-6 rounded-lg ring-2 ring-white/25 justify-center`;
+
+    const STYLE_DISABLED = `inline-flex w-full text-center opacity-50
+    cursor-default bg-gradient-to-t from-neutral-900 to-neutral-800  
+    text-white py-1 px-4 md:px-6 rounded-lg ring-2 ring-white/25 justify-center`;
 
     return (
         <div className="relative">
@@ -365,18 +378,18 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     onClick={() => {
                         slider.current?.prev();
                     }}
-                    className="inline-flex w-full text-center hover:opacity-75
-          cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800  
-          transition duration-150 text-white py-1 px-4 md:px-6 rounded-lg ring-2 ring-white/25 justify-center"
+                    className={`${currentSlide === 0 ? STYLE_DISABLED : STYLE}`}
+                    disabled={currentSlide === 0}
                 >
                     <ChevronLeft />
                 </button>
 
                 <button
-                    onClick={() => slider.current?.next()}
-                    className="inline-flex w-full text-center hover:opacity-75
-          cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800  
-          transition duration-150 text-white py-1 px-4 md:px-6 rounded-lg ring-2 ring-white/25 justify-center"
+                    onClick={() => {
+                        slider.current?.next();
+                    }}
+                    className={`${currentSlide === (slider.current?.slides.length ?? 0) - 1 ? STYLE_DISABLED : STYLE}`}
+                    disabled={currentSlide === (slider.current?.slides.length ?? 0) - 1}
                 >
                     <ChevronRight />
                 </button>
