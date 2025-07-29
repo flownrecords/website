@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import ReactDOM from "react-dom/client";
-import { Maximize, Minimize, Minus, Plus } from "lucide-react";
-
-
+import { Maximize, Minus, Plus } from "lucide-react";
 
 export function MapToolbar() {
     const map = useMap();
