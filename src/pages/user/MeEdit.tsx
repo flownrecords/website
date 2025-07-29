@@ -17,6 +17,7 @@ export default function MeEdit() {
     const [name, setName] = useState(user?.firstName ?? "");
     const [location, setLocation] = useState(user?.location ?? "");
     const [bio, setBio ] = useState(user?.bio ?? "");
+    const [homeAirport, setHomeAirport] = useState(user?.homeAirport ?? "");
     const [organizationId, setOrganizationId] = useState(user?.organization?.id ?? "none");
     const [organizationRole, setOrganizationRole] = useState(user?.organizationRole ?? "");
     const [visibility, setVisibility] = useState(user?.publicProfile);
@@ -55,6 +56,7 @@ export default function MeEdit() {
             organizationId: organizationId === "none" ? null : organizationId,
             organizationRole,
             profilePictureUrl: base64Image,
+            homeAirport,
         }, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -120,6 +122,7 @@ export default function MeEdit() {
                     setBio(response.data.bio ?? "");
                     setVisibility(response.data.publicProfile ?? true);
                     setBase64Image(response.data.profilePictureUrl ?? null);
+                    setHomeAirport(response.data.homeAirport ?? "");
                 }
             })
             .catch((error) => {
@@ -257,7 +260,24 @@ export default function MeEdit() {
                             />
                         </div>
 
-                        <div className="mt-6 row-span-9 order-3">
+                        <div className="order-9">
+                            <label className="inline-block text-sm text-white/75 mb-1">home airport (icao)</label>
+                            <input
+                                autoComplete="new-home-airport"
+                                onChange={(e) => {
+                                    e.target.value = e.target.value.toUpperCase();
+                                    setHomeAirport(e.target.value);
+                                }}
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 w-full"
+                                type="text"
+                                defaultValue={user?.homeAirport ?? ""}
+                                required
+                                minLength={4}
+                                maxLength={4}
+                            />
+                        </div>
+
+                        <div className="mt-6 row-span-4 order-3">
                             <ProfileCard data={
                                 {
                                     firstName: name.split(" ")[0],
