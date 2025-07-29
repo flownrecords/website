@@ -122,7 +122,7 @@ export default function MeEdit() {
 
     return (
         <>
-            <Splash uppertext={` `} title="Edit Profile"/>
+            <Splash uppertext=""  title="Edit Profile"/>
             <div className="container mx-auto max-w-6xl p-4 lg:px-0">
                 <div className="rounded-lg ring-2 ring-white/25 p-4">
                     <form
