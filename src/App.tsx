@@ -16,6 +16,7 @@ import {
     Logbook,
     MeEdit,
     LogbookEntry,
+    LogbookManualInput,
     Tools,
     Questions,
     ManageQuestions,
@@ -53,6 +54,7 @@ function App() {
                 <Route path="/me/edit" element={<MeEdit />} />
                 <Route path="/me/logbook" element={<Logbook />} />
                 <Route path="/me/logbook/:entryId" element={<LogbookEntry />} />
+                <Route path="/me/logbook/manual" element={<LogbookManualInput />} />
 
                 {/* DATA ROUTES */}
                 <Route path="/navdata" element={<Navdata />} />
