@@ -17,7 +17,7 @@ export default function Planner() {
                 <div className="ring-2 ring-white/25 rounded-lg p-4">
                     <div className="grid grid-cols-4 gap-4">
                         <input
-                            className="bg-secondary/25 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                            className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                             type="text"
                             placeholder="Callsign or Flight ID"
                             maxLength={7}
@@ -26,7 +26,7 @@ export default function Planner() {
                             }}
                         />
                         <input
-                            className="bg-secondary/25 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                            className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                             type="text"
                             placeholder="Departure (ICAO)"
                             maxLength={4}
@@ -35,7 +35,7 @@ export default function Planner() {
                             }}
                         />
                         <input
-                            className="bg-secondary/25 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                            className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                             type="text"
                             placeholder="Destination (ICAO)"
                             maxLength={4}
@@ -61,7 +61,7 @@ export default function Planner() {
                                         Aircraft Type
                                     </label>
                                     <input
-                                        className="bg-secondary/25 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                                        className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                                         type="text"
                                         maxLength={4}
                                         onInput={(e) => {
@@ -81,7 +81,7 @@ export default function Planner() {
                                         </span>
 
                                         <input
-                                            className="bg-secondary/25 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 w-full text-right"
+                                            className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 w-full text-right"
                                             type="text"
                                             maxLength={4}
                                             onInput={(e) => {
@@ -102,7 +102,7 @@ export default function Planner() {
                                         </span>
 
                                         <input
-                                            className="bg-secondary/25 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 w-full text-right"
+                                            className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 w-full text-right"
                                             type="text"
                                             maxLength={3}
                                             onInput={(e) => {
@@ -118,7 +118,7 @@ export default function Planner() {
                                         Alternate (ICAO)
                                     </label>
                                     <input
-                                        className="bg-secondary/25 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                                        className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                                         type="text"
                                         maxLength={4}
                                         onInput={(e) => {
@@ -132,7 +132,7 @@ export default function Planner() {
                             <div className="flex flex-col mt-4">
                                 <label className="text-sm text-white/75 mb-1">Route</label>
                                 <input
-                                    className="bg-secondary/25 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                                    className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                                     type="text"
                                     onInput={(e) => {
                                         e.currentTarget.value = e.currentTarget.value.toUpperCase();
@@ -158,7 +158,7 @@ export default function Planner() {
                                 <div className="flex flex-col">
                                     <label className="text-sm text-white/75 mb-1">ETD</label>
                                     <input
-                                        className="bg-secondary/25 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                                        className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                                         type="datetime-local"
                                         style={{
                                             colorScheme: "dark",
@@ -169,7 +169,7 @@ export default function Planner() {
                                 <div className="flex flex-col">
                                     <label className="text-sm text-white/75 mb-1">ETA</label>
                                     <input
-                                        className="bg-secondary/25 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 accent-accent"
+                                        className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 accent-accent"
                                         type="datetime-local"
                                         style={{
                                             colorScheme: "dark",
