@@ -4,6 +4,7 @@ about: Suggest an idea for this project
 title: "[FEATURE] - Title"
 labels: feature, flown-records, under review
 assignees: 'jurgenjacobsen'
+projects: ['flownrecords/1']
 
 ---
 

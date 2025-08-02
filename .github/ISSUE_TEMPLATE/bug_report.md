@@ -2,8 +2,9 @@
 name: Bug report
 about: Create a report to help us improve
 title: "[BUG] - Title"
-labels: bug, under review
-assignees: ''
+labels: bug, flown-records, under review
+assignees: 'jurgenjacobsen'
+projects: ['flownrecords/1']
 
 ---
 
