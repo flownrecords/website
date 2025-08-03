@@ -239,7 +239,7 @@ export default function Logbook() {
                 }
                 title="Logbook"
             />
-            <div className="container mx-auto max-w-6xl p-4 lg:px-0">
+            <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div
                     className="
           bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2

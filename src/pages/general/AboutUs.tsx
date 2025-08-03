@@ -15,7 +15,7 @@ export default function AboutUs() {
         <>
             <Splash uppertext="About" />
 
-            <div className="container mx-auto max-w-6xl p-4 lg:px-0">
+            <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div className="">
                         <h1 className="text-4xl font-bold">Our Mission</h1>

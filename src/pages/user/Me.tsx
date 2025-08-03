@@ -87,7 +87,7 @@ export default function Me() {
 
     return (
         <>
-            <div className="container mx-auto max-w-6xl p-4 lg:px-0">
+            <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <ProfileHeader user={user} />
 
                 { user ? (

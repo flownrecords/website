@@ -235,7 +235,7 @@ export default function LogbookEntry() {
                 )}
             </div>
 
-            <div className="container mx-auto max-w-6xl p-4 lg:p-0">
+            <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="ring-2 ring-white/25 rounded-lg overflow-hidden">
                     {entry && <RouteMap type="ENTRY" user={user} entryId={entry.id} />}
                 </div>

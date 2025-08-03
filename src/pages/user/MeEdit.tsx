@@ -89,6 +89,7 @@ export default function MeEdit() {
 
         axios
             .get(API + "/users/me", {
+                withCredentials: true,
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                 },
@@ -123,7 +124,7 @@ export default function MeEdit() {
     return (
         <>
             <Splash uppertext=""  title="Edit Profile"/>
-            <div className="container mx-auto max-w-6xl p-4 lg:px-0">
+            <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="rounded-lg ring-2 ring-white/25 p-4">
                     <form
                     className="grid grid-cols-1 lg:grid-cols-3 gap-4"

@@ -243,7 +243,7 @@ export default function LogbookManualInput() {
         <>
             <Splash uppertext="Manual Input" title="Logbook"/>
 
-            <div className="container mx-auto max-w-6xl p-4 lg:px-0">
+            <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="ring-2 ring-white/25 rounded-lg p-4 mb-4 space-x-4">
                     <Button 
                         styleType="small" 
