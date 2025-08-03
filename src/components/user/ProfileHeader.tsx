@@ -1,14 +1,10 @@
 import { AtSign, Globe, GlobeLock, MapPin } from "lucide-react";
-import type { User } from "../../lib/types"
+import type { User } from "../../lib/types";
 import { Link } from "react-router-dom";
 import Skeleton from "../general/Skeleton";
 import { roles } from "../../lib/roles";
 
-export default function ProfileHeader(
-    props: {
-        user: User | null,
-    }
-) {
+export default function ProfileHeader(props: { user: User | null }) {
     const { user } = props;
 
     function totalFlightTime() {
@@ -30,7 +26,7 @@ export default function ProfileHeader(
         const hours = Math.floor(total);
         const minutes = Math.round((total % 1) * 60);
         return `${hours}h${minutes < 10 ? "0" + minutes : minutes}`;
-    };
+    }
 
     function mostVisitedAirport() {
         if (!user?.logbookEntries || user.logbookEntries.length === 0) {
@@ -52,7 +48,7 @@ export default function ProfileHeader(
                       }, {}),
               ).reduce((a: any, b: any) => (a[1] > b[1] ? a : b))[0]
             : "None";
-    };
+    }
 
     function mostFlownAcft() {
         if (!user?.logbookEntries || user.logbookEntries.length === 0) {
@@ -68,7 +64,7 @@ export default function ProfileHeader(
         );
 
         return mostFlownAcft || "None";
-    };
+    }
 
     return (
         <>
@@ -76,7 +72,7 @@ export default function ProfileHeader(
                 <div className="flex flex-row items-center space-x-4 lg:col-span-3">
                     <img
                         className="h-18 w-18 md:h-28 md:w-28 rounded-full ring-2 ring-white/25 object-cover"
-                        draggable="false" 
+                        draggable="false"
                         src={
                             user?.profilePictureUrl ??
                             `https://placehold.co/512/09090B/313ED8?font=roboto&text=${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}`
@@ -86,38 +82,42 @@ export default function ProfileHeader(
 
                     <div>
                         <h1 className="text-3xl md:text-4xl font-bold capitalize">
-                            { user ? (user?.firstName
-                                ? `${user?.firstName} ${user?.lastName}`
-                                : `@${user?.username}`
-                            ).substring(0, 20) : <Skeleton type="h1"/>}
+                            {user ? (
+                                (user?.firstName
+                                    ? `${user?.firstName} ${user?.lastName}`
+                                    : `@${user?.username}`
+                                ).substring(0, 20)
+                            ) : (
+                                <Skeleton type="h1" />
+                            )}
                         </h1>
                         <div>
-                            {
-                                user ? (
-                                    <div className="font-semibold text-lg">
-                                        {user?.organizationRole && (
-                                            <span className="text-white/50">
-                                                {roles.find(
-                                                    (role) => role.id === user?.organizationRole,
-                                                )?.label || user?.organizationRole}
-                                            </span>
-                                        )}
+                            {user ? (
+                                <div className="font-semibold text-lg">
+                                    {user?.organizationRole && (
+                                        <span className="text-white/50">
+                                            {roles.find(
+                                                (role) => role.id === user?.organizationRole,
+                                            )?.label || user?.organizationRole}
+                                        </span>
+                                    )}
 
-                                        {user?.organizationId && user?.organizationRole && (
-                                            <span className="text-white/25 px-2"> @ </span>
-                                        )}
+                                    {user?.organizationId && user?.organizationRole && (
+                                        <span className="text-white/25 px-2"> @ </span>
+                                    )}
 
-                                        {user?.organizationId && (
-                                            <Link
-                                                to={`/org/${user.organizationId}`}
-                                                className="text-white/50 capitalize"
-                                            >
-                                                {user?.organization?.name ?? user?.organizationId}
-                                            </Link>
-                                        )}
-                                    </div> 
-                                ) : <Skeleton type="span" />
-                            }
+                                    {user?.organizationId && (
+                                        <Link
+                                            to={`/org/${user.organizationId}`}
+                                            className="text-white/50 capitalize"
+                                        >
+                                            {user?.organization?.name ?? user?.organizationId}
+                                        </Link>
+                                    )}
+                                </div>
+                            ) : (
+                                <Skeleton type="span" />
+                            )}
                         </div>
 
                         <div className="mt-1 space-x-2 space-y-2 md:block hidden">
@@ -127,7 +127,7 @@ export default function ProfileHeader(
                             </span>
                             <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block">
                                 <MapPin className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
-                                { user ? user?.location?.substring(0, 24) : <Skeleton type="span" /> }
+                                {user ? user?.location?.substring(0, 24) : <Skeleton type="span" />}
                             </span>
                             <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 hidden lg:inline-block relative">
                                 {user?.publicProfile ? (
@@ -140,32 +140,28 @@ export default function ProfileHeader(
                             </span>
                         </div>
                     </div>
-
-                    
                 </div>
 
                 <div className="space-x-2 space-y-2 block md:hidden">
                     <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block">
                         @{user?.username}
                     </span>
-                    { user?.location && (
+                    {user?.location && (
                         <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block">
                             {user?.location?.substring(0, 24)}
                         </span>
-                    ) }
-                    { !user?.location && (
+                    )}
+                    {!user?.location && (
                         <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block">
                             {user?.publicProfile ? "Public" : "Private"}
                         </span>
-                    ) }
+                    )}
                 </div>
 
                 <div className="lg:ml-2 lg:pl-4 space-y-1 text-md">
                     <div className="flex justify-between">
                         <span className="text-white/50">Flight Time</span>
-                        <span className="text-white/75 font-semibold">
-                            { totalFlightTime() }
-                        </span>
+                        <span className="text-white/75 font-semibold">{totalFlightTime()}</span>
                     </div>
                     <div className="flex justify-between">
                         <span className="text-white/50">Flown</span>
@@ -175,18 +171,14 @@ export default function ProfileHeader(
                     </div>
                     <div className="flex justify-between">
                         <span className="text-white/50">Most flown aircraft</span>
-                        <span className="text-white/75 font-semibold">
-                            { mostFlownAcft() }
-                        </span>
+                        <span className="text-white/75 font-semibold">{mostFlownAcft()}</span>
                     </div>
                     <div className="flex justify-between">
                         <span className="text-white/50">Most visited airport</span>
-                        <span className="text-white/75 font-semibold">
-                            { mostVisitedAirport() }
-                        </span>
+                        <span className="text-white/75 font-semibold">{mostVisitedAirport()}</span>
                     </div>
                 </div>
             </div>
         </>
-    )
+    );
 }

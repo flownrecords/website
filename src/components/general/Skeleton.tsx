@@ -1,14 +1,17 @@
 export default function Skeleton(props: {
-    type: "p" | "h1" | "h3" | "button" | "span",
-    className?: string
+    type: "p" | "h1" | "h3" | "button" | "span";
+    className?: string;
 }) {
     const { type, className = "" } = props;
 
     const baseClass = "bg-secondary rounded animate-pulse";
-    
+
     if (type === "span") {
         return (
-            <span className={`${baseClass} inline-block h-4 align-middle ${className}`} style={{ width: '6ch' }} />
+            <span
+                className={`${baseClass} inline-block h-4 align-middle ${className}`}
+                style={{ width: "6ch" }}
+            />
         );
     }
 
@@ -23,9 +26,7 @@ export default function Skeleton(props: {
                     <div className={`h-4 ${baseClass} w-10/12 ${className}`} />
                 </div>
             )}
-            {type === "button" && (
-                <div className={`h-8 ${baseClass} w-24 mt-4 ${className}`} />
-            )}
+            {type === "button" && <div className={`h-8 ${baseClass} w-24 mt-4 ${className}`} />}
         </div>
     );
 }

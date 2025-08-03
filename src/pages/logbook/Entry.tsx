@@ -242,11 +242,16 @@ export default function LogbookEntry() {
 
                 <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
                     <div className="flex flex-col lg:grid grid-cols-4 gap-4">
-                        <Button 
-                            styleType="small" 
-                            type="button" 
+                        <Button
+                            styleType="small"
+                            type="button"
                             onClick={() => navigate(-1)}
-                            text={<><Undo2 className="h-4 w-4 inline-block" strokeWidth={2}/> <span>Go Back</span></>}
+                            text={
+                                <>
+                                    <Undo2 className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                    <span>Go Back</span>
+                                </>
+                            }
                         />
 
                         <Button
@@ -254,7 +259,12 @@ export default function LogbookEntry() {
                             styleType="small"
                             type="button"
                             onClick={() => navigate(`/logbook/edit/${entry?.id}`)}
-                            text={<><Pencil className="h-4 w-4 inline-block" strokeWidth={2}/> <span>Edit Entry</span></>}
+                            text={
+                                <>
+                                    <Pencil className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                    <span>Edit Entry</span>
+                                </>
+                            }
                         />
 
                         <Button
@@ -262,7 +272,12 @@ export default function LogbookEntry() {
                             styleType="small"
                             type="button"
                             onClick={() => {}}
-                            text={<><FilePlus2 className="h-4 w-4 inline-block" strokeWidth={2}/> <span>Add Flight Plan</span></>}
+                            text={
+                                <>
+                                    <FilePlus2 className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                    <span>Add Flight Plan</span>
+                                </>
+                            }
                         />
 
                         <Button
@@ -270,7 +285,15 @@ export default function LogbookEntry() {
                             styleType="small"
                             type="button"
                             onClick={() => {}}
-                            text={<><Save className="h-4 w-4 inline-block text-white/75" strokeWidth={2}/> <span>Add Flight Record</span></>}
+                            text={
+                                <>
+                                    <Save
+                                        className="h-4 w-4 inline-block text-white/75"
+                                        strokeWidth={2}
+                                    />{" "}
+                                    <span>Add Flight Record</span>
+                                </>
+                            }
                         />
                     </div>
                 </div>
@@ -354,36 +377,37 @@ export default function LogbookEntry() {
                             <div className="rounded-lg bg-secondary p-2 relative">
                                 {entry?.crew && entry.crew.length > 0 ? (
                                     entry.crew.map((m: User, i) => {
-                                    const fullName = m?.firstName
-                                        ? `${m.firstName} ${m.lastName ?? ""}`
-                                        : `@${m?.username}`;
+                                        const fullName = m?.firstName
+                                            ? `${m.firstName} ${m.lastName ?? ""}`
+                                            : `@${m?.username}`;
 
-                                    return (
-                                        <div
-                                        className={`inline-block hover:mr-2 ${
-                                            i !== 0 ? "-ml-1 hover:ml-1" : ""
-                                        } transition-all duration-500`}
-                                        key={i}
-                                        >
-                                        <div className="relative group inline-block">
-                                            <Link
-                                            to={"/users/" + m?.id}
-                                            className="inline-block"
-                                            title={fullName} // still useful for screen readers
+                                        return (
+                                            <div
+                                                className={`inline-block hover:mr-2 ${
+                                                    i !== 0 ? "-ml-1 hover:ml-1" : ""
+                                                } transition-all duration-500`}
+                                                key={i}
                                             >
-                                            <img
-                                                src={
-                                                m?.profilePictureUrl ??
-                                                `https://placehold.co/512/09090B/313ED8?font=roboto&text=${
-                                                    m?.firstName?.charAt(0) || ""
-                                                }${m?.lastName?.charAt(0) || ""}`
-                                                }
-                                                className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"
-                                            />
-                                            </Link>
+                                                <div className="relative group inline-block">
+                                                    <Link
+                                                        to={"/users/" + m?.id}
+                                                        className="inline-block"
+                                                        title={fullName} // still useful for screen readers
+                                                    >
+                                                        <img
+                                                            src={
+                                                                m?.profilePictureUrl ??
+                                                                `https://placehold.co/512/09090B/313ED8?font=roboto&text=${
+                                                                    m?.firstName?.charAt(0) || ""
+                                                                }${m?.lastName?.charAt(0) || ""}`
+                                                            }
+                                                            className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"
+                                                        />
+                                                    </Link>
 
-                                            {/* Custom tooltip */}
-                                            <div className="
+                                                    {/* Custom tooltip */}
+                                                    <div
+                                                        className="
                                                fixed sm:absolute 
                                                 top-12 sm:top-auto 
                                                 left-1/2 
@@ -397,23 +421,30 @@ export default function LogbookEntry() {
                                                 opacity-0 
                                                 group-hover:opacity-100 
                                                 transition-opacity duration-300 
-                                                z-10 shadow-xs">
-                                                <ProfileCard data={{
-                                                    profilePictureUrl: m?.profilePictureUrl ?? '',
-                                                    firstName: m?.firstName ?? null,
-                                                    lastName: m?.lastName ?? '',
-                                                    username: m?.username ?? null,
-                                                    location: m?.location ?? null,
-                                                    publicProfile: m?.publicProfile ?? false,
-                                                    bio: m?.bio ?? null,
-                                                    organizationId: m?.organizationId ?? '',
-                                                    organizationRole: m?.organizationRole ?? '',
-                                                    organization: m?.organization
-                                                }}/>
+                                                z-10 shadow-xs"
+                                                    >
+                                                        <ProfileCard
+                                                            data={{
+                                                                profilePictureUrl:
+                                                                    m?.profilePictureUrl ?? "",
+                                                                firstName: m?.firstName ?? null,
+                                                                lastName: m?.lastName ?? "",
+                                                                username: m?.username ?? null,
+                                                                location: m?.location ?? null,
+                                                                publicProfile:
+                                                                    m?.publicProfile ?? false,
+                                                                bio: m?.bio ?? null,
+                                                                organizationId:
+                                                                    m?.organizationId ?? "",
+                                                                organizationRole:
+                                                                    m?.organizationRole ?? "",
+                                                                organization: m?.organization,
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                        </div>
-                                    );
+                                        );
                                     })
                                 ) : (
                                     <span className="text-white/75 text-sm flex items-center h-4 my-1">
@@ -421,11 +452,14 @@ export default function LogbookEntry() {
                                     </span>
                                 )}
 
-                                <span 
+                                <span
                                     className="absolute right-2 top-1/2 -translate-y-1/2 text-white/75 bg-primary px-2 py-1 rounded-lg cursor-pointer flex hover:opacity-75 transition-all duration-300"
                                     onClick={() => setCrewModal(!crewModal)}
                                 >
-                                    <Plus className="h-4 w-4 inline-block text-white cursor-pointer lg:mr-1" strokeWidth={2}/>
+                                    <Plus
+                                        className="h-4 w-4 inline-block text-white cursor-pointer lg:mr-1"
+                                        strokeWidth={2}
+                                    />
                                     <span className="text-xs hidden lg:inline-block">Add Crew</span>
                                 </span>
                             </div>
@@ -520,13 +554,13 @@ export default function LogbookEntry() {
 
                 <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
                     <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Recording</h1>
-                    {recording ? 
+                    {recording ? (
                         <></>
-                         : 
+                    ) : (
                         <span className="text-white/75 text-sm my-1">
                             No flight recording available for this entry.
                         </span>
-                    }
+                    )}
                 </div>
             </div>
 

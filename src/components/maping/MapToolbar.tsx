@@ -7,8 +7,7 @@ import { Maximize, Minus, Plus } from "lucide-react";
 export function MapToolbar() {
     const map = useMap();
 
-    const style = 
-    `w-8 h-8 
+    const style = `w-8 h-8 
     bg-gradient-to-t from-neutral-900 to-neutral-800 hover:opacity-75 transition duration-150
     ring-2 ring-white/25 rounded-lg 
     cursor-pointer 
@@ -25,18 +24,10 @@ export function MapToolbar() {
 
         root.render(
             <div className="space-y-2 flex flex-col items-center justify-center ">
-                <button
-                    title="Zoom In"
-                    onClick={() => map.zoomIn()}
-                    className={style}   
-                >
+                <button title="Zoom In" onClick={() => map.zoomIn()} className={style}>
                     <Plus className="w-4 h-4" />
                 </button>
-                <button
-                    title="Zoom Out"
-                    onClick={() => map.zoomOut()}
-                    className={style}
-                >
+                <button title="Zoom Out" onClick={() => map.zoomOut()} className={style}>
                     <Minus className="w-4 h-4" />
                 </button>
                 <button
@@ -54,7 +45,7 @@ export function MapToolbar() {
                 >
                     <Maximize className="w-4 h-4" />
                 </button>
-            </div>
+            </div>,
         );
 
         return () => {

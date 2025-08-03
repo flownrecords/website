@@ -5,7 +5,7 @@ export default function Modal({
     onClose,
     title,
     children,
-    buttons
+    buttons,
 }: {
     isOpen: boolean;
     onClose: () => void;
@@ -21,7 +21,7 @@ export default function Modal({
                 <h1 className="text-xl font-semibold mb-2">{title}</h1>
                 {children}
                 <div className={`mt-4 space-x-2 ${buttons ? "flex flex-row" : "flex justify-end"}`}>
-                    <Button onClick={onClose} text="Close" styleType="small"/>
+                    <Button onClick={onClose} text="Close" styleType="small" />
                     {buttons}
                 </div>
             </div>

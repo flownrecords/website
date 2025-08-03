@@ -14,15 +14,20 @@ type ProfileCardData = {
 
     organizationId?: string | null;
     organizationRole?: string | null;
-    organization?: Organization | 
-    {
-        id?: string;
-        name?: string;
-        logo?: string;
-    } | null;
-}
+    organization?:
+        | Organization
+        | {
+              id?: string;
+              name?: string;
+              logo?: string;
+          }
+        | null;
+};
 
-export default function ProfileCard(props: { data: ProfileCardData, organizations?: { id: string, name: string }[] }) {
+export default function ProfileCard(props: {
+    data: ProfileCardData;
+    organizations?: { id: string; name: string }[];
+}) {
     const { data } = props;
 
     return (
@@ -42,38 +47,41 @@ export default function ProfileCard(props: { data: ProfileCardData, organization
                     />
                     <div>
                         <h1 className="text-xl lg:text-2xl font-bold capitalize">
-                            {data?.firstName || data.lastName || data.username ? (data?.firstName
-                                ? `${data?.firstName} ${data?.lastName ?? ""}`
-                                : `@${data?.username}`
-                            ).substring(0, 20) : <Skeleton type="h1"/>}
+                            {data?.firstName || data.lastName || data.username ? (
+                                (data?.firstName
+                                    ? `${data?.firstName} ${data?.lastName ?? ""}`
+                                    : `@${data?.username}`
+                                ).substring(0, 20)
+                            ) : (
+                                <Skeleton type="h1" />
+                            )}
                         </h1>
                         <div className="font-medium text-base">
-                            {
-                                
-                                data.organizationId || data.organizationRole ? (
-                                    <div className="font-medium text-base">
-                                        {data?.organizationRole && (
-                                            <span className="text-white/50">
-                                                {roles.find(
-                                                    (role) => role.id === data?.organizationRole,
-                                                )?.label || data?.organizationRole}
-                                            </span>
-                                        )}
+                            {data.organizationId || data.organizationRole ? (
+                                <div className="font-medium text-base">
+                                    {data?.organizationRole && (
+                                        <span className="text-white/50">
+                                            {roles.find(
+                                                (role) => role.id === data?.organizationRole,
+                                            )?.label || data?.organizationRole}
+                                        </span>
+                                    )}
 
-                                        {data?.organizationId && data.organizationId !== "none" && data?.organizationRole && (
+                                    {data?.organizationId &&
+                                        data.organizationId !== "none" &&
+                                        data?.organizationRole && (
                                             <span className="text-white/25 px-2"> @ </span>
                                         )}
 
-                                        {data?.organizationId && data.organizationId !== "none" && (
-                                            <span
-                                                className="text-white/50 capitalize"
-                                            >
-                                                {data?.organization?.name ?? data?.organizationId}
-                                            </span>
-                                        )}
-                                    </div> 
-                                ) : <Skeleton type="span" />
-                            }
+                                    {data?.organizationId && data.organizationId !== "none" && (
+                                        <span className="text-white/50 capitalize">
+                                            {data?.organization?.name ?? data?.organizationId}
+                                        </span>
+                                    )}
+                                </div>
+                            ) : (
+                                <Skeleton type="span" />
+                            )}
                         </div>
                     </div>
                 </div>
@@ -83,30 +91,30 @@ export default function ProfileCard(props: { data: ProfileCardData, organization
                         <AtSign className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/15 opacity-50" />
                         {data.username ? data?.username : <Skeleton type="span" />}
                     </span>
-                    { data?.location && <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-2 py-0.5 inline-block">
-                        <MapPin className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
-                        { data.location.substring(0, 24) }
-                    </span> }
+                    {data?.location && (
+                        <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-2 py-0.5 inline-block">
+                            <MapPin className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
+                            {data.location.substring(0, 24)}
+                        </span>
+                    )}
                     <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-2 py-0.5 hidden lg:inline-block relative">
-                        { data.publicProfile ? (
+                        {data.publicProfile ? (
                             <Globe className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
                         ) : (
                             <GlobeLock className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
                         )}
 
-                        { data.publicProfile ? "Public" : "Private"}
+                        {data.publicProfile ? "Public" : "Private"}
                     </span>
                 </div>
 
                 <div className="mt-2 bg-primary text-sm p-2 rounded-lg">
-                    <label className="inline-block font-medium mb-1">
-                        Biography
-                    </label>
+                    <label className="inline-block font-medium mb-1">Biography</label>
                     <div className="text-white/75 break-words whitespace-pre-wrap">
-                        { data?.bio || "This user has not set a biography yet." }
+                        {data?.bio || "This user has not set a biography yet."}
                     </div>
                 </div>
             </div>
         </>
-    )
+    );
 }

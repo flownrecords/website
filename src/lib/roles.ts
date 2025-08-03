@@ -13,5 +13,5 @@ export const roles = [
     { id: "OFFICE", label: "Office" },
     { id: "SUPERVISOR", label: "Supervisor" },
     { id: "ADMIN", label: "Administrator" },
-    { id: "MANAGER", label: "Manager" }
-]
+    { id: "MANAGER", label: "Manager" },
+];

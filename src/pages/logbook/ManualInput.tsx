@@ -11,14 +11,14 @@ import useAlert from "../../components/alert/useAlert";
 import axios from "axios";
 
 type EntryInput = {
-    depAd: string | null,
-    arrAd: string | null,
+    depAd: string | null;
+    arrAd: string | null;
     offBlock: Date | null;
     onBlock: Date | null;
 
-    aircraftType: string | null,
-    aircraftRegistration: string | null,
-    picName: string | null,
+    aircraftType: string | null;
+    aircraftRegistration: string | null;
+    picName: string | null;
 
     total: number | string | null;
     dayTime: number | string | null;
@@ -40,17 +40,17 @@ type EntryInput = {
     remarks: string | null;
 
     crew: User[];
-}
+};
 
 export default function LogbookManualInput() {
     const API = import.meta.env.VITE_API_URL;
-    
+
     const query = new URLSearchParams(window.location.search);
     const queryData = {
-        acftReg: query.get('acftReg'),
-        acftType: query.get('acftType'),
-        depAd: query.get('depAd'),
-        arrAd: query.get('arrAd'),
+        acftReg: query.get("acftReg"),
+        acftType: query.get("acftType"),
+        depAd: query.get("depAd"),
+        arrAd: query.get("arrAd"),
     };
 
     const [displayCrewDialog, setDisplayCrewDialog] = useState(false);
@@ -83,8 +83,8 @@ export default function LogbookManualInput() {
         includeInFt: true,
         remarks: null,
 
-        crew: []
-    })
+        crew: [],
+    });
 
     useEffect(() => {
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -133,11 +133,9 @@ export default function LogbookManualInput() {
                 }
             })
             .catch((error) => {
-
                 if (error.response?.status === 404 || error.response?.status === 500) {
                     return alert("Error", "User not found.");
-                } else 
-                if (error.response?.status === 401) {
+                } else if (error.response?.status === 401) {
                     console.log("Unauthorized access, redirecting to login.");
                     localStorage.removeItem("accessToken");
                     navigate("/login");
@@ -169,7 +167,7 @@ export default function LogbookManualInput() {
 
     function handleSubmit() {
         checkData();
-        
+
         const total = timeDifference(entryData.offBlock as Date, entryData.onBlock as Date);
 
         const updated = { ...entryData, total, simTime: fstd ? total : 0 };
@@ -177,49 +175,74 @@ export default function LogbookManualInput() {
 
         console.log("Updated entry:", updated); // ✅ This will now show correct `total`
 
-        axios.post(API + "/users/logbook/add", {
-            ...updated,
-            date: new Date(updated.offBlock as Date),
-        }, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
-        })
-        .then((response) => {
-            if (response.status === 200) {
-                alert("Success", "Logbook entry added successfully.");
-                //navigate("/me/logbook");
-            } else {
+        axios
+            .post(
+                API + "/users/logbook/add",
+                {
+                    ...updated,
+                    date: new Date(updated.offBlock as Date),
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                    },
+                },
+            )
+            .then((response) => {
+                if (response.status === 200) {
+                    alert("Success", "Logbook entry added successfully.");
+                    //navigate("/me/logbook");
+                } else {
+                    alert("Error", "Failed to add logbook entry. Please try again.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error adding logbook entry:", error);
                 alert("Error", "Failed to add logbook entry. Please try again.");
-            }
-        })
-        .catch((error) => {
-            console.error("Error adding logbook entry:", error);
-            alert("Error", "Failed to add logbook entry. Please try again.");
-        });
+            });
     }
 
     function checkData() {
+        if (
+            !entryData.aircraftRegistration ||
+            entryData.aircraftRegistration.length < 3 ||
+            entryData.aircraftRegistration.length > 8
+        )
+            return alert("Error", "Aircraft registration must be between 3 and 8 characters long.");
+        if (
+            !entryData.aircraftType ||
+            entryData.aircraftType.length < 3 ||
+            entryData.aircraftType.length > 4
+        )
+            return alert("Error", "Aircraft type must be between 3 and 4 characters long.");
 
-        if (!entryData.aircraftRegistration || entryData.aircraftRegistration.length < 3 || entryData.aircraftRegistration.length > 8) return alert("Error", "Aircraft registration must be between 3 and 8 characters long.");
-        if (!entryData.aircraftType || entryData.aircraftType.length < 3 || entryData.aircraftType.length > 4) return alert("Error", "Aircraft type must be between 3 and 4 characters long.");
+        if (!entryData.depAd || entryData.depAd.length !== 4)
+            return alert("Error", "Departure airport ICAO code must be exactly 4 characters long.");
+        if (!entryData.arrAd || entryData.arrAd.length !== 4)
+            return alert("Error", "Arrival airport ICAO code must be exactly 4 characters long.");
 
-        if (!entryData.depAd || entryData.depAd.length !== 4) return alert("Error", "Departure airport ICAO code must be exactly 4 characters long.");
-        if (!entryData.arrAd || entryData.arrAd.length !== 4) return alert("Error", "Arrival airport ICAO code must be exactly 4 characters long.");
-
-        if (entryData.landDay === 0 && entryData.landNight === 0) return alert("Error", "At least one landing must be recorded.");
+        if (entryData.landDay === 0 && entryData.landNight === 0)
+            return alert("Error", "At least one landing must be recorded.");
         if (!entryData.picName) return alert("Error", "PIC name must be added.");
 
         // check if offblock and onBlock are set and if type date
-        if (!entryData.offBlock || !entryData.onBlock || !(entryData.offBlock instanceof Date) || !(entryData.onBlock instanceof Date)) {
+        if (
+            !entryData.offBlock ||
+            !entryData.onBlock ||
+            !(entryData.offBlock instanceof Date) ||
+            !(entryData.onBlock instanceof Date)
+        ) {
             alert("Error", "Both off block and on block times must be set.");
             return;
         }
 
-        if (entryData.offBlock.getTime() === entryData.onBlock.getTime()) return alert("Error", "Off block time cannot be the same as on block time.");
-        if (entryData.offBlock >= entryData.onBlock) return alert("Error", "Off block time must be before on block time.");
+        if (entryData.offBlock.getTime() === entryData.onBlock.getTime())
+            return alert("Error", "Off block time cannot be the same as on block time.");
+        if (entryData.offBlock >= entryData.onBlock)
+            return alert("Error", "Off block time must be before on block time.");
 
-        if (entryData.offBlock.getFullYear() !== entryData.onBlock.getFullYear()) return alert("Error", "Off block and on block times must be in the same year.");
+        if (entryData.offBlock.getFullYear() !== entryData.onBlock.getFullYear())
+            return alert("Error", "Off block and on block times must be in the same year.");
 
         // Day + Night time must be less than or equal to total flight time
         const totalFlightTime = timeDifference(entryData.offBlock, entryData.onBlock);
@@ -233,41 +256,54 @@ export default function LogbookManualInput() {
         const sepTotal = Number(entryData.sepVfr) || 0 + Number(entryData.sepIfr) || 0;
         const meTotal = Number(entryData.meVfr) || 0 + Number(entryData.meIfr) || 0;
         if (sepTotal > 0 && meTotal > 0) {
-            return alert("Error", "You can only have Single Engine or Multi Engine time, not both.");
+            return alert(
+                "Error",
+                "You can only have Single Engine or Multi Engine time, not both.",
+            );
         }
 
         if (sepTotal > totalFlightTime || meTotal > totalFlightTime) {
-            return alert("Error", "Single Engine or Multi Engine time cannot exceed total flight time.");
+            return alert(
+                "Error",
+                "Single Engine or Multi Engine time cannot exceed total flight time.",
+            );
         }
-
     }
 
     return (
         <>
-            <Splash uppertext="Manual Input" title="Logbook"/>
+            <Splash uppertext="Manual Input" title="Logbook" />
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="ring-2 ring-white/25 rounded-lg p-4 mb-4 space-x-4">
-                    <Button 
-                        styleType="small" 
-                        type="button" 
+                    <Button
+                        styleType="small"
+                        type="button"
                         onClick={() => navigate(-1)}
-                        text={<><Undo2 className="h-4 w-4 inline-block" strokeWidth={2}/> <span>Go Back</span></>}
+                        text={
+                            <>
+                                <Undo2 className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                <span>Go Back</span>
+                            </>
+                        }
                     />
 
-                    <Button 
-                        styleType="small" 
-                        type="button" 
+                    <Button
+                        styleType="small"
+                        type="button"
                         onClick={checkData}
-                        text={<><SearchCheck className="h-4 w-4 inline-block" strokeWidth={2}/> <span>Validate</span></>}
+                        text={
+                            <>
+                                <SearchCheck className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                <span>Validate</span>
+                            </>
+                        }
                     />
                 </div>
                 <div className="ring-2 ring-white/25 rounded-lg p-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div className="lg:col-span-4">
-                            <h3 className="font-medium text-white/75">
-                                Information
-                            </h3>
+                            <h3 className="font-medium text-white/75">Information</h3>
                         </div>
                         <div className="flex flex-col">
                             <label className="text-sm text-white/75 mb-1">
@@ -281,15 +317,16 @@ export default function LogbookManualInput() {
                                 onChange={(e) => {
                                     e.target.value = e.target.value.replace(/[^a-zA-Z0-9-]/g, "");
                                     e.target.value = e.target.value.toUpperCase();
-                                    setEntryData({ ...entryData, aircraftRegistration: e.target.value });
+                                    setEntryData({
+                                        ...entryData,
+                                        aircraftRegistration: e.target.value,
+                                    });
                                 }}
                             />
                         </div>
 
                         <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Aircraft Type
-                            </label>
+                            <label className="text-sm text-white/75 mb-1">Aircraft Type</label>
                             <input
                                 className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                                 type="text"
@@ -298,25 +335,34 @@ export default function LogbookManualInput() {
                                 defaultValue={queryData.acftType || ""}
                                 onChange={(e) => {
                                     e.currentTarget.value = e.currentTarget.value
-                                    .toUpperCase()
-                                    .replace(/[^A-Z0-9]/g, "");
-                                    setEntryData({ ...entryData, aircraftType: e.currentTarget.value });
+                                        .toUpperCase()
+                                        .replace(/[^A-Z0-9]/g, "");
+                                    setEntryData({
+                                        ...entryData,
+                                        aircraftType: e.currentTarget.value,
+                                    });
                                 }}
                             />
                         </div>
 
                         <div className="flex flex-col">
                             <label className="text-sm text-white/75 mb-1">
-                                Include in Flight Time 
+                                Include in Flight Time
                                 <span title="Include this flight in the total flight time count">
-                                    <InfoIcon className="h-4 w-4 inline-block text-white/75 cursor-help ml-1" strokeWidth={2} />
+                                    <InfoIcon
+                                        className="h-4 w-4 inline-block text-white/75 cursor-help ml-1"
+                                        strokeWidth={2}
+                                    />
                                 </span>
                             </label>
                             <select
                                 className="bg-secondary ring-2 ring-white/25 rounded-lg px-3 py-2 focus:outline-none focus:ring-white/50"
                                 defaultValue={"Y"}
                                 onChange={(e) => {
-                                    setEntryData({ ...entryData, includeInFt: (e.target as HTMLSelectElement).value === "Y" });
+                                    setEntryData({
+                                        ...entryData,
+                                        includeInFt: (e.target as HTMLSelectElement).value === "Y",
+                                    });
                                 }}
                             >
                                 <option value="Y">Yes</option>
@@ -326,9 +372,12 @@ export default function LogbookManualInput() {
 
                         <div className="flex flex-col">
                             <label className="text-sm text-white/75 mb-1">
-                                FSTD 
+                                FSTD
                                 <span title="Flight Simulator Training Device">
-                                    <InfoIcon className="h-4 w-4 inline-block text-white/75 cursor-help ml-1" strokeWidth={2}/>
+                                    <InfoIcon
+                                        className="h-4 w-4 inline-block text-white/75 cursor-help ml-1"
+                                        strokeWidth={2}
+                                    />
                                 </span>
                             </label>
                             <select
@@ -356,9 +405,7 @@ export default function LogbookManualInput() {
                         </div>
 
                         <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Departure
-                            </label>
+                            <label className="text-sm text-white/75 mb-1">Departure</label>
                             <input
                                 className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                                 type="text"
@@ -366,16 +413,14 @@ export default function LogbookManualInput() {
                                 minLength={4}
                                 maxLength={4}
                                 onChange={(e) => {
-                                    e.target.value  = e.target.value.toUpperCase();
+                                    e.target.value = e.target.value.toUpperCase();
                                     setEntryData({ ...entryData, depAd: e.target.value });
                                 }}
                             />
                         </div>
 
                         <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Arrival
-                            </label>
+                            <label className="text-sm text-white/75 mb-1">Arrival</label>
                             <input
                                 className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                                 type="text"
@@ -403,207 +448,220 @@ export default function LogbookManualInput() {
 
                         <div className="lg:col-span-4">
                             <hr className="border-white/25 my-2 border-1 rounded-lg" />
-                            <h3 className="font-medium text-white/75">
-                                Time
-                            </h3>
+                            <h3 className="font-medium text-white/75">Time</h3>
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">Pilot in Command</label>
+                            <input
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
+                                type="time"
+                                onInput={(e) => {
+                                    setEntryData({
+                                        ...entryData,
+                                        picTime: parseTimeInput(e.currentTarget.value),
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">Day</label>
+                            <input
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
+                                type="time"
+                                onInput={(e) => {
+                                    setEntryData({
+                                        ...entryData,
+                                        dayTime: parseTimeInput(e.currentTarget.value),
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">Night</label>
+                            <input
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
+                                type="time"
+                                onInput={(e) => {
+                                    setEntryData({
+                                        ...entryData,
+                                        nightTime: parseTimeInput(e.currentTarget.value),
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">Dual</label>
+                            <input
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
+                                type="time"
+                                onInput={(e) => {
+                                    setEntryData({
+                                        ...entryData,
+                                        dualTime: parseTimeInput(e.currentTarget.value),
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">Copilot</label>
+                            <input
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
+                                type="time"
+                                onInput={(e) => {
+                                    setEntryData({
+                                        ...entryData,
+                                        copilotTime: parseTimeInput(e.currentTarget.value),
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">Multipilot</label>
+                            <input
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
+                                type="time"
+                                onInput={(e) => {
+                                    setEntryData({
+                                        ...entryData,
+                                        multiPilotTime: parseTimeInput(e.currentTarget.value),
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">Instructor</label>
+                            <input
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
+                                type="time"
+                                onInput={(e) => {
+                                    setEntryData({
+                                        ...entryData,
+                                        instructorTime: parseTimeInput(e.currentTarget.value),
+                                    });
+                                }}
+                            />
                         </div>
 
                         <div className="flex flex-col">
                             <label className="text-sm text-white/75 mb-1">
-                                Pilot in Command
-                            </label>
-                            <input
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
-                                type="time"
-                                onInput={(e) => {
-                                    setEntryData({ ...entryData, picTime: parseTimeInput(e.currentTarget.value) });
-                                }}
-                            />
-                        </div> 
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Day
-                            </label>
-                            <input
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
-                                type="time"
-                                onInput={(e) => {
-                                    setEntryData({ ...entryData, dayTime: parseTimeInput(e.currentTarget.value) });
-                                }}
-                            />
-                        </div> 
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Night
-                            </label>
-                            <input
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
-                                type="time"
-                                onInput={(e) => {
-                                    setEntryData({ ...entryData, nightTime: parseTimeInput(e.currentTarget.value) });
-                                }}
-                            />
-                        </div> 
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Dual
-                            </label>
-                            <input
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
-                                type="time"
-                                onInput={(e) => {
-                                    setEntryData({ ...entryData, dualTime: parseTimeInput(e.currentTarget.value) });
-                                }}
-                            />
-                        </div> 
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Copilot
-                            </label>
-                            <input
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
-                                type="time"
-                                onInput={(e) => {
-                                    setEntryData({ ...entryData, copilotTime: parseTimeInput(e.currentTarget.value) });
-                                }}
-                            />
-                        </div> 
-                        
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Multipilot
-                            </label>
-                            <input
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
-                                type="time"
-                                onInput={(e) => {
-                                    setEntryData({ ...entryData, multiPilotTime: parseTimeInput(e.currentTarget.value) });
-                                }}
-                            />
-                        </div> 
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Instructor
-                            </label>
-                            <input
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
-                                type="time"
-                                onInput={(e) => {
-                                    setEntryData({ ...entryData, instructorTime: parseTimeInput(e.currentTarget.value) });
-                                }}
-                            />
-                        </div> 
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                FSTD Instructor 
+                                FSTD Instructor
                                 <span title="Flight Simulator Training Device Instructor">
-                                    <InfoIcon className="h-4 w-4 inline-block text-white/75 cursor-help ml-1" strokeWidth={2}/>
+                                    <InfoIcon
+                                        className="h-4 w-4 inline-block text-white/75 cursor-help ml-1"
+                                        strokeWidth={2}
+                                    />
                                 </span>
                             </label>
                             <input
                                 className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
                                 type="time"
                                 onInput={(e) => {
-                                    setEntryData({ ...entryData, simInstructorTime: parseTimeInput(e.currentTarget.value) });
+                                    setEntryData({
+                                        ...entryData,
+                                        simInstructorTime: parseTimeInput(e.currentTarget.value),
+                                    });
                                 }}
                             />
-                        </div> 
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Single Engine VFR
-                            </label>
-                            <input
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
-                                type="time"
-                                onInput={(e) => {
-                                    setEntryData({ ...entryData, sepVfr: parseTimeInput(e.currentTarget.value) });
-                                }}
-                            />
-                        </div> 
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Single Engine IFR
-                            </label>
-                            <input
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
-                                type="time"
-                                onInput={(e) => {
-                                    setEntryData({ ...entryData, sepIfr: parseTimeInput(e.currentTarget.value) });
-                                }}
-                            />
-                        </div> 
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Multi Engine VFR
-                            </label>
-                            <input
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
-                                type="time"
-                                onInput={(e) => {
-                                    setEntryData({ ...entryData, meVfr: parseTimeInput(e.currentTarget.value) });
-                                }}
-                            />
-                        </div> 
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Multi Engine IFR
-                            </label>
-                            <input
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
-                                type="time"
-                                onInput={(e) => {
-                                    setEntryData({ ...entryData, meIfr: parseTimeInput(e.currentTarget.value) });
-                                }}
-                            />
-                        </div> 
-
-                        <div className="lg:col-span-4">
-                            <hr className="border-white/25 my-2 border-1 rounded-lg" />
-                            <h3 className="font-medium text-white/75">
-                                Details
-                            </h3>
                         </div>
 
                         <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Landings (Day)
-                            </label>
+                            <label className="text-sm text-white/75 mb-1">Single Engine VFR</label>
+                            <input
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
+                                type="time"
+                                onInput={(e) => {
+                                    setEntryData({
+                                        ...entryData,
+                                        sepVfr: parseTimeInput(e.currentTarget.value),
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">Single Engine IFR</label>
+                            <input
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
+                                type="time"
+                                onInput={(e) => {
+                                    setEntryData({
+                                        ...entryData,
+                                        sepIfr: parseTimeInput(e.currentTarget.value),
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">Multi Engine VFR</label>
+                            <input
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
+                                type="time"
+                                onInput={(e) => {
+                                    setEntryData({
+                                        ...entryData,
+                                        meVfr: parseTimeInput(e.currentTarget.value),
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">Multi Engine IFR</label>
+                            <input
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 scheme-dark"
+                                type="time"
+                                onInput={(e) => {
+                                    setEntryData({
+                                        ...entryData,
+                                        meIfr: parseTimeInput(e.currentTarget.value),
+                                    });
+                                }}
+                            />
+                        </div>
+
+                        <div className="lg:col-span-4">
+                            <hr className="border-white/25 my-2 border-1 rounded-lg" />
+                            <h3 className="font-medium text-white/75">Details</h3>
+                        </div>
+
+                        <div className="flex flex-col">
+                            <label className="text-sm text-white/75 mb-1">Landings (Day)</label>
                             <input
                                 className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                                 type="number"
                                 onInput={(e) => {
-                                    setEntryData({ ...entryData, landDay: parseInt(e.currentTarget.value) || 0 });
+                                    setEntryData({
+                                        ...entryData,
+                                        landDay: parseInt(e.currentTarget.value) || 0,
+                                    });
                                 }}
                             />
-                        </div> 
+                        </div>
 
                         <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Landings (Night)
-                            </label>
+                            <label className="text-sm text-white/75 mb-1">Landings (Night)</label>
                             <input
                                 className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                                 type="number"
                                 onInput={(e) => {
-                                    setEntryData({ ...entryData, landNight: parseInt(e.currentTarget.value) || 0 });
+                                    setEntryData({
+                                        ...entryData,
+                                        landNight: parseInt(e.currentTarget.value) || 0,
+                                    });
                                 }}
                             />
-                        </div> 
+                        </div>
 
                         <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                PIC Name
-                            </label>
+                            <label className="text-sm text-white/75 mb-1">PIC Name</label>
                             <input
                                 className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                                 type="text"
@@ -612,46 +670,43 @@ export default function LogbookManualInput() {
                                     setEntryData({ ...entryData, picName: e.target.value });
                                 }}
                             />
-                        </div> 
+                        </div>
 
                         <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">
-                                Crew
-                            </label>
-                            <div
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 relative"
-                            >
-                                { crew && crew.length > 0 ? (
+                            <label className="text-sm text-white/75 mb-1">Crew</label>
+                            <div className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 relative">
+                                {crew && crew.length > 0 ? (
                                     crew.map((m: User, i) => {
-                                    const fullName = m?.firstName
-                                        ? `${m.firstName} ${m.lastName ?? ""}`
-                                        : `@${m?.username}`;
+                                        const fullName = m?.firstName
+                                            ? `${m.firstName} ${m.lastName ?? ""}`
+                                            : `@${m?.username}`;
 
-                                    return (
-                                        <div
-                                        className={`relative inline-block hover:mr-2 ${
-                                            i !== 0 ? "-ml-1 hover:ml-1" : ""
-                                        } transition-all duration-500`}
-                                        key={i}
-                                        >
-                                            <div className="relative group inline-block">
-                                                <Link
-                                                to={"/users/" + m?.id}
-                                                className="inline-block"
-                                                title={fullName} // still useful for screen readers
-                                                >
-                                                <img
-                                                    src={
-                                                    m?.profilePictureUrl ??
-                                                    `https://placehold.co/512/09090B/313ED8?font=roboto&text=${
-                                                        m?.firstName?.charAt(0) || ""
-                                                    }${m?.lastName?.charAt(0) || ""}`
-                                                    }
-                                                    className="h-5 w-5 rounded-full inline-block ring-2 ring-neutral-600"
-                                                />
-                                                </Link>
+                                        return (
+                                            <div
+                                                className={`relative inline-block hover:mr-2 ${
+                                                    i !== 0 ? "-ml-1 hover:ml-1" : ""
+                                                } transition-all duration-500`}
+                                                key={i}
+                                            >
+                                                <div className="relative group inline-block">
+                                                    <Link
+                                                        to={"/users/" + m?.id}
+                                                        className="inline-block"
+                                                        title={fullName} // still useful for screen readers
+                                                    >
+                                                        <img
+                                                            src={
+                                                                m?.profilePictureUrl ??
+                                                                `https://placehold.co/512/09090B/313ED8?font=roboto&text=${
+                                                                    m?.firstName?.charAt(0) || ""
+                                                                }${m?.lastName?.charAt(0) || ""}`
+                                                            }
+                                                            className="h-5 w-5 rounded-full inline-block ring-2 ring-neutral-600"
+                                                        />
+                                                    </Link>
 
-                                                <div className="
+                                                    <div
+                                                        className="
                                                     fixed sm:absolute 
                                                     top-12 sm:top-auto 
                                                     left-1/2 
@@ -665,23 +720,30 @@ export default function LogbookManualInput() {
                                                     opacity-0 
                                                     group-hover:opacity-100 
                                                     transition-opacity duration-300 
-                                                    z-10 shadow-xs">
-                                                    <ProfileCard data={{
-                                                        profilePictureUrl: m?.profilePictureUrl ?? '',
-                                                        firstName: m?.firstName ?? null,
-                                                        lastName: m?.lastName ?? '',
-                                                        username: m?.username ?? null,
-                                                        location: m?.location ?? null,
-                                                        publicProfile: m?.publicProfile ?? false,
-                                                        bio: m?.bio ?? null,
-                                                        organizationId: m?.organizationId ?? '',
-                                                        organizationRole: m?.organizationRole ?? '',
-                                                        organization: m?.organization
-                                                    }}/>
+                                                    z-10 shadow-xs"
+                                                    >
+                                                        <ProfileCard
+                                                            data={{
+                                                                profilePictureUrl:
+                                                                    m?.profilePictureUrl ?? "",
+                                                                firstName: m?.firstName ?? null,
+                                                                lastName: m?.lastName ?? "",
+                                                                username: m?.username ?? null,
+                                                                location: m?.location ?? null,
+                                                                publicProfile:
+                                                                    m?.publicProfile ?? false,
+                                                                bio: m?.bio ?? null,
+                                                                organizationId:
+                                                                    m?.organizationId ?? "",
+                                                                organizationRole:
+                                                                    m?.organizationRole ?? "",
+                                                                organization: m?.organization,
+                                                            }}
+                                                        />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    );
+                                        );
                                     })
                                 ) : (
                                     <span className="text-white/75 text-sm flex items-center h-4 my-1">
@@ -689,21 +751,21 @@ export default function LogbookManualInput() {
                                     </span>
                                 )}
 
-                                <span 
+                                <span
                                     className="absolute right-2 top-1/2 -translate-y-1/2 text-white/75 bg-primary px-2 py-1 rounded-lg cursor-pointer flex hover:opacity-75 transition-all duration-300"
                                     onClick={() => setDisplayCrewDialog(!displayCrewDialog)}
                                 >
-                                    <Plus className="h-4 w-4 inline-block text-white cursor-pointer lg:mr-1" strokeWidth={2}/>
+                                    <Plus
+                                        className="h-4 w-4 inline-block text-white cursor-pointer lg:mr-1"
+                                        strokeWidth={2}
+                                    />
                                     <span className="text-xs hidden lg:inline-block">Add Crew</span>
                                 </span>
                             </div>
-                            
-                        </div> 
+                        </div>
 
                         <div className="flex flex-col lg:col-span-4">
-                            <label className="text-sm text-white/75 mb-1">
-                                Remarks
-                            </label>
+                            <label className="text-sm text-white/75 mb-1">Remarks</label>
                             <input
                                 className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
                                 type="text"
@@ -711,15 +773,21 @@ export default function LogbookManualInput() {
                                     setEntryData({ ...entryData, remarks: e.currentTarget.value });
                                 }}
                             />
-                        </div> 
+                        </div>
                     </div>
 
-                    <div className="flex flex-row justify-end space-x-4 mt-4" id="button-row">      
-                        <Button 
-                        styleType="small" 
-                        type="button" 
-                        onClick={handleSubmit}
-                        text={<><Plus className="h-4 w-4 inline-block" strokeWidth={2}/> <span>Submit</span></>}/>
+                    <div className="flex flex-row justify-end space-x-4 mt-4" id="button-row">
+                        <Button
+                            styleType="small"
+                            type="button"
+                            onClick={handleSubmit}
+                            text={
+                                <>
+                                    <Plus className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                    <span>Submit</span>
+                                </>
+                            }
+                        />
                     </div>
                 </div>
             </div>

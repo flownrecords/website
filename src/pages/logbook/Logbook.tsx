@@ -205,14 +205,17 @@ export default function Logbook() {
                 arrAd: meArrival?.toUpperCase().trim() || "",
             };
 
-            if(skip) return navigate(`/me/logbook/manual?${new URLSearchParams(data).toString()}`);
-        
+            if (skip) return navigate(`/me/logbook/manual?${new URLSearchParams(data).toString()}`);
+
             if (!meAircraftReg || !meAircraftType || !meDeparture || !meArrival) {
                 return alert("Error", "Please fill in all fields before submitting the entry");
             }
 
             if (data.depAd?.length !== 4 || data.arrAd?.length !== 4) {
-                return alert("Error", "Departure and arrival airport codes must be 4 characters long");
+                return alert(
+                    "Error",
+                    "Departure and arrival airport codes must be 4 characters long",
+                );
             }
 
             if (!data.acftReg || data.acftReg.length < 1) {
@@ -228,7 +231,7 @@ export default function Logbook() {
             }
 
             return navigate(`/me/logbook/manual?${new URLSearchParams(data).toString()}`);
-        }
+        };
     }
 
     return (
@@ -269,16 +272,26 @@ export default function Logbook() {
 
                     <div className="space-x-4">
                         <div className="hidden lg:inline-block">
-                            <Button 
-                                to="/me" 
-                                text={<><UserRound className="h-4 w-4 inline-block "/><span className="hidden lg:inline-block ml-2">Profile</span></>} 
-                                styleType="small" 
+                            <Button
+                                to="/me"
+                                text={
+                                    <>
+                                        <UserRound className="h-4 w-4 inline-block " />
+                                        <span className="hidden lg:inline-block ml-2">Profile</span>
+                                    </>
+                                }
+                                styleType="small"
                             />
                         </div>
 
                         <Button
                             type="button"
-                            text={<><Plus className="h-4 w-4 inline-block"/><span className="hidden lg:inline-block ml-2">Add Entry</span></>}
+                            text={
+                                <>
+                                    <Plus className="h-4 w-4 inline-block" />
+                                    <span className="hidden lg:inline-block ml-2">Add Entry</span>
+                                </>
+                            }
                             onClick={() => toggleEntryModal(!entryModal)}
                             styleType="small"
                         />
@@ -286,14 +299,26 @@ export default function Logbook() {
                         {manageMode && (
                             <Button
                                 type="button"
-                                text={<><Trash className="h-4 w-4 inline-block"/><span className="hidden lg:inline-block ml-2">Delete Selected</span></>}
+                                text={
+                                    <>
+                                        <Trash className="h-4 w-4 inline-block" />
+                                        <span className="hidden lg:inline-block ml-2">
+                                            Delete Selected
+                                        </span>
+                                    </>
+                                }
                                 styleType="small"
                                 onClick={handleDeleteSelected}
                             />
                         )}
                         <Button
                             type="button"
-                            text={<><Pencil className="h-4 w-4 inline-block"/><span className="hidden lg:inline-block ml-2">Manage</span></>}
+                            text={
+                                <>
+                                    <Pencil className="h-4 w-4 inline-block" />
+                                    <span className="hidden lg:inline-block ml-2">Manage</span>
+                                </>
+                            }
                             className={`${manageMode ? "underline decoration-2 decoration-accent" : ""}`}
                             styleType="small"
                             onClick={() => toggleManageMode(!manageMode)}
@@ -407,7 +432,9 @@ export default function Logbook() {
                                             {parseDate(entry.date, true)}
                                         </span>
                                         <span className="text-xs md:text-sm text-white/50">
-                                            {entry.aircraftRegistration ? entry.aircraftRegistration.split(' ')[0] : "-"}
+                                            {entry.aircraftRegistration
+                                                ? entry.aircraftRegistration.split(" ")[0]
+                                                : "-"}
                                         </span>
                                         <span className="text-xs md:text-sm text-white/50">
                                             {entry.depAd || "-"}
@@ -496,11 +523,11 @@ export default function Logbook() {
                 )}
             </div>
 
-            <Modal 
-            isOpen={entryModal} 
-            onClose={() => toggleEntryModal(false)}
-            title="Add Logbook Entry">
-                
+            <Modal
+                isOpen={entryModal}
+                onClose={() => toggleEntryModal(false)}
+                title="Add Logbook Entry"
+            >
                 <h2 className="text-white/75">Choose your source</h2>
 
                 <div className="w-full bg-primary rounded-lg mt-2 flex flex-row justify-between items-center">
@@ -511,7 +538,8 @@ export default function Logbook() {
                             styleType="small"
                             text="Manual Entry"
                             onClick={() => {
-                                toggleManualModal(!manualModal); toggleUploadModal(false);
+                                toggleManualModal(!manualModal);
+                                toggleUploadModal(false);
                             }}
                         />
                     </div>
@@ -523,15 +551,16 @@ export default function Logbook() {
                             styleType="small"
                             text="Upload Entry"
                             onClick={() => {
-                                toggleUploadModal(!uploadModal); toggleManualModal(false);
+                                toggleUploadModal(!uploadModal);
+                                toggleManualModal(false);
                             }}
                         />
                     </div>
                 </div>
 
-                {uploadModal && 
-                <div className="bg-primary rounded-lg p-4 mt-4">
-                    <h2 className="text-xl font-semibold mb-4">Upload Entry</h2>
+                {uploadModal && (
+                    <div className="bg-primary rounded-lg p-4 mt-4">
+                        <h2 className="text-xl font-semibold mb-4">Upload Entry</h2>
                         <div>
                             <label className="inline-block text-sm text-white/75 mb-1">
                                 file source
@@ -561,82 +590,97 @@ export default function Logbook() {
                             <div className="text-sm text-second-accent mb-4">{uploadInfo}</div>
                         )}
                         <div className="flex justify-start space-x-4">
-                            <Button text="Submit" onClick={uploadLogbook} styleType="small"/>
+                            <Button text="Submit" onClick={uploadLogbook} styleType="small" />
                         </div>
-                </div>}
+                    </div>
+                )}
 
-                {manualModal && 
-                <div className="bg-primary rounded-lg p-4 mt-4">
-                    <h2 className="text-xl font-semibold mb-4">Manual Entry</h2>
+                {manualModal && (
+                    <div className="bg-primary rounded-lg p-4 mt-4">
+                        <h2 className="text-xl font-semibold mb-4">Manual Entry</h2>
 
-                    <div className="grid grid-cols-1 gap-4">
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">aircraft reg.</label>
-                            <input
-                                type="text"
-                                autoComplete="me-aircraft-reg"
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
-                                maxLength={8}
-                                onChange={(e) => {
-                                    e.target.value = e.target.value.replace(/[^a-zA-Z0-9-]/g, "");
-                                    e.target.value = e.target.value.toUpperCase();
-                                    setMeAircraftReg(e.target.value);
-                                }}
+                        <div className="grid grid-cols-1 gap-4">
+                            <div className="flex flex-col">
+                                <label className="text-sm text-white/75 mb-1">aircraft reg.</label>
+                                <input
+                                    type="text"
+                                    autoComplete="me-aircraft-reg"
+                                    className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                                    maxLength={8}
+                                    onChange={(e) => {
+                                        e.target.value = e.target.value.replace(
+                                            /[^a-zA-Z0-9-]/g,
+                                            "",
+                                        );
+                                        e.target.value = e.target.value.toUpperCase();
+                                        setMeAircraftReg(e.target.value);
+                                    }}
+                                />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label className="text-sm text-white/75 mb-1">aircraft type</label>
+                                <input
+                                    type="text"
+                                    autoComplete="me-aircraft-reg"
+                                    className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                                    minLength={3}
+                                    maxLength={4}
+                                    onChange={(e) => {
+                                        e.target.value = e.target.value.replace(
+                                            /[^a-zA-Z0-9-]/g,
+                                            "",
+                                        );
+                                        e.target.value = e.target.value.toUpperCase();
+                                        setMeAircraftType(e.target.value);
+                                    }}
+                                />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <label className="text-sm text-white/75 mb-1">departure</label>
+                                <input
+                                    type="text"
+                                    autoComplete="me-departure"
+                                    className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                                    minLength={4}
+                                    maxLength={4}
+                                    onChange={(e) => {
+                                        e.target.value = e.target.value.toUpperCase();
+                                        setMeDeparture(e.target.value);
+                                    }}
+                                />
+                            </div>
+                            <div className="flex flex-col">
+                                <label className="text-sm text-white/75 mb-1">arrival</label>
+                                <input
+                                    type="text"
+                                    autoComplete="me-arrival"
+                                    className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                                    minLength={4}
+                                    maxLength={4}
+                                    onChange={(e) => {
+                                        e.target.value = e.target.value.toUpperCase();
+                                        setMeArrival(e.target.value);
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-start mt-4 space-x-4">
+                            <Button
+                                text="Submit"
+                                onClick={handleManualEntrySubmit(false)}
+                                styleType="small"
                             />
-                        </div>
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">aircraft type</label>
-                            <input
-                                type="text"
-                                autoComplete="me-aircraft-reg"
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
-                                minLength={3}
-                                maxLength={4}
-                                onChange={(e) => {
-                                    e.target.value = e.target.value.replace(/[^a-zA-Z0-9-]/g, "");
-                                    e.target.value = e.target.value.toUpperCase();
-                                    setMeAircraftType(e.target.value);
-                                }}
-                            />
-                        </div>
-
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">departure</label>
-                            <input
-                                type="text"
-                                autoComplete="me-departure"
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
-                                minLength={4}
-                                maxLength={4}
-                                onChange={(e) => {
-                                    e.target.value  = e.target.value.toUpperCase();
-                                    setMeDeparture(e.target.value);
-                                }}
-                            />
-                        </div>
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">arrival</label>
-                            <input
-                                type="text"
-                                autoComplete="me-arrival"
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
-                                minLength={4}
-                                maxLength={4}
-                                onChange={(e) => {
-                                    e.target.value  = e.target.value.toUpperCase();
-                                    setMeArrival(e.target.value);
-                                }}
+                            <Button
+                                text="Open"
+                                onClick={handleManualEntrySubmit(true)}
+                                styleType="small"
                             />
                         </div>
                     </div>
-
-                    <div className="flex justify-start mt-4 space-x-4">
-                        <Button text="Submit" onClick={handleManualEntrySubmit(false)} styleType="small"/>
-                        <Button text="Open" onClick={handleManualEntrySubmit(true)} styleType="small"/>
-                    </div>
-                </div>}
-
+                )}
             </Modal>
 
             <Footer />

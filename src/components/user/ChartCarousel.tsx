@@ -175,8 +175,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         })
         .slice(isMobile ? -4 : -6);
 
-    const STYLE = 
-    `inline-flex w-full text-center hover:opacity-75
+    const STYLE = `inline-flex w-full text-center hover:opacity-75
     cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800  
     transition duration-150 text-white py-1 px-4 md:px-6 rounded-lg ring-2 ring-white/25 justify-center`;
 

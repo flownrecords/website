@@ -97,7 +97,7 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0 }) =
                 ]}
                 className="h-full w-full"
             >
-                <MapToolbar/>
+                <MapToolbar />
 
                 <TileLayer
                     url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png"
