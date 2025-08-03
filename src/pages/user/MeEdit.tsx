@@ -43,7 +43,6 @@ export default function MeEdit() {
         }, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                "Content-Type": "application/json",
             },
         })
         .then((response) => {
