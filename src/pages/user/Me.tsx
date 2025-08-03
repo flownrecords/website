@@ -12,7 +12,9 @@ import {
     FileText,
     Forward,
     Loader,
+    Pencil,
     PencilLine,
+    Share,
 } from "lucide-react";
 import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
@@ -24,7 +26,6 @@ export default function Me() {
     const alert = useAlert();
     const navigate = useNavigate();
     const [user, setUser] = useState<User>(null);
-    const [reportLoading, setReportLoading] = useState<boolean>(false);
 
     const [localWeather, setLocalWeather] = useState<{
         metar?: string;
@@ -79,10 +80,6 @@ export default function Me() {
             .catch(() => {
                 return alert("Not supported", "Sharing is not supported in this browser.");
             });
-    }
-
-    function requestReport() {
-        alert("Coming soon", "This feature is not yet implemented.");
     }
 
     return (
@@ -143,31 +140,23 @@ export default function Me() {
 
                     <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg hidden lg:block">
                         <div className="flex flex-col space-y-4">
-                            <Button text="Edit Profile" to="/me/edit" />
+                            <Button 
+                                text={<><Pencil className="h-4 w-4 inline-block" /> <span className="ml-1">Edit Profile</span></>} 
+                                to="/me/edit" />
 
                             <hr className="bg-transparent border-b-2 border-white/25 rounded-lg" />
-                            <Button text="Logbook" to="/me/logbook" />
 
-                            <button
-                                className="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 ring-2 ring-white/25 
-            hover:opacity-75 transition duration-150 text-white p-2 rounded-lg text-center flex justify-center items-center "
-                                onClick={() => {
-                                    setReportLoading(true);
-                                    requestReport();
-                                    setTimeout(() => {
-                                        setReportLoading(false);
-                                    }, 5000);
-                                }}
-                            >
-                                <span className="relative">
-                                    {reportLoading && (
-                                        <Loader className="animate-spin w-4 h-4 text-white absolute -left-6 top-1/2 transform -translate-y-1/2" />
-                                    )}
-                                    Generate Report
-                                </span>
-                            </button>
+                            <Button 
+                                text={<><Book className="h-4 w-4 inline-block" /> <span className="ml-1">Logbook</span></>} 
+                                to="/me/logbook" />
 
-                            <Button text="Share" onClick={share} type="button" />
+                            <Button
+                                text={<><FileText className="h-4 w-4 inline-block" /> <span className="ml-1">Generate Report</span></>}
+                                disabled={true}
+                                to="/me/report"
+                            />
+
+                            <Button text={<><Share className="h-4 w-4 inline-block" /> <span className="ml-1">Share</span></>} onClick={share} type="button" />
                         </div>
                     </div>
 

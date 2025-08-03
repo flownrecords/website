@@ -177,7 +177,10 @@ export default function LogbookManualInput() {
 
         console.log("Updated entry:", updated); // ✅ This will now show correct `total`
 
-        axios.post(API + "/users/logbook/manual", updated, {
+        axios.post(API + "/users/logbook/add", {
+            ...updated,
+            date: new Date(updated.offBlock as Date),
+        }, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
@@ -185,7 +188,7 @@ export default function LogbookManualInput() {
         .then((response) => {
             if (response.status === 200) {
                 alert("Success", "Logbook entry added successfully.");
-                navigate("/me/logbook");
+                //navigate("/me/logbook");
             } else {
                 alert("Error", "Failed to add logbook entry. Please try again.");
             }

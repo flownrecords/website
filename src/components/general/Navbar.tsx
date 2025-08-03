@@ -42,7 +42,7 @@ export default function Navbar() {
                                 </Link>
 
                                 {toolsOpen && (
-                                    <ul className="absolute top-full left-0 w-48 bg-secondary shadow-xl rounded-lg ring-2 ring-white/25 z-50 overflow-hidden p-4 space-y-2">
+                                    <ul className="absolute top-full left-0 w-48 bg-secondary shadow-xl rounded-lg ring-2 ring-neutral-600 z-50 overflow-hidden p-4 space-y-2">
                                         <li>
                                             <Link
                                                 to="/questions"
@@ -87,7 +87,7 @@ export default function Navbar() {
                                                 "https://placehold.co/512x512"
                                             }
                                             draggable="false"
-                                            className="rounded-full h-5 w-5 mx-2"
+                                            className="rounded-full h-5 w-5 mx-2 object-cover"
                                             alt="User profile icon"
                                         />
                                         {user?.firstName ?? `@${user.username}`}
