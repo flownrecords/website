@@ -43,6 +43,7 @@ export default function MeEdit() {
         }, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                "Content-Type": "application/json",
             },
         })
         .then((response) => {
@@ -89,7 +90,6 @@ export default function MeEdit() {
 
         axios
             .get(API + "/users/me", {
-                withCredentials: true,
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                 },
