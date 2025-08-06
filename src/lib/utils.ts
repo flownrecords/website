@@ -36,3 +36,13 @@ export function parseDuration(time?: string | number | null) {
     const minutes = Math.round((total % 1) * 60);
     return `${hours}:${minutes < 10 ? "0" + minutes : minutes}`;
 }
+
+export function parseDate(date?: string | Date | null, cut = false) {
+    return new Date(date as any)
+        .toLocaleDateString("en-GB", {
+            month: "numeric",
+            day: "numeric",
+            year: "numeric",
+        })
+        .slice(0, cut ? 5 : undefined);
+}

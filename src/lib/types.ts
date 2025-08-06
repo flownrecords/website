@@ -70,7 +70,7 @@ export type LogbookEntry = {
     user: User | null;
     crew: User[];
 
-    recording: FlightRecording[];
+    recording: FlightRecording | null;
     plan: FlightPlan | null;
 };
 
@@ -99,12 +99,29 @@ export type FlightRecording = {
     createdAt: Date;
     updatedAt: Date;
 
-    fileName: string;
-    data: any | null;
+    name: string;
+    description: string | null;
+    coords: FlightRecordingPlacemark[];
 
     logbookEntryId: number | null;
     logbookEntry: LogbookEntry | null;
 };
+
+export type FlightRecordingPlacemark ={
+    id: number;
+    latitude: number;
+    longitude: number;
+    altitude: {
+        mode: string; // e.g., 'relativeToGround', 'absolute'
+        value: number; // Altitude (ft)
+    };
+    timestamp?: string;
+    heading?: number; // Optional heading in degrees
+    groundSpeed?: number; // Optional ground speed (kt)
+    verticalSpeed?: number; // Optional vertical speed (ft/min)
+    source?: string; // Source of the data
+    squawk?: number; // Optional transponder code
+}
 
 export type Organization = {
     id: string;

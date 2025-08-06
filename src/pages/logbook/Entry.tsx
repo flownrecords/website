@@ -1,6 +1,9 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
+import AirNavLogo from "../../assets/images/airnav.svg";
+import FlightTracker from "../../assets/images/flighttracker.png";
+
 import axios from "axios";
 
 import type { LogbookEntry, User } from "../../lib/types";
@@ -10,21 +13,29 @@ import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
 import ProfileCard from "../../components/user/ProfileCard";
 import { FilePlus2, Pencil, Plus, Save, Undo2 } from "lucide-react";
-import { parseDuration } from "../../lib/utils";
+import { parseDate, parseDuration } from "../../lib/utils";
+import Modal from "../../components/general/Modal";
 
 export default function LogbookEntry() {
     const API = import.meta.env.VITE_API_URL;
+    const token = localStorage.getItem("accessToken");
+
     const { entryId } = useParams();
 
     const [user, setUser] = useState<User>(null);
     const [entry, setEntry] = useState<LogbookEntry | null>(null);
     // @ts-ignore
-    const [recording, setRecording] = useState<any>(null); // FlightRecording type can be defined later if needed
+    const [recording, setRecording] = useState<any>(null);
 
     const alert = useAlert();
     const navigate = useNavigate();
 
     const [crewModal, setCrewModal] = useState<boolean>(false);
+    const [recordModal, setRecordModal] = useState<boolean>(false);
+
+    const [selectedRecordingSource, setSelectedRecordingSource] = useState<string | null>(null);
+    const [recordingFile, setRecordingFile] = useState<File | null>(null);
+    const [recordUploadInfo, setRecordUploadInfo] = useState<string | null>(null);
 
     const addCrewMemberRef = useRef<HTMLInputElement>(null);
 
@@ -41,8 +52,12 @@ export default function LogbookEntry() {
             })
             .then((response) => {
                 if (response.status === 200) {
+                    if(!response.data) {
+                        navigate("/login");
+                        return;
+                    }
                     setUser(response.data);
-                }
+                }            
             })
             .catch((error) => {
                 console.error("Error fetching user data:", error);
@@ -77,16 +92,6 @@ export default function LogbookEntry() {
                 }
             });
     }, []);
-
-    function parseDate(date?: string | Date | null, cut = false) {
-        return new Date(date as any)
-            .toLocaleDateString("en-GB", {
-                month: "numeric",
-                day: "numeric",
-                year: "numeric",
-            })
-            .slice(0, cut ? 5 : undefined);
-    }
 
     function parseTime(rawDate: Date | null): string {
         if (!rawDate) return "N/A";
@@ -187,6 +192,70 @@ export default function LogbookEntry() {
             });
     }
 
+    function handleRecordingFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+        if (event.target.files && event.target.files.length > 0) {
+            const file = event.target.files[0];
+            if (file.type !== "application/vnd.google-earth.kml+xml") {
+                alert("Error", "Please upload a valid KML file.");
+                setRecordingFile(null);
+                setRecordUploadInfo(null);
+                event.target.value = "";
+                return;
+            }
+
+            setRecordingFile(file);
+        }
+    };
+
+    function recordUpload() {
+        // Handle the file upload logic here
+        if (!selectedRecordingSource) {
+            return setRecordUploadInfo("Please select a recording source.");
+        }
+
+        if (!recordingFile) {
+            return setRecordUploadInfo("Please select a KML file to upload.");
+        }
+
+        if(!entry || !entry.id) {
+            return setRecordUploadInfo("No logbook entry found to associate with the recording. Try refreshing the page or ensure you are logged in.");
+        }
+
+        const form= new FormData();
+        form.append("file", recordingFile);
+        form.append("fileSource", selectedRecordingSource);
+        form.append("entryId", entry?.id.toString() || "");
+
+        axios
+            .post(API + "/users/recording/upload", form, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log(response.data);
+                    /*if (response.data.length === 0) {
+                        setUploadInfo("No new logbook entries found in the file");
+                        return;
+                    }
+
+                    toggleUploadModal(false);
+                    setFile(null);
+                    setUploadInfo(undefined);*/
+
+                    //window.location.reload();
+                } else {
+                    setRecordUploadInfo("Failed to upload the recording. Please try again.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error uploading recording:", error);
+                setRecordUploadInfo("An error occurred while uploading the recording. Please try again later.");
+            });
+    }
+
     return (
         <>
             <div className="text-center mt-24 mb-4">
@@ -202,7 +271,7 @@ export default function LogbookEntry() {
                             {entry?.depAd} <span className="text-white/15">to</span> {entry?.arrAd}
                         </h1>
                         <h3 className="font-semibold text-white/50">
-                            {entry ? parseDate(entry.offBlock) : "N/A"}
+                            {entry.offBlock ? parseDate(entry.offBlock) : "N/A"}
                         </h3>
                     </div>
                 ) : (
@@ -214,7 +283,7 @@ export default function LogbookEntry() {
                             <span className="text-white/15">Simulator</span>
                         </h1>
                         <h3 className="font-semibold text-white/50">
-                            {entry ? parseDate(entry.offBlock) : "N/A"}
+                            {entry?.offBlock ? parseDate(entry.offBlock) : "N/A"}
                         </h3>
                     </div>
                 )}
@@ -222,7 +291,7 @@ export default function LogbookEntry() {
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="ring-2 ring-white/25 rounded-lg overflow-hidden">
-                    {entry && <RouteMap type="ENTRY" user={user} entryId={entry.id} />}
+                    {entry && <RouteMap type="ENTRY" user={user} entryId={entry.id} recording={entry.recording} />}
                 </div>
 
                 <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
@@ -266,10 +335,12 @@ export default function LogbookEntry() {
                         />
 
                         <Button
-                            disabled={true}
+                            disabled={entry?.recording ? true : false}
                             styleType="small"
                             type="button"
-                            onClick={() => {}}
+                            onClick={() => {
+                                setRecordModal(true);
+                            }}
                             text={
                                 <>
                                     <Save
@@ -539,8 +610,12 @@ export default function LogbookEntry() {
 
                 <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
                     <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Recording</h1>
-                    {recording ? (
-                        <></>
+                    {entry?.recording ? (
+                        <>
+                            <code>
+                                { JSON.stringify(entry.recording, null, 2) }
+                            </code>
+                        </>
                     ) : (
                         <span className="text-white/75 text-sm my-1">
                             No flight recording available for this entry.
@@ -612,6 +687,65 @@ export default function LogbookEntry() {
                     </div>
                 </div>
             )}
+
+            <Modal isOpen={recordModal} onClose={() => setRecordModal(false)} title="Add Flight Recording">
+                <div className="bg-primary rounded-lg p-4 mt-4">
+                    <h2 className="text-xl font-semibold mb-4">Upload Recording</h2>
+                    <div>
+                        <label className="inline-block text-sm text-white/75 mb-1">
+                            file source
+                        </label>
+                        <div className="flex flex-row space-x-4">
+                            <Button
+                                text={
+                                    <img src={AirNavLogo} alt="AirNav" title="AirNav" className="inline-block h-8" />
+                                }
+                                styleType="small"
+                                type="button"
+                                className={`w-full ${selectedRecordingSource === "AIRNAV" ? "opacity-100" : "opacity-50"}`}
+                                onClick={() => {
+                                    setSelectedRecordingSource("AIRNAV");
+                                    setRecordUploadInfo("");
+                                    if(selectedRecordingSource === "AIRNAV") {
+                                        setSelectedRecordingSource(null);
+                                    }
+                                }}
+                            />
+                            <Button
+                                disabled={true}
+                                text={
+                                    <img src={FlightTracker} alt="Flight Track" title="Flight Tracker" className="inline-block h-8" />
+                                }
+                                styleType="small"
+                                type="button"
+                                className="w-full cursor-not-allowed"
+                                onClick={() => {
+                                    setSelectedRecordingSource("FLIGHTTRACKER");
+                                    setRecordUploadInfo("");
+                                    if(selectedRecordingSource === "FLIGHTTRACKER") {
+                                        setSelectedRecordingSource(null);
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col mb-4">
+                        <label className="text-sm text-white/75 mt-4 mb-1">KML file</label>
+                        <input
+                            onChange={handleRecordingFileChange}
+                            type="file"
+                            accept=".kml"
+                            className="bg-secondary ring-2 ring-white/25 rounded-lg px-2 py-2 file:text-white file:bg-primary/50 file:border-0 file:rounded-md file:px-3"
+                        />
+                    </div>
+                    {recordUploadInfo && (
+                        <div className="text-sm text-second-accent mb-4">{recordUploadInfo}</div>
+                    )}
+                    <div className="flex justify-start space-x-4">
+                        <Button text="Submit" onClick={recordUpload} styleType="small" />
+                    </div>
+                </div>
+            </Modal>
         </>
     );
 }

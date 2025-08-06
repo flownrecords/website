@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import type { FIR, User } from "../../lib/types";
+import type { FIR, FlightRecording, User } from "../../lib/types";
 import { MapContainer, TileLayer } from "react-leaflet";
 import axios from "axios";
 import { AerodromesLayer } from "./AerodromesLayer";
 import { RoutePlot } from "./RoutePlot";
 import { MapToolbar } from "./MapToolbar";
+import RecordingPlot from "./RecordingPlot";
 
 type MapProps = {
     type: "OVERVIEW" | "PLANNING" | "ENTRY";
     entryId?: number;
+    recording?: FlightRecording | null;
     user: User;
     dimensions?: {
         width?: string;
@@ -16,7 +18,7 @@ type MapProps = {
     };
 };
 
-const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0 }) => {
+const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0, recording = null }) => {
     const API = import.meta.env.VITE_API_URL;
 
     const [aerodromes, setAerodromes] = useState<any[]>([]);
@@ -104,6 +106,12 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0 }) =
                     attribution="&copy; OpenStreetMap & CARTO"
                     keepBuffer={6}
                 />
+
+                {type === "ENTRY" && recording && (
+                    <RecordingPlot
+                        recording={recording}
+                    />
+                )}
 
                 {aerodromes.length > 0 && waypoints.length > 0 && (
                     <RoutePlot
