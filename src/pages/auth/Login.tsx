@@ -6,6 +6,7 @@ import Button from "../../components/general/Button";
 import Splash from "../../components/general/Splash";
 import useAlert from "../../components/alert/useAlert";
 import { useAuth } from "../../components/auth/AuthContext";
+import Footer from "../../components/general/Footer";
 
 export default function Login() {
     const API = import.meta.env.VITE_API_URL;
@@ -147,6 +148,9 @@ export default function Login() {
                     </Link>
                 </div>
             </div>
+
+            <br/><br/>
+            <Footer />
         </>
     );
 }

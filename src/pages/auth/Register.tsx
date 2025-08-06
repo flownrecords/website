@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useAlert from "../../components/alert/useAlert";
 import axios from "axios";
 import { useAuth } from "../../components/auth/AuthContext";
+import Footer from "../../components/general/Footer";
 
 type Role = {
     id: string;
@@ -332,6 +333,8 @@ export default function Register() {
                     </div>
                 </form>
             </div>
+
+            <Footer />
         </>
     );
 }
