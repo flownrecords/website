@@ -240,7 +240,7 @@ export default function Logbook() {
                                 "https://placehold.co/512/09090B/313ED8?font=roboto"
                             }
                             draggable={false}
-                            className="h-8 w-8 rounded-full ring-1 ring-white/25"
+                            className="h-8 w-8 rounded-full ring-1 ring-white/25 object-cover"
                             alt="User profile icon"
                         />
                         <h1 className="font-semibold ml-2">

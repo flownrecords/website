@@ -25,8 +25,6 @@ export default function LogbookEntry() {
 
     const [user, setUser] = useState<User>(null);
     const [entry, setEntry] = useState<LogbookEntry | null>(null);
-    // @ts-ignore
-    const [recording, setRecording] = useState<any>(null);
 
     const alert = useAlert();
     const navigate = useNavigate();
@@ -236,17 +234,13 @@ export default function LogbookEntry() {
             })
             .then((response) => {
                 if (response.status === 200) {
-                    console.log(response.data);
-                    /*if (response.data.length === 0) {
-                        setUploadInfo("No new logbook entries found in the file");
-                        return;
+                    if(response.data) {
+                        setRecordUploadInfo("Recording uploaded successfully.");
+                        setRecordModal(false);
+                        setRecordingFile(null);
+                        setSelectedRecordingSource(null);
+                        window.location.reload();
                     }
-
-                    toggleUploadModal(false);
-                    setFile(null);
-                    setUploadInfo(undefined);*/
-
-                    //window.location.reload();
                 } else {
                     setRecordUploadInfo("Failed to upload the recording. Please try again.");
                 }
