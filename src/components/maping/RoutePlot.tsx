@@ -26,108 +26,109 @@ export const RoutePlot = ({
         singleEntryId?: number;
     };
 }) => {
-    const coords: { id: string; type: CoordType; data: [number, number] }[] = [];
-
     const entries = options.singleEntry
         ? user?.logbookEntries.filter((entry) => entry.id === options.singleEntryId)
         : user?.logbookEntries;
 
-    entries?.forEach((entry) => {
-        const dep = navdata.aerodromes.find(
-            (ad: any) => ad.icao === (entry.plan?.depAd || entry.depAd),
-        );
-        const arr = navdata.aerodromes.find(
-            (ad: any) => ad.icao === (entry.plan?.arrAd || entry.arrAd),
-        );
-
-        const route = extractRoutePoints(entry.plan?.route || "").map((wpt) => {
-            const fix =
-                navdata.waypoints.find((w) => w.id === wpt) ||
-                navdata.aerodromes.find((ad) => ad.icao === wpt);
-
-            if (fix) {
-                return {
-                    ...fix,
-                    type: navdata.aerodromes.find((ad) => ad.icao === wpt) ? "AD" : "WPT",
-                };
-            } else {
-                console.warn(`Waypoint or aerodrome not found for ${wpt} in entry ${entry.id}`);
-                return null;
-            }
-        });
-
-        if (dep) {
-            coords.push({
-                id: dep.icao,
-                type: "AD",
-                data: [dep.coords.lat, dep.coords.long],
-            });
-        }
-
-        route.forEach((fix) => {
-            if (fix) {
-                let id = "icao" in fix ? fix.icao : fix.id;
-                coords.push({
-                    id: id,
-                    type: fix.type === "AD" ? "AD" : "WPT",
-                    data: [fix.coords.lat, fix.coords.long],
-                });
-            }
-        });
-
-        if (arr) {
-            coords.push({
-                id: arr.icao,
-                type: "AD",
-                data: [arr.coords.lat, arr.coords.long],
-            });
-        }
-    });
+    if (!entries || entries.length === 0) return null;
 
     return (
         <>
-            {coords.length > 1 && (
-                <Polyline
-                    positions={coords.map((c) => c.data)}
-                    pathOptions={{ color: colors.base }}
-                    weight={1.5}
-                    noClip={true}
-                    opacity={0.75}
-                />
-            )}
+            {entries.map((entry, idx) => {
+                const routeCoords: [number, number][] = [];
+                const points: { id: string; type: CoordType; coords: [number, number] }[] = [];
 
-            {coords.map((pos, idx) => (
-                <CircleMarker
-                    key={`polyline-${idx}`}
-                    center={pos.data}
-                    pathOptions={{
-                        fillColor: pos.type === "AD" ? colors.accent : colors.base,
-                        color: pos.type === "AD" ? colors.accent : colors.base,
-                        fillOpacity: 1,
-                        weight: 0,
-                    }}
-                    radius={1.5}
-                    stroke={false}
-                >
-                    <Popup className="route-popup">
-                        {pos.type === "AD" ? (
-                            <div>
-                                <strong>{pos.id}</strong>
-                                <br />
-                                {navdata.aerodromes.find((ad) => ad.icao === pos.id)?.name ||
-                                    "Unknown name"}
-                            </div>
-                        ) : (
-                            <div>
-                                <strong>{pos.id}</strong>
-                                <br />
-                                {navdata.waypoints.find((wpt) => wpt.id === pos.id)?.name ||
-                                    "Unknown name"}
-                            </div>
-                        )}
-                    </Popup>
-                </CircleMarker>
-            ))}
+                // Find DEP and ARR
+                const dep = navdata.aerodromes.find(
+                    (ad) => ad.icao === (entry.plan?.depAd || entry.depAd)
+                );
+                const arr = navdata.aerodromes.find(
+                    (ad) => ad.icao === (entry.plan?.arrAd || entry.arrAd)
+                );
+
+                if (dep) {
+                    routeCoords.push([dep.coords.lat, dep.coords.long]);
+                    points.push({ id: dep.icao, type: "AD", coords: [dep.coords.lat, dep.coords.long] });
+                }
+
+                // Extract route waypoints
+                const routeFixes = extractRoutePoints(entry.plan?.route || "").map((wpt) => {
+                    const fix =
+                        navdata.waypoints.find((w) => w.id === wpt) ||
+                        navdata.aerodromes.find((ad) => ad.icao === wpt);
+                    if (fix) {
+                        return {
+                            id: "icao" in fix ? fix.icao : fix.id,
+                            type: navdata.aerodromes.find((ad) => ad.icao === wpt) ? "AD" : "WPT",
+                            coords: [fix.coords.lat, fix.coords.long] as [number, number],
+                        };
+                    }
+                    console.warn(`Waypoint or aerodrome not found for ${wpt} in entry ${entry.id}`);
+                    return null;
+                }).filter(Boolean) as { id: string; type: CoordType; coords: [number, number] }[];
+
+                routeCoords.push(...routeFixes.map((f) => f.coords));
+                points.push(...routeFixes);
+
+                if (arr) {
+                    routeCoords.push([arr.coords.lat, arr.coords.long]);
+                    points.push({ id: arr.icao, type: "AD", coords: [arr.coords.lat, arr.coords.long] });
+                }
+
+                if (routeCoords.length < 2) return null;
+
+                return (
+                    <div key={`route-${idx}`}>
+                        {/* Route Polyline */}
+                        <Polyline
+                            positions={routeCoords}
+                            pathOptions={{ color: colors.base }}
+                            weight={1.5}
+                            noClip
+                            opacity={0.75}
+                        >
+                            <Popup>
+                                <strong>Route:</strong>{" "}
+                                {dep?.icao || "?"} → {arr?.icao || "?"}
+                            </Popup>
+                        </Polyline>
+
+                        {/* Points on the route */}
+                        {points.map((pos, i) => (
+                            <CircleMarker
+                                key={`marker-${idx}-${i}`}
+                                center={pos.coords}
+                                pathOptions={{
+                                    fillColor: pos.type === "AD" ? colors.accent : colors.base,
+                                    color: pos.type === "AD" ? colors.accent : colors.base,
+                                    fillOpacity: 1,
+                                    weight: 0,
+                                }}
+                                radius={1.5}
+                                stroke={false}
+                            >
+                                <Popup>
+                                    {pos.type === "AD" ? (
+                                        <div>
+                                            <strong>{pos.id}</strong>
+                                            <br />
+                                            {navdata.aerodromes.find((ad) => ad.icao === pos.id)?.name ||
+                                                "Unknown aerodrome"}
+                                        </div>
+                                    ) : (
+                                        <div>
+                                            <strong>{pos.id}</strong>
+                                            <br />
+                                            {navdata.waypoints.find((wpt) => wpt.id === pos.id)?.name ||
+                                                "Unknown waypoint"}
+                                        </div>
+                                    )}
+                                </Popup>
+                            </CircleMarker>
+                        ))}
+                    </div>
+                );
+            })}
         </>
     );
 };
