@@ -5,7 +5,6 @@ const colors = {
     base: "#666666",
 };
 
-
 export default function RecordingPlot({ recording }: { recording: any; }) {
     const coords: [number, number][] = recording.coords.map((coord: any) => [
         coord.latitude,

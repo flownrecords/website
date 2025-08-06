@@ -15,6 +15,7 @@ import ProfileCard from "../../components/user/ProfileCard";
 import { FilePlus2, Pencil, Plus, Save, Undo2 } from "lucide-react";
 import { parseDate, parseDuration } from "../../lib/utils";
 import Modal from "../../components/general/Modal";
+import FlightDataChart from "../../components/logbook/FlightDataChart";
 
 export default function LogbookEntry() {
     const API = import.meta.env.VITE_API_URL;
@@ -611,11 +612,9 @@ export default function LogbookEntry() {
                 <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
                     <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Recording</h1>
                     {entry?.recording ? (
-                        <>
-                            <code>
-                                { JSON.stringify(entry.recording, null, 2) }
-                            </code>
-                        </>
+                        <div>
+                            <FlightDataChart recording={entry.recording} />
+                        </div>
                     ) : (
                         <span className="text-white/75 text-sm my-1">
                             No flight recording available for this entry.
