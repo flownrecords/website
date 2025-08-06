@@ -68,16 +68,14 @@ export default function LogbookEntry() {
             });
 
         axios
-            .get(API + "/users/logbook", {
+            .get(API + "/users/logbook/" + entryId, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                 },
             })
             .then((response) => {
                 if (response.status === 200) {
-                    let entry = response.data?.find(
-                        (entry: LogbookEntry) => entry.id === Number(entryId),
-                    );
+                    let entry = response.data;
                     if (!entry) return navigate("/me/logbook");
                     setEntry(entry);
                 }
