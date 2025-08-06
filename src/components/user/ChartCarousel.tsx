@@ -18,6 +18,7 @@ import {
 import { ChartTooltip } from "./ChartTooltip";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { parseDuration } from "../../lib/utils";
 
 type Props = {
     logbook?: LogbookEntry[];
@@ -216,7 +217,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
 
                             <Tooltip
                                 formatter={(value: any, name: string) => {
-                                    if (name === "Flight Time") return [parseTime(value), name];
+                                    if (name === "Flight Time") return [parseDuration(value), name];
                                     return [value, name];
                                 }}
                                 content={<ChartTooltip />}
@@ -289,8 +290,8 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                         <PieChart margin={chartMargin}>
                             <Legend />
                             <Tooltip
-                                formatter={(value: any) => parseTime(value)}
-                                content={<ChartTooltip />}
+                                formatter={(value: any) => parseDuration(value)}
+                                content={<ChartTooltip type="time" />}
                             />
 
                             <Pie
@@ -300,7 +301,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                                 cx="50%"
                                 cy="50%"
                                 outerRadius={isMobile ? 64 : 128}
-                                label={(entry) => `${entry.name}: ${parseTime(entry.value)}`}
+                                label={(entry) => `${entry.name}: ${parseDuration(entry.value)}`}
                                 strokeWidth={0}
                             >
                                 {vfrIfrData.map((entry, index) => (
@@ -320,8 +321,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                         <PieChart margin={chartMargin}>
                             <Legend />
                             <Tooltip
-                                formatter={(value: any) => parseTime(value)}
-                                content={<ChartTooltip />}
+                                content={<ChartTooltip type="time"/>}
                             />
 
                             <Pie

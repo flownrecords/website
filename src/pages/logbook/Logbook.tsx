@@ -11,7 +11,7 @@ import { Loader, Pencil, Plus, Trash, UserRound } from "lucide-react";
 import Footer from "../../components/general/Footer";
 import Modal from "../../components/general/Modal";
 
-import { captalize } from "../../lib/utils";
+import { captalize, parseDuration } from "../../lib/utils";
 
 export default function Logbook() {
     const API = import.meta.env.VITE_API_URL;
@@ -73,22 +73,6 @@ export default function Logbook() {
             logo: "https://d308f3rtp9iyib.cloudfront.net/assets/my_flightlogger_icon-99fc56ba222dde06d0b11a88e430a81cc59dbb07027548a1f3666e398f2cfea0.png",
         },
     ];
-
-    function parseTime(time?: string | number | null) {
-        if (!time) return "0:00";
-        const total = typeof time === "string" ? parseFloat(time) : time;
-        if (isNaN(total)) return "0:00";
-        if (total < 0) return "0:00";
-        if (total === 0) return "0:00";
-        if (total < 1) {
-            const minutes = Math.round(total * 60);
-            return `0:${minutes < 10 ? "0" + minutes : minutes}`;
-        }
-
-        const hours = total.toFixed(0);
-        const minutes = Math.round((total % 1) * 60);
-        return `${hours}:${minutes < 10 ? "0" + minutes : minutes}`;
-    }
 
     function parseDate(date?: string | Date | null, cut = false) {
         return new Date(date as any)
@@ -443,7 +427,7 @@ export default function Logbook() {
                                             {entry.arrAd || "-"}
                                         </span>
                                         <span className="text-xs md:text-sm text-white/50">
-                                            {parseTime(
+                                            {parseDuration(
                                                 typeof entry.total === "number" && entry.total > 0
                                                     ? entry.total
                                                     : entry.simTime,

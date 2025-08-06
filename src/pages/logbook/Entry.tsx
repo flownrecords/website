@@ -10,6 +10,7 @@ import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
 import ProfileCard from "../../components/user/ProfileCard";
 import { FilePlus2, Pencil, Plus, Save, Undo2 } from "lucide-react";
+import { parseDuration } from "../../lib/utils";
 
 export default function LogbookEntry() {
     const API = import.meta.env.VITE_API_URL;
@@ -65,6 +66,7 @@ export default function LogbookEntry() {
                     );
                     if (!entry) return navigate("/me/logbook");
                     setEntry(entry);
+                    console.log(entry);
                 }
             })
             .catch((error) => {
@@ -85,22 +87,6 @@ export default function LogbookEntry() {
                 year: "numeric",
             })
             .slice(0, cut ? 5 : undefined);
-    }
-
-    function parseDuration(time?: string | number | null) {
-        if (!time) return "0:00";
-        const total = typeof time === "string" ? parseFloat(time) : time;
-        if (isNaN(total)) return "0:00";
-        if (total < 0) return "0:00";
-        if (total === 0) return "0:00";
-        if (total < 1) {
-            const minutes = Math.round(total * 60);
-            return `0:${minutes < 10 ? "0" + minutes : minutes}`;
-        }
-
-        const hours = total.toFixed(0);
-        const minutes = Math.round((total % 1) * 60);
-        return `${hours}:${minutes < 10 ? "0" + minutes : minutes}`;
     }
 
     function parseTime(rawDate: Date | null): string {
