@@ -42,7 +42,7 @@ export default function FlightDataChart({ recording }: { recording: FlightRecord
 
         if( speed === undefined || speed === null) return null;
         // Remove isolated zeros
-        if (speed === 0 && prev.groundSpeed && prev.groundSpeed > 0 && next.groundSpeed && next.groundSpeed > 0) {
+        if (speed === 0 && prev?.groundSpeed && prev.groundSpeed > 0 && next?.groundSpeed && next.groundSpeed > 0) {
             return null;
         }
 
