@@ -66,7 +66,6 @@ export default function LogbookEntry() {
                     );
                     if (!entry) return navigate("/me/logbook");
                     setEntry(entry);
-                    console.log(entry);
                 }
             })
             .catch((error) => {
