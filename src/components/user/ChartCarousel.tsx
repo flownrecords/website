@@ -19,6 +19,7 @@ import { ChartTooltip } from "./ChartTooltip";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { parseDuration } from "../../lib/utils";
+import { Link } from "react-router-dom";
 
 type Props = {
     logbook?: LogbookEntry[];
@@ -382,6 +383,13 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                 >
                     <ChevronLeft />
                 </button>
+
+                <Link
+                    to="/me/stats"
+                    className={STYLE}
+                >
+                    More Details
+                </Link>
 
                 <button
                     onClick={() => {
