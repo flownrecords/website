@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import Splash from "../../components/general/Splash";
 import Footer from "../../components/general/Footer";
+import { useAuth } from "../../components/auth/AuthContext";
 
 export default function Home() {
     let highlightTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    const { user } = useAuth();
 
     function highlight() {
         const button = document.getElementById("get-started-button") as HTMLButtonElement;
@@ -71,7 +74,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col items-center mt-2 md:mt-10 mb-8">
-                <Link to="/getstarted">
+                <Link to={user ? "/me" : "/getstarted"}>
                     <button
                         id="get-started-button"
                         className="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 hover:opacity-75 text-white font-semibold py-2 px-4 rounded-lg ring-2 ring-white/25 transition duration-150"
