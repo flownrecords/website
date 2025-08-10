@@ -99,7 +99,13 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0, rec
                 ]}
                 className="h-full w-full"
             >
-                <MapToolbar />
+                <MapToolbar 
+                initialBounds={mapBounds.length > 1 ? mapBounds : undefined}
+                initialCenterZoom={
+                    mapBounds.length === 1
+                    ? { center: mapBounds[0], zoom: 10 } // your default zoom for single point
+                    : undefined
+                }/>
 
                 <TileLayer
                     url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png"

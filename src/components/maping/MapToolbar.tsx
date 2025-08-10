@@ -2,9 +2,14 @@ import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import ReactDOM from "react-dom/client";
-import { Maximize, Minus, Plus } from "lucide-react";
+import { Crosshair, Maximize, Minus, Plus } from "lucide-react";
 
-export function MapToolbar() {
+type MapToolbarProps = {
+    initialBounds?: [number, number][]; // multiple points
+    initialCenterZoom?: { center: [number, number]; zoom: number }; // single point
+};
+
+export function MapToolbar({ initialBounds, initialCenterZoom }: MapToolbarProps) {
     const map = useMap();
 
     const style = `w-8 h-8 
@@ -44,6 +49,19 @@ export function MapToolbar() {
                     className={style}
                 >
                     <Maximize className="w-4 h-4" />
+                </button>
+                <button
+                    title="Recenter"
+                    onClick={() => {
+                        if (initialBounds) {
+                            map.fitBounds(initialBounds, { padding: [25, 25] });
+                        } else if (initialCenterZoom) {
+                            map.setView(initialCenterZoom.center, initialCenterZoom.zoom);
+                        }
+                    }}
+                    className={style}
+                >
+                    <Crosshair className="w-4 h-4" />
                 </button>
             </div>,
         );
