@@ -12,6 +12,8 @@ import Footer from "../../components/general/Footer";
 import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
 import ProfileCard from "../../components/user/ProfileCard";
+import PageLoader from "../../components/general/Loader";
+
 import { FilePlus2, Pencil, Plus, Save, Undo2 } from "lucide-react";
 import { parseDate, parseDuration } from "../../lib/utils";
 import Modal from "../../components/general/Modal";
@@ -252,39 +254,61 @@ export default function LogbookEntry() {
     return (
         <>
             <div className="text-center mt-24 mb-4">
-                {typeof entry?.total === "number" &&
-                entry.total > 0 &&
-                entry?.depAd &&
-                entry?.arrAd ? (
-                    <div>
-                        <h3 className="text-2xl md:text-3xl font-bold text-white/50">
-                            {entry?.aircraftRegistration ?? ""}
-                        </h3>
-                        <h1 className="block text-7xl md:text-8xl font-bold">
-                            {entry?.depAd} <span className="text-white/15">to</span> {entry?.arrAd}
-                        </h1>
-                        <h3 className="font-semibold text-white/50">
-                            {entry.offBlock ? parseDate(entry.offBlock) : "N/A"}
-                        </h3>
-                    </div>
-                ) : (
-                    <div>
-                        <h3 className="text-2xl md:text-3xl font-bold text-white/50">
-                            {entry?.aircraftRegistration ?? ""}
-                        </h3>
-                        <h1 className="block text-7xl md:text-8xl font-bold">
-                            <span className="text-white/15">Simulator</span>
-                        </h1>
-                        <h3 className="font-semibold text-white/50">
-                            {entry?.offBlock ? parseDate(entry.offBlock) : "N/A"}
-                        </h3>
-                    </div>
-                )}
+                {(() => {
+                    if (
+                        typeof entry?.total === "number" &&
+                        typeof entry?.simTime === "number" &&
+                        entry.total > 0 &&
+                        entry.simTime === 0
+                    ) {
+                        return (
+                            <div>
+                                <h3 className="text-2xl md:text-3xl font-bold text-white/50">
+                                    {entry?.aircraftRegistration ?? ""}
+                                </h3>
+                                <h1 className="block text-7xl md:text-8xl font-bold">
+                                    {entry?.depAd} <span className="text-white/15">to</span> {entry?.arrAd}
+                                </h1>
+                                <h3 className="font-semibold text-white/50">
+                                    {entry.offBlock ? parseDate(entry.offBlock) : "N/A"}
+                                </h3>
+                            </div>
+                        );
+                    } 
+                    else if (typeof entry?.simTime === "number" && entry.simTime > 0) {
+                        return (
+                            <div>
+                                <h3 className="text-2xl md:text-3xl font-bold text-white/50">
+                                    {entry?.aircraftRegistration ?? ""}
+                                </h3>
+                                <h1 className="block text-7xl md:text-8xl font-bold">
+                                    <span className="text-white/15">Simulator</span>
+                                </h1>
+                                <h3 className="font-semibold text-white/50">
+                                    {entry?.offBlock ? parseDate(entry.offBlock) : "N/A"}
+                                </h3>
+                            </div>
+                        );
+                    } 
+                    else {
+                        return (
+                            <div>
+                                <h3 className="text-2xl md:text-3xl font-bold text-white/50">
+                                    {"Loading"}
+                                </h3>
+                                <h1 className="block text-7xl md:text-8xl font-bold">
+                                    <span className="text-white/15">Flight</span>
+                                </h1>
+                            </div>
+                        );
+                    }
+                })()}
             </div>
+
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="ring-2 ring-white/25 rounded-lg overflow-hidden">
-                    {entry && <RouteMap type="ENTRY" user={user} entryId={entry.id} recording={entry.recording} />}
+                    <RouteMap type="ENTRY" user={user} entryId={entry?.id} recording={entry?.recording} />
                 </div>
 
                 <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
@@ -328,7 +352,13 @@ export default function LogbookEntry() {
                         />
 
                         <Button
-                            disabled={entry?.recording ? true : false}
+                            disabled={
+                                entry?.recording 
+                                    ? true : 
+                                    (
+                                        entry?.id ? false : true
+                                    )
+                            }
                             styleType="small"
                             type="button"
                             onClick={() => {
@@ -346,273 +376,275 @@ export default function LogbookEntry() {
                         />
                     </div>
                 </div>
-
-                <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
-                    <h1 className="text-lg text-white/50 font-semibold mb-2">
-                        Logbook Entry Details
-                    </h1>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div>
-                            <h1 className="mb-1">Registration</h1>
-                            <div className="rounded-lg bg-secondary p-2">
-                                {entry ? entry.aircraftRegistration : "N/A"}
+                
+                { entry ? <>
+                    <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
+                        <h1 className="text-lg text-white/50 font-semibold mb-2">
+                            Logbook Entry Details
+                        </h1>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <h1 className="mb-1">Registration</h1>
+                                <div className="rounded-lg bg-secondary p-2">
+                                    {entry ? entry.aircraftRegistration : "N/A"}
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <h1 className="mb-1">Departure</h1>
-                            <div className="rounded-lg bg-secondary p-2">
-                                {entry?.depAd && entry.depAd.length > 0 ? entry.depAd : "N/A"}
+                            <div>
+                                <h1 className="mb-1">Departure</h1>
+                                <div className="rounded-lg bg-secondary p-2">
+                                    {entry?.depAd && entry.depAd.length > 0 ? entry.depAd : "N/A"}
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <h1 className="mb-1">Arrival</h1>
-                            <div className="rounded-lg bg-secondary p-2">
-                                {entry?.arrAd && entry.arrAd.length > 0 ? entry.arrAd : "N/A"}
+                            <div>
+                                <h1 className="mb-1">Arrival</h1>
+                                <div className="rounded-lg bg-secondary p-2">
+                                    {entry?.arrAd && entry.arrAd.length > 0 ? entry.arrAd : "N/A"}
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <h1 className="mb-1">Uploaded on</h1>
-                            <div className="rounded-lg bg-secondary p-2">
-                                {entry
-                                    ? `${parseDate(entry.createdAt)} ${parseTime(entry.createdAt)}`
-                                    : "N/A"}
+                            <div>
+                                <h1 className="mb-1">Uploaded on</h1>
+                                <div className="rounded-lg bg-secondary p-2">
+                                    {entry
+                                        ? `${parseDate(entry.createdAt)} ${parseTime(entry.createdAt)}`
+                                        : "N/A"}
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <h1 className="mb-1">Date</h1>
-                            <div className="rounded-lg bg-secondary p-2">
-                                {entry ? parseDate(entry.offBlock) : "N/A"}
+                            <div>
+                                <h1 className="mb-1">Date</h1>
+                                <div className="rounded-lg bg-secondary p-2">
+                                    {entry ? parseDate(entry.offBlock) : "N/A"}
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <h1 className="mb-1">Off Block</h1>
-                            <div className="rounded-lg bg-secondary p-2">
-                                {entry ? parseTime(entry.offBlock) : "N/A"}
+                            <div>
+                                <h1 className="mb-1">Off Block</h1>
+                                <div className="rounded-lg bg-secondary p-2">
+                                    {entry ? parseTime(entry.offBlock) : "N/A"}
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <h1 className="mb-1">On Block</h1>
-                            <div className="rounded-lg bg-secondary p-2">
-                                {entry ? parseTime(entry.onBlock) : "N/A"}
+                            <div>
+                                <h1 className="mb-1">On Block</h1>
+                                <div className="rounded-lg bg-secondary p-2">
+                                    {entry ? parseTime(entry.onBlock) : "N/A"}
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <h1 className="mb-1">
-                                {entry && typeof entry.total === "number" && entry.total > 0
-                                    ? ""
-                                    : "Synthetic"}{" "}
-                                Flight Time
-                            </h1>
-                            <div className="rounded-lg bg-secondary p-2">
-                                {entry
-                                    ? parseDuration(
-                                          typeof entry.total === "number" && entry.total > 0
-                                              ? entry.total
-                                              : entry.simTime,
-                                      )
-                                    : "00h00"}
+                            <div>
+                                <h1 className="mb-1">
+                                    {entry && typeof entry.total === "number" && entry.total > 0
+                                        ? ""
+                                        : "Synthetic"}{" "}
+                                    Flight Time
+                                </h1>
+                                <div className="rounded-lg bg-secondary p-2">
+                                    {entry
+                                        ? parseDuration(
+                                            typeof entry.total === "number" && entry.total > 0
+                                                ? entry.total
+                                                : entry.simTime,
+                                        )
+                                        : "00h00"}
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <h1 className="mb-1">Crew</h1>
-                            <div className="rounded-lg bg-secondary p-2 relative">
-                                {entry?.crew && entry.crew.length > 0 ? (
-                                    entry.crew.map((m: User, i) => {
-                                        const fullName = m?.firstName
-                                            ? `${m.firstName} ${m.lastName ?? ""}`
-                                            : `@${m?.username}`;
+                            <div>
+                                <h1 className="mb-1">Crew</h1>
+                                <div className="rounded-lg bg-secondary p-2 relative">
+                                    {entry?.crew && entry.crew.length > 0 ? (
+                                        entry.crew.map((m: User, i) => {
+                                            const fullName = m?.firstName
+                                                ? `${m.firstName} ${m.lastName ?? ""}`
+                                                : `@${m?.username}`;
 
-                                        return (
-                                            <div
-                                                className={`inline-block hover:mr-2 ${
-                                                    i !== 0 ? "-ml-1 hover:ml-1" : ""
-                                                } transition-all duration-500`}
-                                                key={i}
-                                            >
-                                                <div className="relative group inline-block">
-                                                    <Link
-                                                        to={"/users/" + m?.id}
-                                                        className="inline-block"
-                                                        title={fullName} // still useful for screen readers
-                                                    >
-                                                        <img
-                                                            src={
-                                                                m?.profilePictureUrl ??
-                                                                `https://placehold.co/512/09090B/313ED8?font=roboto&text=${
-                                                                    m?.firstName?.charAt(0) || ""
-                                                                }${m?.lastName?.charAt(0) || ""}`
-                                                            }
-                                                            className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"
-                                                        />
-                                                    </Link>
+                                            return (
+                                                <div
+                                                    className={`inline-block hover:mr-2 ${
+                                                        i !== 0 ? "-ml-1 hover:ml-1" : ""
+                                                    } transition-all duration-500`}
+                                                    key={i}
+                                                >
+                                                    <div className="relative group inline-block">
+                                                        <Link
+                                                            to={"/users/" + m?.id}
+                                                            className="inline-block"
+                                                            title={fullName} // still useful for screen readers
+                                                        >
+                                                            <img
+                                                                src={
+                                                                    m?.profilePictureUrl ??
+                                                                    `https://placehold.co/512/09090B/313ED8?font=roboto&text=${
+                                                                        m?.firstName?.charAt(0) || ""
+                                                                    }${m?.lastName?.charAt(0) || ""}`
+                                                                }
+                                                                className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"
+                                                            />
+                                                        </Link>
 
-                                                    {/* Custom tooltip */}
-                                                    <div
-                                                        className="
-                                               fixed sm:absolute 
-                                                top-12 sm:top-auto 
-                                                left-1/2 
-                                                -translate-x-1/2 
-                                                sm:bottom-full 
-                                                sm:mb-1 
-                                                pointer-events-none 
-                                                whitespace-nowrap 
-                                                text-white text-xs 
-                                                rounded px-2 py-1 
-                                                opacity-0 
-                                                group-hover:opacity-100 
-                                                transition-opacity duration-300 
-                                                z-10 shadow-xs"
-                                                    >
-                                                        <ProfileCard
-                                                            data={{
-                                                                profilePictureUrl:
-                                                                    m?.profilePictureUrl ?? "",
-                                                                firstName: m?.firstName ?? null,
-                                                                lastName: m?.lastName ?? "",
-                                                                username: m?.username ?? null,
-                                                                location: m?.location ?? null,
-                                                                publicProfile:
-                                                                    m?.publicProfile ?? false,
-                                                                bio: m?.bio ?? null,
-                                                                organizationId:
-                                                                    m?.organizationId ?? "",
-                                                                organizationRole:
-                                                                    m?.organizationRole ?? "",
-                                                                organization: m?.organization,
-                                                            }}
-                                                        />
+                                                        {/* Custom tooltip */}
+                                                        <div
+                                                            className="
+                                                fixed sm:absolute 
+                                                    top-12 sm:top-auto 
+                                                    left-1/2 
+                                                    -translate-x-1/2 
+                                                    sm:bottom-full 
+                                                    sm:mb-1 
+                                                    pointer-events-none 
+                                                    whitespace-nowrap 
+                                                    text-white text-xs 
+                                                    rounded px-2 py-1 
+                                                    opacity-0 
+                                                    group-hover:opacity-100 
+                                                    transition-opacity duration-300 
+                                                    z-10 shadow-xs"
+                                                        >
+                                                            <ProfileCard
+                                                                data={{
+                                                                    profilePictureUrl:
+                                                                        m?.profilePictureUrl ?? "",
+                                                                    firstName: m?.firstName ?? null,
+                                                                    lastName: m?.lastName ?? "",
+                                                                    username: m?.username ?? null,
+                                                                    location: m?.location ?? null,
+                                                                    publicProfile:
+                                                                        m?.publicProfile ?? false,
+                                                                    bio: m?.bio ?? null,
+                                                                    organizationId:
+                                                                        m?.organizationId ?? "",
+                                                                    organizationRole:
+                                                                        m?.organizationRole ?? "",
+                                                                    organization: m?.organization,
+                                                                }}
+                                                            />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        );
-                                    })
-                                ) : (
-                                    <span className="text-white/75 text-sm flex items-center h-4 my-1">
-                                        No crew assigned
+                                            );
+                                        })
+                                    ) : (
+                                        <span className="text-white/75 text-sm flex items-center h-4 my-1">
+                                            No crew assigned
+                                        </span>
+                                    )}
+
+                                    <span
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-white/75 bg-primary px-2 py-1 rounded-lg cursor-pointer flex hover:opacity-75 transition-all duration-300"
+                                        onClick={() => setCrewModal(!crewModal)}
+                                    >
+                                        <Plus
+                                            className="h-4 w-4 inline-block text-white cursor-pointer lg:mr-1"
+                                            strokeWidth={2}
+                                        />
+                                        <span className="text-xs hidden lg:inline-block">Add Crew</span>
                                     </span>
-                                )}
-
-                                <span
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-white/75 bg-primary px-2 py-1 rounded-lg cursor-pointer flex hover:opacity-75 transition-all duration-300"
-                                    onClick={() => setCrewModal(!crewModal)}
-                                >
-                                    <Plus
-                                        className="h-4 w-4 inline-block text-white cursor-pointer lg:mr-1"
-                                        strokeWidth={2}
-                                    />
-                                    <span className="text-xs hidden lg:inline-block">Add Crew</span>
-                                </span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <h1 className="mb-1">Landings</h1>
-                            <div className="rounded-lg bg-secondary p-2">
-                                {entry ? (entry.landDay ?? 0) + (entry.landNight ?? 0) : "1"}
+                            <div>
+                                <h1 className="mb-1">Landings</h1>
+                                <div className="rounded-lg bg-secondary p-2">
+                                    {entry ? (entry.landDay ?? 0) + (entry.landNight ?? 0) : "1"}
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="col-span-2">
-                            <h1 className="mb-1">Remarks</h1>
-                            <div className="rounded-lg bg-secondary p-2">
-                                {entry?.remarks ? entry.remarks : "N/A"}
+                            <div className="col-span-2">
+                                <h1 className="mb-1">Remarks</h1>
+                                <div className="rounded-lg bg-secondary p-2">
+                                    {entry?.remarks ? entry.remarks : "N/A"}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
-                    <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Plan</h1>
-                    {entry?.plan ? (
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div className="">
-                                <h1 className="mb-1">Departure</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry && entry.plan ? entry.plan.depAd : "N/A"}
+                    <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
+                        <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Plan</h1>
+                        {entry?.plan ? (
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div className="">
+                                    <h1 className="mb-1">Departure</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry && entry.plan ? entry.plan.depAd : "N/A"}
+                                    </div>
+                                </div>
+
+                                <div className="">
+                                    <h1 className="mb-1">ETD</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry && entry.plan ? parseTime(entry.plan.etd) : "N/A"}
+                                    </div>
+                                </div>
+
+                                <div className="">
+                                    <h1 className="mb-1">ETE</h1>{" "}
+                                    {/* Estimated Time Enroute eta - etd */}
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry && entry.plan && entry.plan.eta && entry.plan.etd
+                                            ? parseDuration(
+                                                (new Date(entry.plan.eta).getTime() -
+                                                    new Date(entry.plan.etd).getTime()) /
+                                                    1000 /
+                                                    60 /
+                                                    60,
+                                            )
+                                            : "N/A"}
+                                    </div>
+                                </div>
+
+                                <div className="">
+                                    <h1 className="mb-1">Estimated Fuel</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry && entry.plan && entry.plan.fuelPlan
+                                            ? `${Number(entry.plan.fuelPlan)}l`
+                                            : "N/A"}
+                                    </div>
+                                </div>
+
+                                <div className="col-span-4">
+                                    <h1 className="mb-1">Route</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry && entry.plan?.route ? entry.plan.route : "N/A"}
+                                    </div>
+                                </div>
+
+                                <div className="">
+                                    <h1 className="mb-1">Arrival</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry && entry.plan ? entry.plan.depAd : "N/A"}
+                                    </div>
+                                </div>
+
+                                <div className="">
+                                    <h1 className="mb-1">ETA</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry && entry.plan ? parseTime(entry.plan.eta) : "N/A"}
+                                    </div>
                                 </div>
                             </div>
+                        ) : (
+                            <span className="text-white/75 text-sm my-1">
+                                No flight plan available for this entry.
+                            </span>
+                        )}
+                    </div>
 
-                            <div className="">
-                                <h1 className="mb-1">ETD</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry && entry.plan ? parseTime(entry.plan.etd) : "N/A"}
-                                </div>
+                    <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
+                        <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Recording</h1>
+                        {entry?.recording ? (
+                            <div>
+                                <FlightDataChart recording={entry.recording} />
                             </div>
-
-                            <div className="">
-                                <h1 className="mb-1">ETE</h1>{" "}
-                                {/* Estimated Time Enroute eta - etd */}
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry && entry.plan && entry.plan.eta && entry.plan.etd
-                                        ? parseDuration(
-                                              (new Date(entry.plan.eta).getTime() -
-                                                  new Date(entry.plan.etd).getTime()) /
-                                                  1000 /
-                                                  60 /
-                                                  60,
-                                          )
-                                        : "N/A"}
-                                </div>
-                            </div>
-
-                            <div className="">
-                                <h1 className="mb-1">Estimated Fuel</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry && entry.plan && entry.plan.fuelPlan
-                                        ? `${Number(entry.plan.fuelPlan)}l`
-                                        : "N/A"}
-                                </div>
-                            </div>
-
-                            <div className="col-span-4">
-                                <h1 className="mb-1">Route</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry && entry.plan?.route ? entry.plan.route : "N/A"}
-                                </div>
-                            </div>
-
-                            <div className="">
-                                <h1 className="mb-1">Arrival</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry && entry.plan ? entry.plan.depAd : "N/A"}
-                                </div>
-                            </div>
-
-                            <div className="">
-                                <h1 className="mb-1">ETA</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry && entry.plan ? parseTime(entry.plan.eta) : "N/A"}
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        <span className="text-white/75 text-sm my-1">
-                            No flight plan available for this entry.
-                        </span>
-                    )}
-                </div>
-
-                <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
-                    <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Recording</h1>
-                    {entry?.recording ? (
-                        <div>
-                            <FlightDataChart recording={entry.recording} />
-                        </div>
-                    ) : (
-                        <span className="text-white/75 text-sm my-1">
-                            No flight recording available for this entry.
-                        </span>
-                    )}
-                </div>
+                        ) : (
+                            <span className="text-white/75 text-sm my-1">
+                                No flight recording available for this entry.
+                            </span>
+                        )}
+                    </div>
+                </> : <PageLoader />}
             </div>
 
             <Footer />
