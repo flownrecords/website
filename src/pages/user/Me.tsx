@@ -134,8 +134,8 @@ export default function Me() {
                                 <Button
                                     text={
                                         <>
-                                            <Pencil className="h-4 w-4 inline-block" />{" "}
-                                            <span className="ml-1">Edit Profile</span>
+                                            <Pencil className="h-4 w-4 inline-block" strokeWidth={2}/>
+                                            <span className="ml-2">Edit Profile</span>
                                         </>
                                     }
                                     to="/me/edit"
@@ -146,8 +146,8 @@ export default function Me() {
                                 <Button
                                     text={
                                         <>
-                                            <Book className="h-4 w-4 inline-block" />{" "}
-                                            <span className="ml-1">Logbook</span>
+                                            <Book className="h-4 w-4 inline-block" strokeWidth={2}/>
+                                            <span className="ml-2">Logbook</span>
                                         </>
                                     }
                                     to="/me/logbook"
@@ -156,8 +156,8 @@ export default function Me() {
                                 <Button
                                     text={
                                         <>
-                                            <FileText className="h-4 w-4 inline-block" />{" "}
-                                            <span className="ml-1">Generate Report</span>
+                                            <FileText className="h-4 w-4 inline-block" strokeWidth={2}/>
+                                            <span className="ml-2">Generate Report</span>
                                         </>
                                     }
                                     disabled={true}
@@ -167,8 +167,8 @@ export default function Me() {
                                 <Button
                                     text={
                                         <>
-                                            <Share className="h-4 w-4 inline-block" />{" "}
-                                            <span className="ml-1">Share</span>
+                                            <Share className="h-4 w-4 inline-block" strokeWidth={2}/>
+                                            <span className="ml-2">Share</span>
                                         </>
                                     }
                                     onClick={share}

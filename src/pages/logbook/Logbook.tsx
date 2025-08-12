@@ -260,7 +260,7 @@ export default function Logbook() {
                                 to="/me"
                                 text={
                                     <>
-                                        <UserRound className="h-4 w-4 inline-block " />
+                                        <UserRound className="h-4 w-4 inline-block " strokeWidth={2}/>
                                         <span className="hidden lg:inline-block ml-2">Profile</span>
                                     </>
                                 }
@@ -272,7 +272,7 @@ export default function Logbook() {
                             type="button"
                             text={
                                 <>
-                                    <Plus className="h-4 w-4 inline-block" />
+                                    <Plus className="h-4 w-4 inline-block" strokeWidth={2}/>
                                     <span className="hidden lg:inline-block ml-2">Add Entry</span>
                                 </>
                             }
@@ -285,7 +285,7 @@ export default function Logbook() {
                                 type="button"
                                 text={
                                     <>
-                                        <Trash className="h-4 w-4 inline-block" />
+                                        <Trash className="h-4 w-4 inline-block" strokeWidth={2}/>
                                         <span className="hidden lg:inline-block ml-2">
                                             Delete Selected
                                         </span>
@@ -299,7 +299,7 @@ export default function Logbook() {
                             type="button"
                             text={
                                 <>
-                                    <Pencil className="h-4 w-4 inline-block" />
+                                    <Pencil className="h-4 w-4 inline-block" strokeWidth={2}/>
                                     <span className="hidden lg:inline-block ml-2">Manage</span>
                                 </>
                             }

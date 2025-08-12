@@ -7,6 +7,7 @@ import type { User } from "../../lib/types";
 import { useNavigate } from "react-router-dom";
 import useAlert from "../../components/alert/useAlert";
 import { roles } from "../../lib/roles";
+import { Save, Undo2 } from "lucide-react";
 
 export default function MeEdit() {
     const API = import.meta.env.VITE_API_URL;
@@ -290,8 +291,26 @@ export default function MeEdit() {
 
                 <div className="mt-4 rounded-lg ring-2 ring-white/25 p-4">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        <Button text="Go Back" to="/me" styleType="small" />
-                        <Button text="Save Changes" onClick={handleSave} styleType="small" />
+                        <Button 
+                            text={
+                                <>
+                                    <Undo2 className="h-4 w-4 inline-block" strokeWidth={2} />
+                                    <span className="ml-2">Go Back</span>
+                                </>
+                            }
+                            to="/me" 
+                            styleType="small" 
+                        />
+                        <Button 
+                            text={
+                                <>
+                                    <Save className="h-4 w-4 inline-block" strokeWidth={2} />
+                                    <span className="ml-2">Save Changes</span>
+                                </>
+                            } 
+                            onClick={handleSave} 
+                            styleType="small" 
+                        />
                     </div>
                     <div></div>
                 </div>
