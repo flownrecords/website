@@ -55,16 +55,16 @@ export default function Data() {
 
                     // Check navaids
                     fir.navaid?.forEach((navaid: Navaid) => {
-                        if (!navaid.coords || !navaid.icao) {
+                        if (!navaid.coords || !navaid.id) {
                             warnings.push({
                                 fir: fir.fir,
                                 error: 1,
-                                navId: navaid.icao || undefined,
+                                navId: navaid.id || undefined,
                             });
-                        } else if (navaidIds.has(navaid.icao)) {
-                            warnings.push({ fir: fir.fir, error: 2, navId: navaid.icao });
+                        } else if (navaidIds.has(navaid.id)) {
+                            warnings.push({ fir: fir.fir, error: 2, navId: navaid.id });
                         } else {
-                            navaidIds.add(navaid.icao);
+                            navaidIds.add(navaid.id);
                         }
                     });
 
@@ -254,12 +254,12 @@ export default function Data() {
                                                       <div className="grid grid-cols-1 lg:grid-cols-4 text-sm gap-2">
                                                           {data[id].navaid?.map((navaid) => (
                                                               <div
-                                                                  key={navaid.icao}
+                                                                  key={navaid.id}
                                                                   className="bg-primary rounded-lg p-2"
                                                               >
-                                                                  <span>{navaid.icao}</span>{" "}
+                                                                  <span>{navaid.id}</span>{" "}
                                                                   <span className="text-white/75">
-                                                                      {truncateStr(navaid.name, 20)}
+                                                                      {navaid.freq}MHz
                                                                   </span>
                                                               </div>
                                                           )) || <span>No navaids available</span>}

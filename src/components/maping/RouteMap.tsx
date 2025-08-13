@@ -23,6 +23,7 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0, rec
 
     const [aerodromes, setAerodromes] = useState<any[]>([]);
     const [waypoints, setWaypoints] = useState<any[]>([]);
+    const [navaids, setNavaids] = useState<any[]>([]);
     const [mapBounds, setMapBounds] = useState<[number, number][]>([]);
 
     const visitedIcaos = useMemo(() => {
@@ -63,8 +64,11 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0, rec
                 ...(f.waypoints.ifr ?? []),
             ]);
 
+            const navaids = (navdata.data as FIR[]).flatMap((f) => f.navaid ?? []);
+
             setAerodromes(ads);
             setWaypoints(wpts);
+            setNavaids(navaids);
 
             const visitedCoords: [number, number][] = ads
                 .filter(
@@ -121,7 +125,7 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0, rec
 
                 {aerodromes.length > 0 && waypoints.length > 0 && (
                     <RoutePlot
-                        navdata={{ aerodromes, waypoints }}
+                        navdata={{ aerodromes, waypoints, navaids }}
                         user={user}
                         options={
                             type === "ENTRY" ? { singleEntry: true, singleEntryId: entryId } : {}

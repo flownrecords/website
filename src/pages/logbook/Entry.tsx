@@ -599,7 +599,7 @@ export default function LogbookEntry() {
                                     <h1 className="mb-1">Estimated Fuel</h1>
                                     <div className="rounded-lg bg-secondary p-2">
                                         {entry && entry.plan && entry.plan.fuelPlan
-                                            ? `${Number(entry.plan.fuelPlan)}l`
+                                            ? <><span>{Number(entry.plan.fuelPlan)}</span> <span className="font-semibold text-white/50" title="Liters">L</span></>
                                             : "N/A"}
                                     </div>
                                 </div>
@@ -614,7 +614,7 @@ export default function LogbookEntry() {
                                 <div className="">
                                     <h1 className="mb-1">Arrival</h1>
                                     <div className="rounded-lg bg-secondary p-2">
-                                        {entry && entry.plan ? entry.plan.depAd : "N/A"}
+                                        {entry && entry.plan ? entry.plan.arrAd : "N/A"}
                                     </div>
                                 </div>
 

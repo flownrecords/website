@@ -198,12 +198,11 @@ export type Aerodrome = {
 };
 
 export type Navaid = {
-    icao: string;
+    id: string;
+    type: "VOR" | "VOR/DME" | "NDB" | "DME";
+    freq: number;
     coords: Coordinates;
-    type: string; // e.g., VOR, NDB, etc.
-    name?: string; // Optional name for the navaid
-    frequency?: string; // Optional frequency for the navaid
-};
+}
 
 export type Coordinates = {
     lat: number;
