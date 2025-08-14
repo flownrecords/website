@@ -229,7 +229,7 @@ export default function Logbook() {
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div
                     className="
-          bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2
+          bg-primary ring-2 ring-white/25 rounded-lg px-4 py-2
           flex justify-between items-center
           "
                 >
@@ -311,7 +311,7 @@ export default function Logbook() {
                 </div>
 
                 {user?.logbookEntries ? (
-                    <div className="mt-4 bg-secondary ring-2 ring-white/25 rounded-lg p-4">
+                    <div className="mt-4 bg-primary ring-2 ring-white/25 rounded-lg p-4">
                         <div className="grid grid-cols-6 px-2 mb-4">
                             <span>Date</span>
 
