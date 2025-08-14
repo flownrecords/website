@@ -130,13 +130,13 @@ export default function ProfileHeader(props: { user: User | null }) {
                                 {user ? user?.location?.substring(0, 24) : <Skeleton type="span" />}
                             </span>
                             <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 hidden lg:inline-block relative">
-                                {user?.publicProfile ? (
+                                {user?.publicProfile || !user ? (
                                     <Globe className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
                                 ) : (
                                     <GlobeLock className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
                                 )}
 
-                                {user?.publicProfile ? "Public" : "Private"}
+                                { user ? (user?.publicProfile ? "Public" : "Private") : <Skeleton type="span" />}
                             </span>
                         </div>
                     </div>
