@@ -23,6 +23,7 @@ import {
     ViewQuestion,
     Planner,
     Navdata,
+    Stats,
 } from "./pages";
 
 // Components
@@ -52,6 +53,7 @@ function App() {
                 {/* USER ROUTES */}
                 <Route path="/me" element={<Me />} />
                 <Route path="/me/edit" element={<MeEdit />} />
+                <Route path="/me/stats" element={<Stats />} />
                 <Route path="/me/logbook" element={<Logbook />} />
                 <Route path="/me/logbook/:entryId" element={<LogbookEntry />} />
                 <Route path="/me/logbook/manual" element={<LogbookManualInput />} />

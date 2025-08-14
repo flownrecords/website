@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { parseDuration } from "../../lib/utils";
 import { Link } from "react-router-dom";
+import Button from "../general/Button";
 
 type Props = {
     logbook?: LogbookEntry[];
@@ -136,7 +137,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         {
             name: "IFR",
             value: logbook.reduce(
-                (sum, e) => sum + ((Number(e.sepIfr) || 0) + (Number(e.meIfr) || 0)),
+                (sum, e) => sum + ((Number(e.sepIfr) || 0) + (Number(e.meIfr) || 0) + (Number(e.simTime) || 0)),
                 0,
             ),
         },
@@ -373,33 +374,32 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                 </div>
             </div>
 
-            <div className="w-3/4 flex mx-auto gap-4 mt-4">
-                <button
+            <div className="flex mx-auto gap-4 mt-4 justify-center">
+                <Button
+                    styleType="small"
+                    disabled={currentSlide === 0}
+                    type="button"
                     onClick={() => {
                         slider.current?.prev();
                     }}
-                    className={`${currentSlide === 0 ? STYLE_DISABLED : STYLE}`}
-                    disabled={currentSlide === 0}
-                >
-                    <ChevronLeft />
-                </button>
+                    text={<ChevronLeft />}
+                />
 
-                <Link
+                <Button
                     to="/me/stats"
-                    className={STYLE}
-                >
-                    More Details
-                </Link>
+                    styleType="small"
+                    text="More Details"
+                />
 
-                <button
+                <Button
+                    styleType="small"
+                    disabled={currentSlide === (slider.current?.slides.length ?? 0) - 1 }
+                    type="button"
                     onClick={() => {
                         slider.current?.next();
                     }}
-                    className={`${currentSlide === (slider.current?.slides.length ?? 0) - 1 ? STYLE_DISABLED : STYLE}`}
-                    disabled={currentSlide === (slider.current?.slides.length ?? 0) - 1}
-                >
-                    <ChevronRight />
-                </button>
+                    text={<ChevronRight />}
+                />
             </div>
         </div>
     );
