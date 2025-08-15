@@ -181,7 +181,7 @@ export default function Navbar() {
                                         <img
                                             src={user.profilePictureUrl}
                                             draggable="false"
-                                            className="rounded-full h-5 w-5 mr-2"
+                                            className="rounded-full h-5 w-5 mr-2 object-cover"
                                         />
                                     )}
                                     {user?.firstName ?? `@${user.username}`}
