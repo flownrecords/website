@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 const colors = {
     accent: "#313ED8",
     secondAccent: "#DD3434",
-    base: "#CCC",
+    base: "#1E1E1E",
 };
 
 export default function FlightDataChart({ recording }: { recording: FlightRecording }) {
@@ -126,7 +126,7 @@ export default function FlightDataChart({ recording }: { recording: FlightRecord
         <ResponsiveContainer width="100%" height={400}>
             <LineChart data={finalChartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
 
-                <CartesianGrid strokeLinecap="round" color={colors.base} opacity={0.1}/>
+                <CartesianGrid strokeLinecap="round" color={colors.base} opacity={0.05}/>
 
                 <XAxis
                     dataKey="time"
