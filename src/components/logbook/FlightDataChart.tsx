@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 const colors = {
     accent: "#313ED8",
     secondAccent: "#DD3434",
-    base: "#666666",
+    base: "#CCC",
 };
 
 export default function FlightDataChart({ recording }: { recording: FlightRecording }) {
@@ -80,26 +80,47 @@ export default function FlightDataChart({ recording }: { recording: FlightRecord
     const finalChartData = smoothData(chartData as any, 5);
 
     const CustomTooltip = ({ active, payload, label }: any) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-secondary text-white text-sm p-2 rounded shadow">
-                    <p className="mb-2 font-semibold">
-                        {new Date(label).toLocaleTimeString("en-GB", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            second: "2-digit"
-                        })} UTC
-                    </p>
-                    {payload.map((item: any, index: number) => (
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-secondary text-white text-sm p-2 rounded shadow">
+                <p className="mb-2 font-semibold">
+                    {new Date(label).toLocaleTimeString("en-GB", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit"
+                    })} UTC
+                </p>
+                {payload.map((item: any, index: number) => {
+                    if (item.name === "Altitude") {
+                        const meters = (item.value * 0.3048).toFixed(0);
+                        return (
+                            <p key={index}>
+                                <span style={{ color: item.color }}>{item.name}: </span> 
+                                {item.value ? `${item.value.toFixed(0)} ft (${meters} m)` : "N/A"}
+                            </p>
+                        );
+                    }
+                    if (item.name === "Ground Speed") {
+                        const kmh = (item.value * 1.852).toFixed(0);
+                        return (
+                            <p key={index}>
+                                <span style={{ color: item.color }}>{item.name}: </span> 
+                                {item.value ? `${item.value.toFixed(0)} kt (${kmh} km/h)` : "N/A"}
+                            </p>
+                        );
+                    }
+                    return (
                         <p key={index}>
-                            <span style={{ color: item.color }}>{item.name}:</span> <strong>{item.value ? isNaN(item.value) ? item.value : item.value.toFixed(0) : "N/A"}</strong>
+                            <span style={{ color: item.color }}>{item.name}:</span> 
+                            {item.value}
                         </p>
-                    ))}
-                </div>
-            );
-        }
-        return null;
-    };
+                    );
+                })}
+            </div>
+        );
+    }
+    return null;
+};
 
     return (
         <ResponsiveContainer width="100%" height={400}>
