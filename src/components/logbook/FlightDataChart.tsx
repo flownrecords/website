@@ -95,7 +95,9 @@ export default function FlightDataChart({ recording }: { recording: FlightRecord
                         return (
                             <p key={index}>
                                 <span style={{ color: item.color }}>{item.name}: </span> 
-                                {item.value ? `${item.value.toFixed(0)} ft (${meters} m)` : "N/A"}
+                                { item.value ? <>
+                                    {item.value.toFixed(0)} ft <span className="text-white/25">({meters} m)</span>
+                                </> : "N/A"}
                             </p>
                         );
                     }
@@ -104,7 +106,9 @@ export default function FlightDataChart({ recording }: { recording: FlightRecord
                         return (
                             <p key={index}>
                                 <span style={{ color: item.color }}>{item.name}: </span> 
-                                {item.value ? `${item.value.toFixed(0)} kt (${kmh} km/h)` : "N/A"}
+                                { item.value ? <>
+                                    {item.value.toFixed(0)} kt <span className="text-white/25">({kmh} km/h)</span>
+                                </> : "N/A"}
                             </p>
                         );
                     }
