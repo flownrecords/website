@@ -76,3 +76,11 @@ html {
     border-radius: 5px 0px 0px 0px !important;
     color: rgba(255, 255, 255, 0.5) !important;
 }
+
+.recharts-brush rect:focus, .recharts-brush-traveller {
+    outline: none;
+}
+
+.recharts-brush-slide {
+    padding: 10px !important;
+}

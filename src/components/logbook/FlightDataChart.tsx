@@ -6,7 +6,8 @@ import {
     CartesianGrid,
     Tooltip,
     Legend,
-    ResponsiveContainer
+    ResponsiveContainer,
+    Brush
 } from "recharts";
 import type { FlightRecording, FlightRecordingPlacemark } from "../../lib/types";
 import { useEffect, useState } from "react";
@@ -17,6 +18,7 @@ const colors = {
 };
 
 export default function FlightDataChart({ recording }: { recording: FlightRecording }) {
+    
     function useIsMobile(breakpoint = 768) {
         const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
 
@@ -30,6 +32,8 @@ export default function FlightDataChart({ recording }: { recording: FlightRecord
     }
 
     const isMobile = useIsMobile(768);
+
+    const chartHeight = isMobile ? 300 : 450;
 
     const chartData = recording.coords
     .map((point, index, arr) => {
@@ -79,54 +83,67 @@ export default function FlightDataChart({ recording }: { recording: FlightRecord
     const finalChartData = smoothData(chartData as any, 5);
 
     const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
+        if (active && payload && payload.length) {
+            return (
+                <div className="bg-secondary text-white text-sm p-2 rounded shadow">
+                    <p className="mb-2 font-semibold">
+                        {new Date(label).toLocaleTimeString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit"
+                        })} UTC
+                    </p>
+                    {payload.map((item: any, index: number) => {
+                        if (item.name === "Altitude") {
+                            const meters = (item.value * 0.3048).toFixed(0);
+                            return (
+                                <p key={index}>
+                                    <span style={{ color: item.color }}>{item.name}: </span> 
+                                    { item.value ? <>
+                                        {item.value.toFixed(0)} ft <span className="text-white/25">({meters} m)</span>
+                                    </> : "N/A"}
+                                </p>
+                            );
+                        }
+                        if (item.name === "Ground Speed") {
+                            const kmh = (item.value * 1.852).toFixed(0);
+                            return (
+                                <p key={index}>
+                                    <span style={{ color: item.color }}>{item.name}: </span> 
+                                    { item.value ? <>
+                                        {item.value.toFixed(0)} kt <span className="text-white/25">({kmh} km/h)</span>
+                                    </> : "N/A"}
+                                </p>
+                            );
+                        }
+                        return (
+                            <p key={index}>
+                                <span style={{ color: item.color }}>{item.name}:</span> 
+                                {item.value}
+                            </p>
+                        );
+                    })}
+                </div>
+            );
+        }
+        return null;
+    };
+
+    const CustomTraveller = (props: any) => {
+        const { x, y, width, height } = props;
         return (
-            <div className="bg-secondary text-white text-sm p-2 rounded shadow">
-                <p className="mb-2 font-semibold">
-                    {new Date(label).toLocaleTimeString("en-GB", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit"
-                    })} UTC
-                </p>
-                {payload.map((item: any, index: number) => {
-                    if (item.name === "Altitude") {
-                        const meters = (item.value * 0.3048).toFixed(0);
-                        return (
-                            <p key={index}>
-                                <span style={{ color: item.color }}>{item.name}: </span> 
-                                { item.value ? <>
-                                    {item.value.toFixed(0)} ft <span className="text-white/25">({meters} m)</span>
-                                </> : "N/A"}
-                            </p>
-                        );
-                    }
-                    if (item.name === "Ground Speed") {
-                        const kmh = (item.value * 1.852).toFixed(0);
-                        return (
-                            <p key={index}>
-                                <span style={{ color: item.color }}>{item.name}: </span> 
-                                { item.value ? <>
-                                    {item.value.toFixed(0)} kt <span className="text-white/25">({kmh} km/h)</span>
-                                </> : "N/A"}
-                            </p>
-                        );
-                    }
-                    return (
-                        <p key={index}>
-                            <span style={{ color: item.color }}>{item.name}:</span> 
-                            {item.value}
-                        </p>
-                    );
-                })}
-            </div>
+            <rect
+                x={x}
+                y={y}
+                width={width}
+                height={height}
+                className="fill-secondary outline-2 outline-accent rounded-xs w-4"
+            />
         );
-    }
-    return null;
-};
+    };
 
     return (
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={chartHeight}>
             <LineChart data={finalChartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
 
                 <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25} />
@@ -178,6 +195,7 @@ export default function FlightDataChart({ recording }: { recording: FlightRecord
                  <Tooltip content={<CustomTooltip />} />
 
                 <Legend />
+                
                 {/* Main Line: Altitude */}
                 <Line
                     yAxisId="left"
@@ -196,6 +214,23 @@ export default function FlightDataChart({ recording }: { recording: FlightRecord
                     stroke={colors.secondAccent}
                     dot={false}
                     name="Ground Speed"
+                />
+
+                <Brush
+                    
+                    className="rounded-md"
+                    dataKey="time"
+                    height={12}
+                    stroke={colors.accent}
+                    fill={""}
+                    travellerWidth={15}
+                    tickFormatter={(value) =>
+                        new Date(value).toLocaleTimeString("en-GB", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        })
+                    }
+                    traveller={<CustomTraveller/>}
                 />
 
             </LineChart>
