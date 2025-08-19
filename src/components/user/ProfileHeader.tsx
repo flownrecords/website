@@ -133,15 +133,15 @@ export default function ProfileHeader(props: { user: User | null }) {
                         </div>
 
                         <div className="mt-1 space-x-2 space-y-2 md:block hidden">
-                            <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block">
+                            <span className="text-sm text-white/75 ring-white/25 ring-2 rounded-md px-4 py-0.5 inline-block">
                                 <AtSign className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/15 opacity-50" />
                                 {user ? user?.username : <Skeleton type="span" />}
                             </span>
-                            <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block">
+                            <span className="text-sm text-white/75 ring-white/25 ring-2 rounded-md px-4 py-0.5 inline-block">
                                 <MapPin className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
                                 {user ? user?.location?.substring(0, 24) : <Skeleton type="span" />}
                             </span>
-                            <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 hidden lg:inline-block relative">
+                            <span className="text-sm text-white/75 ring-white/25 ring-2 rounded-md px-4 py-0.5 hidden lg:inline-block relative">
                                 {user?.publicProfile || !user ? (
                                     <Globe className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
                                 ) : (
@@ -153,41 +153,56 @@ export default function ProfileHeader(props: { user: User | null }) {
                         </div>
                     </div>
                 </div>
-
-                <div className="space-x-2 space-y-2 block md:hidden">
-                    <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block">
-                        @{user?.username}
+                
+                <div className="md:hidden flex items-center space-x-2">
+                    <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
+                        <AtSign className="h-4 w-4 mr-1 opacity-25 shrink-0"/>
+                        <span className="text-white/75 truncate">
+                            {user ? user.username : <Skeleton type="span" className="my-0.5"/>}
+                        </span>
                     </span>
-                    {user?.location && (
-                        <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block">
-                            {user?.location?.substring(0, 24)}
-                        </span>
-                    )}
-                    {!user?.location && (
-                        <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-4 py-0.5 inline-block">
-                            {user?.publicProfile ? "Public" : "Private"}
-                        </span>
-                    )}
+                    <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
+                        {!user || (user.location || "").length > 0 ? (<MapPin className="h-4 w-4 mr-1 opacity-25 shrink-0"/>) : null}
+                        {
+                            user ? (
+                                (user && user.location && user.location.length > 0 && <span className="text-white/75 truncate">{(user.location).split(',')[0]}</span>)
+                            ) : (
+                                <Skeleton type="span" className="my-0.5"/>
+                            )
+                        }
+                    </span>
+                    <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm">
+                        {
+                            !user || user.publicProfile ? (
+                                <Globe className="h-4 w-4 inline-block my-0.5 opacity-25"/>
+                            ) : (
+                                <GlobeLock className="h-4 w-4 inline-block my-0.5 opacity-25"/>
+                            )
+                        }
+                    </span>
                 </div>
 
-                <div className="lg:ml-2 lg:pl-4 space-y-1 text-md">
-                    <div className="flex justify-between">
-                        <span className="text-white/50">Flight Time</span>
-                        <span className="text-white/75 font-semibold">{totalFlightTime()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span className="text-white/50">Flown</span>
-                        <span className="text-white/75 font-semibold">
-                            {`${user?.logbookEntries?.length || 0} flights`}
-                        </span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span className="text-white/50">Most flown aircraft</span>
-                        <span className="text-white/75 font-semibold">{mostFlownAcft()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span className="text-white/50">Most visited airport</span>
-                        <span className="text-white/75 font-semibold">{mostVisitedAirport()}</span>
+
+                <div className="lg:ml-2 lg:pl-4 text-md ">
+                    <div className="space-y-1 p-4 bg-secondary rounded-lg ring-2 ring-white/25">
+                        <div className="flex justify-between">
+                            <span className="text-white/50">Flight Time</span>
+                            <span className="text-white/75 font-semibold">{totalFlightTime()}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-white/50">Flown</span>
+                            <span className="text-white/75 font-semibold">
+                                {`${user?.logbookEntries?.length || 0} flights`}
+                            </span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-white/50">Most flown aircraft</span>
+                            <span className="text-white/75 font-semibold">{mostFlownAcft()}</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-white/50">Most visited airport</span>
+                            <span className="text-white/75 font-semibold">{mostVisitedAirport()}</span>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -46,3 +46,8 @@ export function parseDate(date?: string | Date | null, cut = false) {
         })
         .slice(0, cut ? 5 : undefined);
 }
+
+export function truncateString(str: string, maxLength: number): string {
+    if (!str || str.length <= maxLength) return str;
+    return str.slice(0, maxLength) + "...";
+}

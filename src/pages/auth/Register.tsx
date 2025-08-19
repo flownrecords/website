@@ -213,7 +213,7 @@ export default function Register() {
                                 ref={username}
                                 type="text"
                                 required
-                                max={18}
+                                max={14}
                                 className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 pl-10 w-full focus:outline-none focus:ring-white/50"
                             />
                         </div>
