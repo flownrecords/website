@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import Skeleton from "../general/Skeleton";
 import { roles } from "../../lib/roles";
 
+import Icon from "../../assets/images/icon.png";
+
 export default function ProfileHeader(props: { user: User | null }) {
     const { user } = props;
 
@@ -70,15 +72,25 @@ export default function ProfileHeader(props: { user: User | null }) {
         <>
             <div className="px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-4 ring-2 ring-white/25 rounded-lg">
                 <div className="flex flex-row items-center space-x-4 lg:col-span-3">
-                    <img
-                        className="h-18 w-18 md:h-28 md:w-28 rounded-full ring-2 ring-white/25 object-cover"
-                        draggable="false"
-                        src={
-                            user?.profilePictureUrl ??
-                            `https://placehold.co/512/09090B/313ED8?font=roboto&text=${user?.firstName?.charAt(0) || ""}${user?.lastName?.charAt(0) || ""}`
-                        }
-                        alt="User profile icon"
-                    />
+                    <div className="rounded-full ring-2 ring-white/25">
+                        { user ? (
+                            <img
+                                className="h-18 w-18 md:h-28 md:w-28 rounded-full object-cover"
+                                draggable="false"
+                                src={
+                                    user?.profilePictureUrl ?? Icon
+                                }
+                                alt="User profile icon"
+                            />
+                        ) : (
+                            <img
+                                className="h-18 w-18 md:h-28 md:w-28 rounded-full object-cover animate-[pulse_2s_cubic-bezier(0.01,0.02,0.01,0.02)_infinite]"
+                                draggable="false"
+                                src={Icon}
+                                alt="User profile icon"
+                            />
+                        )}
+                    </div>
 
                     <div>
                         <h1 className="text-3xl md:text-4xl font-bold capitalize">
