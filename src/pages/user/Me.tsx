@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Button from "../../components/general/Button";
 
 import type { User } from "../../lib/types";
@@ -82,42 +82,24 @@ export default function Me() {
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
                         <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg block lg:hidden">
                             <div className="grid grid-cols-4 gap-4">
-                                <Link
+                                <Button
                                     to="/me/edit"
-                                    className="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 ring-2 ring-white/25 
-            hover:opacity-75 transition duration-150 text-white p-2 rounded-lg text-center flex justify-center items-center"
-                                >
-                                    <PencilLine strokeWidth={1.25} className="h-6 w-6" />
-                                </Link>
+                                    text={ <PencilLine strokeWidth={1.25} className="h-6 w-6 inline-block" /> }
+                                />
 
-                                <Link
+                                <Button
                                     to="/me/logbook"
-                                    className="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 ring-2 ring-white/25 
-            hover:opacity-75 transition duration-150 text-white p-2 rounded-lg text-center flex justify-center items-center"
-                                >
-                                    <Book strokeWidth={1.25} className="h-6 w-6" />
-                                </Link>
+                                    text={ <Book strokeWidth={1.25} className="h-6 w-6 inline-block" /> }
+                                />
 
-                                <button
-                                    onClick={() => {
-                                        alert(
-                                            "Coming soon",
-                                            "This feature is not yet implemented.",
-                                        );
-                                    }}
-                                    className="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 ring-2 ring-white/25 
-            hover:opacity-75 transition duration-150 text-white p-2 rounded-lg text-center flex justify-center items-center"
-                                >
-                                    <FileText strokeWidth={1.25} className="h-6 w-6" />
-                                </button>
-
-                                <button
+                                <Button
+                                    disabled={true}
+                                    text={ <FileText strokeWidth={1.25} className="h-6 w-6 inline-block" /> }
+                                />
+                                <Button
                                     onClick={share}
-                                    className="cursor-pointer bg-gradient-to-t from-neutral-900 to-neutral-800 ring-2 ring-white/25 
-            hover:opacity-75 transition duration-150 text-white p-2 rounded-lg text-center flex justify-center items-center"
-                                >
-                                    <Forward strokeWidth={1.25} className="h-6 w-6" />
-                                </button>
+                                    text={ <Forward strokeWidth={1.25} className="h-6 w-6 inline-block" /> }
+                                />
                             </div>
                         </div>
 

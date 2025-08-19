@@ -154,18 +154,18 @@ export default function Stats() {
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="mb-4 ring-2 ring-white/25 rounded-lg p-4">
-                    <div className="flex flex-col lg:grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-4 gap-4">
                         <Button
-                            styleType="small"
                             type="button"
                             onClick={() => navigate(-1)}
                             text={
                                 <>
                                     <Undo2 className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
-                                    <span>Go Back</span>
+                                    <span className="hidden lg:inline">Go Back</span>
                                 </>
                             }
                         />
+                        
                     </div>
                 </div>
 

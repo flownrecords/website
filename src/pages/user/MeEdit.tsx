@@ -299,7 +299,6 @@ export default function MeEdit() {
                                 </>
                             }
                             to="/me" 
-                            styleType="small" 
                         />
                         <Button 
                             text={
@@ -309,7 +308,6 @@ export default function MeEdit() {
                                 </>
                             } 
                             onClick={handleSave} 
-                            styleType="small" 
                         />
                     </div>
                     <div></div>
