@@ -102,13 +102,8 @@ export default function Footer() {
                             <h2 className="mb-2 h-8"></h2>
                             <ul className="text-md text-white/25 transition-all duration-150">
                                 <li>
-                                    <Link to="/questions" className="hover:text-white">
-                                        Questions Database
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link to="/planner" className="hover:text-white">
-                                        Flight Planner
+                                    <Link to="/organizations" className="hover:text-white">
+                                        Organizations
                                     </Link>
                                 </li>
                                 <li>
@@ -125,14 +120,19 @@ export default function Footer() {
                                         Report Issue
                                     </Link>
                                 </li>
+                                <li>
+                                    <Link to="https://github.com/sponsors/jurgenjacobsen" className="hover:text-white">
+                                        Sponsor
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
                         <div>
                             <h2 className="mb-2 h-8"></h2>
                             <ul className="text-md text-white/25 transition-all duration-150">
                                 <li>
-                                    <Link to="/organizations" className="hover:text-white">
-                                        Organizations
+                                    <Link to="/faq" className="hover:text-white" title="Frequently Asked Questions">
+                                        FAQ
                                     </Link>
                                 </li>
                             </ul>
