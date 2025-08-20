@@ -725,11 +725,14 @@ export default function LogbookEntry() {
                                 <div className="space-y-1 p-4 bg-secondary rounded-lg">
                                     <div className="flex justify-between">
                                         <span className="text-white/75">Top Speed</span>
-                                        <span className="font-semibold">{calculateStats()?.topSpeed} <span className="opacity-50">kt</span></span>
+                                        <span className="font-semibold">{calculateStats()?.topSpeed} <span className="opacity-50">kt</span>
+                                        <span className="text-xs opacity-25"> ({((calculateStats()?.topSpeed ?? 0) * 1.852).toFixed(0)} km/h)</span>
+                                        </span>
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-white/75">Average Speed</span>
-                                        <span className="font-semibold">{calculateStats()?.averageSpeed} <span className="opacity-50">kt</span></span>
+                                        <span className="font-semibold">{calculateStats()?.averageSpeed} <span className="opacity-50">kt</span> 
+                                        <span className="text-xs opacity-25"> ({((calculateStats()?.averageSpeed ?? 0) * 1.852).toFixed(0)} km/h)</span></span>
                                     </div>
                                 </div>
                                 <div className="space-y-1 p-4 bg-secondary rounded-lg">
