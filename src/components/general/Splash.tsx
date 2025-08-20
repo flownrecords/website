@@ -2,6 +2,10 @@ export default function Splash({
     title = "Flown Records",
     uppertext = "Welcome to",
     poweredBy = false,
+}: {
+    title?: string | React.ReactNode;
+    uppertext?: string | React.ReactNode;
+    poweredBy?: boolean;
 }) {
     return (
         <div className="text-center mt-24 mb-12">

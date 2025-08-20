@@ -12,6 +12,8 @@ import Footer from "../../components/general/Footer";
 import Modal from "../../components/general/Modal";
 
 import { captalize, parseDuration } from "../../lib/utils";
+import Skeleton from "../../components/general/Skeleton";
+import Icon from "../../assets/images/icon.png";
 
 export default function Logbook() {
     const API = import.meta.env.VITE_API_URL;
@@ -23,6 +25,7 @@ export default function Logbook() {
     const [entryModal, toggleEntryModal] = useState(false);
     const [uploadModal, toggleUploadModal] = useState(false);
     const [manualModal, toggleManualModal] = useState<boolean>(false);
+    const [deleteModal, toggleDeleteModal] = useState<boolean>(false);
 
     const [uploadInfo, setUploadInfo] = useState<string>();
     const [file, setFile] = useState<File | null>(null);
@@ -137,17 +140,10 @@ export default function Logbook() {
             });
     }
 
-    function handleDeleteSelected() {
+    function proceedDeleteEntries() {
         if (managedEntries.length === 0) {
             return alert("Error", "No entries selected for deletion");
         }
-
-        if (
-            !window.confirm(
-                "Are you sure you want to delete the selected logbook entries? This action cannot be undone.",
-            )
-        )
-            return;
 
         if (!user) {
             alert("Error", "You must be logged in to delete logbook entries");
@@ -222,7 +218,9 @@ export default function Logbook() {
         <>
             <Splash
                 uppertext={
-                    user ? `${captalize(user?.firstName) ?? `@${user?.username}`}'s` : "User\s"
+                    <>
+                    {user ? `${captalize(user?.firstName) ?? `@${user?.username}`}'s` : <span className="h-8 w-0.5 inline-block"></span>}
+                    </>
                 }
                 title="Logbook"
             />
@@ -234,23 +232,33 @@ export default function Logbook() {
           "
                 >
                     <Link to="/me" className="flex items-center py-2">
-                        <img
-                            src={
-                                user?.profilePictureUrl ??
-                                "https://placehold.co/512/09090B/313ED8?font=roboto"
-                            }
-                            draggable={false}
-                            className="h-8 w-8 rounded-full ring-1 ring-white/25 object-cover"
-                            alt="User profile icon"
-                        />
+                        <div className="rounded-full ring-2 ring-white/25">
+                        { user ? (
+                            <img
+                                className="h-8 w-8 rounded-full object-cover"
+                                draggable="false"
+                                src={
+                                    user?.profilePictureUrl ?? Icon
+                                }
+                                alt="User profile icon"
+                            />
+                        ) : (
+                            <img
+                                className="h-8 w-8 rounded-full object-cover animate-[pulse_2s_cubic-bezier(0.01,0.02,0.01,0.02)_infinite]"
+                                draggable="false"
+                                src={Icon}
+                                alt="User profile icon"
+                            />
+                        )}
+                    </div>
                         <h1 className="font-semibold ml-2">
-                            {user ? (captalize(user?.firstName) ?? `@${user?.username}`) : "User"}
+                            {user ? (captalize(user?.firstName) ?? `@${user?.username}`) : <Skeleton type="span"/>}
                         </h1>
                     </Link>
 
                     <div className="hidden md:flex items-center font-semibold ">
                         <span className="text-sm text-white/50">
-                            {user?.logbookEntries.length ?? 0} flights
+                            {user && user.logbookEntries ? `${user?.logbookEntries.length ?? 0} flights` : <Skeleton type="span"/>}
                         </span>
                     </div>
 
@@ -292,7 +300,13 @@ export default function Logbook() {
                                     </>
                                 }
                                 styleType="small"
-                                onClick={handleDeleteSelected}
+                                onClick={() => {
+                                    if (managedEntries.length === 0) {
+                                        return alert("Error", "No entries selected for deletion");
+                                    }
+
+                                    toggleDeleteModal(true);
+                                }}
                             />
                         )}
                         <Button
@@ -665,6 +679,23 @@ export default function Logbook() {
                         </div>
                     </div>
                 )}
+            </Modal>
+
+            <Modal
+            isOpen={deleteModal}
+            onClose={() => toggleDeleteModal(false)}
+            title="Delete Logbook Entry"
+            buttons={
+                [<Button
+                    text="Confirm"
+                    onClick={proceedDeleteEntries}
+                    styleType="small"
+                />]
+            }
+            >
+                <h2 className="text-white/75">Confirm you want to delete {managedEntries.length} logbook entr{managedEntries.length === 1 ? "y" : "ies"}?</h2>
+
+                <div className="w-full bg-primary rounded-lg mt-2 flex flex-row justify-between items-center"></div>
             </Modal>
 
             <Footer />

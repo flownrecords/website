@@ -451,7 +451,7 @@ export default function LogbookEntry() {
                 { entry ? <>
                     <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
                         <h1 className="text-lg text-white/50 font-semibold mb-2">
-                            Logbook Entry Details
+                            Details
                         </h1>
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                             <div>
@@ -740,7 +740,7 @@ export default function LogbookEntry() {
                                         <span className="text-white/75">Squawk</span>
                                         <span className="font-semibold text-right">
                                             {calculateStats()?.squawks ? calculateStats()?.squawks.map((s, i) => {
-                                                return <><span className={i !== 0 ? "opacity-25" : ""} title={i !== 0 ? "Previous squawk" : undefined}>{s}</span><br/></>
+                                                return <><span className={i !== 0 ? "opacity-25" : ""} title={i !== 0 ? "Previous squawk" : undefined} key={s+i}>{s}</span><br/></>
                                             }) : "N/A"}
                                         </span>
                                     </div>

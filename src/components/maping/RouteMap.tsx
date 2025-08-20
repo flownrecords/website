@@ -79,6 +79,11 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0, rec
                 )
                 .map((ad: any) => [ad.coords.lat, ad.coords.long]);
 
+            if(type === "ENTRY" && recording) {
+                const coords: [number, number][] = recording?.coords.map((point) => [point.latitude, point.longitude]);
+                visitedCoords.push(...coords);
+            }
+
             setMapBounds(visitedCoords);
         }
     }, [user, visitedIcaos, API]);
