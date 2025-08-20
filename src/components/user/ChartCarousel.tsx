@@ -373,7 +373,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     onClick={() => {
                         slider.current?.prev();
                     }}
-                    text={<ChevronLeft />}
+                    text={<ChevronLeft className="h-5 w-5" strokeWidth={2}/>}
                 />
 
                 <Button
@@ -389,7 +389,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     onClick={() => {
                         slider.current?.next();
                     }}
-                    text={<ChevronRight />}
+                    text={<ChevronRight className="h-5 w-5" strokeWidth={2}/>}
                 />
             </div>
         </div>
