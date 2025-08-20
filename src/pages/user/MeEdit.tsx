@@ -27,7 +27,6 @@ export default function MeEdit() {
 
     const organizations = [
         { id: "none", name: "None" },
-        //{ id: "nortavia", name: "Nortávia", logo: "https://i.imgur.com/Fl9IgTt.jpeg" },
     ];
 
     function handleSave() {

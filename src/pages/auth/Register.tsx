@@ -55,7 +55,6 @@ export default function Register() {
 
     const organizations: Organization[] = [
         { id: "none", name: "None" },
-        // { id: "nortavia", name: "Nortávia", logo: "https://i.imgur.com/Fl9IgTt.jpeg" },
     ];
 
     useEffect(() => {
