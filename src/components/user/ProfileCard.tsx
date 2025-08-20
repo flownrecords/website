@@ -22,6 +22,11 @@ type ProfileCardData = {
               logo?: string;
           }
         | null;
+
+    hide?: {
+        bio?: boolean;
+        visibility?: boolean;
+    }
 };
 
 export default function ProfileCard(props: {
@@ -86,34 +91,49 @@ export default function ProfileCard(props: {
                     </div>
                 </div>
 
-                <div className="mt-4 space-x-2 space-y-2 block">
-                    <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-2 py-0.5 inline-block">
-                        <AtSign className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/15 opacity-50" />
-                        {data.username ? data?.username : <Skeleton type="span" />}
-                    </span>
-                    {data?.location && (
-                        <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-2 py-0.5 inline-block">
-                            <MapPin className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
-                            {data.location.substring(0, 24)}
+                <div className="flex items-center space-x-2 mt-2">
+                    <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
+                        <AtSign className="h-4 w-4 mr-1 opacity-25 shrink-0"/>
+                        <span className="text-white/75 truncate">
+                            {data ? data.username : <Skeleton type="span" className="my-0.5"/>}
                         </span>
-                    )}
-                    <span className="text-sm text-white/75 ring-white/25 ring-1 rounded-md px-2 py-0.5 hidden lg:inline-block relative">
-                        {data.publicProfile ? (
-                            <Globe className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
-                        ) : (
-                            <GlobeLock className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
-                        )}
-
-                        {data.publicProfile ? "Public" : "Private"}
+                    </span>
+                    <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
+                        {!data || (data.location || "").length > 0 ? (<MapPin className="h-4 w-4 mr-1 opacity-25 shrink-0"/>) : null}
+                        {
+                            data ? (
+                                (data && data.location && data.location.length > 0 && <span className="text-white/75 truncate">{(data.location).split(',')[0]}</span>)
+                            ) : (
+                                <Skeleton type="span" className="my-0.5"/>
+                            )
+                        }
+                    </span>
+                    <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm">
+                        {
+                            !data || data.publicProfile ? (
+                                <Globe className="h-4 w-4 inline-block my-0.5 opacity-25"/>
+                            ) : (
+                                <GlobeLock className="h-4 w-4 inline-block my-0.5 opacity-25"/>
+                            )
+                        }
+                        {
+                            data ? (
+                                <span className="">
+                                    { data ? <span className="ml-1 hidden md:inline text-white/75">{data?.publicProfile ? "Public" : "Private"}</span> : <Skeleton type="span" />}
+                                </span>
+                            ) : null
+                        }
                     </span>
                 </div>
 
-                <div className="mt-2 bg-primary text-sm p-2 rounded-lg">
-                    <label className="inline-block font-medium mb-1">Biography</label>
-                    <div className="text-white/75 break-words whitespace-pre-wrap">
-                        {data?.bio || "This user has not set a biography yet."}
+                { !data.hide?.bio && 
+                    <div className="mt-2 bg-primary text-sm p-2 rounded-lg">
+                        <label className="inline-block font-medium mb-1">Biography</label>
+                        <div className="text-white/75 break-words whitespace-pre-wrap">
+                            {data?.bio || "This user has not set a biography yet."}
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         </>
     );
