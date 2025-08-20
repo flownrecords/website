@@ -708,36 +708,36 @@ export default function LogbookEntry() {
                         { entry?.recording ? 
                         <>
                             <div className="grid grid-cols-3 gap-4">
-                                <div className="space-y-1 p-4 bg-secondary rounded-lg ring-2 ring-white/25">
+                                <div className="space-y-1 p-4 bg-secondary rounded-lg">
                                     <div className="flex justify-between">
-                                        <span className="text-white/50">Highest Flight Level</span>
-                                        <span className="text-white/75 font-semibold">{calculateStats()?.highestLevel}</span>
+                                        <span className="text-white/75">Highest Flight Level</span>
+                                        <span className="font-semibold">{calculateStats()?.highestLevel}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-white/50">Average Flight Level</span>
-                                        <span className="text-white/75 font-semibold">{calculateStats()?.averageLevel}</span>
+                                        <span className="text-white/75">Average Flight Level</span>
+                                        <span className="font-semibold">{calculateStats()?.averageLevel}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-white/50">Highest Vertical Speed</span>
-                                        <span className="text-white/75 font-semibold text-right">{calculateStats()?.highestVerticalSpeed}</span>
-                                    </div>
-                                </div>
-                                <div className="space-y-1 p-4 bg-secondary rounded-lg ring-2 ring-white/25">
-                                    <div className="flex justify-between">
-                                        <span className="text-white/50">Top Speed</span>
-                                        <span className="text-white/75 font-semibold">{calculateStats()?.topSpeed} <span className="opacity-50">kt</span></span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-white/50">Average Speed</span>
-                                        <span className="text-white/75 font-semibold">{calculateStats()?.averageSpeed} <span className="opacity-50">kt</span></span>
+                                        <span className="text-white/75">Highest Vertical Speed</span>
+                                        <span className="font-semibold text-right">{calculateStats()?.highestVerticalSpeed}</span>
                                     </div>
                                 </div>
-                                <div className="space-y-1 p-4 bg-secondary rounded-lg ring-2 ring-white/25">
+                                <div className="space-y-1 p-4 bg-secondary rounded-lg">
                                     <div className="flex justify-between">
-                                        <span className="text-white/50">Squawk</span>
-                                        <span className="text-white/75 font-semibold text-right">
+                                        <span className="text-white/75">Top Speed</span>
+                                        <span className="font-semibold">{calculateStats()?.topSpeed} <span className="opacity-50">kt</span></span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-white/75">Average Speed</span>
+                                        <span className="font-semibold">{calculateStats()?.averageSpeed} <span className="opacity-50">kt</span></span>
+                                    </div>
+                                </div>
+                                <div className="space-y-1 p-4 bg-secondary rounded-lg">
+                                    <div className="flex justify-between">
+                                        <span className="text-white/75">Squawk</span>
+                                        <span className="font-semibold text-right">
                                             {calculateStats()?.squawks ? calculateStats()?.squawks.map((s, i) => {
-                                                return <><span className={i !== 0 ? "opacity-25" : ""}>{s}</span><br/></>
+                                                return <><span className={i !== 0 ? "opacity-25" : ""} title={i !== 0 ? "Previous squawk" : undefined}>{s}</span><br/></>
                                             }) : "N/A"}
                                         </span>
                                     </div>
