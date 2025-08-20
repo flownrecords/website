@@ -19,6 +19,15 @@ import { parseDate, parseDuration } from "../../lib/utils";
 import Modal from "../../components/general/Modal";
 import FlightDataChart from "../../components/logbook/FlightDataChart";
 
+type RecordingStats = {
+    highestLevel: string, // "000" rounded to nearest 500ft
+    averageLevel: string, // "000" rounded to nearest 500ft
+    topSpeed: number,     // knots
+    averageSpeed: number, // knots
+    squawks: string[], // most-used first
+    highestVerticalSpeed: string, // ft per min (fpm)
+    } | undefined
+
 export default function LogbookEntry() {
     const API = import.meta.env.VITE_API_URL;
     const token = localStorage.getItem("accessToken");
@@ -250,6 +259,68 @@ export default function LogbookEntry() {
                 setRecordUploadInfo("An error occurred while uploading the recording. Please try again later.");
             });
     }
+
+    function calculateStats(): RecordingStats {
+        const recording = entry?.recording?.coords;
+        if(!recording) return undefined;
+        if (!Array.isArray(recording) || recording.length === 0) {
+            return {
+                highestLevel: "000",
+                averageLevel: "000",
+                topSpeed: 0,
+                averageSpeed: 0,
+                squawks: [],
+                highestVerticalSpeed: "000fpm"
+            };
+        }
+
+        // Extract altitude and speed values
+        const altitudes = recording.map(r => r.altitude?.value ?? 0);
+        const speeds = recording.map(r => r.groundSpeed ?? 0);
+        const verticalSpeeds = recording.map(r => r.verticalSpeed ?? 0);
+
+        // Stats
+        const highestAltitude = Math.max(...altitudes);
+        const averageAltitude = altitudes.reduce((a, b) => a + b, 0) / altitudes.length;
+
+        const topSpeed = Math.max(...speeds);
+        const averageSpeed = speeds.reduce((a, b) => a + b, 0) / speeds.length;
+
+        // Helper to convert altitude → rounded FL string
+        const toFlightLevel = (alt: number): string => {
+            const rounded = Math.round(alt / 500) * 500; // nearest 500 ft
+            return String(Math.floor(rounded / 100)).padStart(3, "0");
+        };
+
+        const squawkCounts: Record<string, number> = {};
+        for (const r of recording) {
+            const code = r.squawk ?? "----"; // placeholder for null/empty squawks
+            squawkCounts[code] = (squawkCounts[code] ?? 0) + 1;
+        }
+
+        // Sort squawks by frequency
+        const squawks = Object.entries(squawkCounts)
+            .sort((a, b) => b[1] - a[1]) // most used first
+            .map(([code]) => code).filter(code => code !== "----");
+
+        const highestVerticalSpeedValue = verticalSpeeds.reduce((max, vs) =>
+            Math.abs(vs) > Math.abs(max) ? vs : max, 0
+        );
+        const highestVerticalSpeed = `${highestVerticalSpeedValue >= 0 ? "+" : ""}${highestVerticalSpeedValue} fpm`;
+
+
+        return {
+            highestLevel: toFlightLevel(highestAltitude),
+            averageLevel: toFlightLevel(averageAltitude),
+            topSpeed,
+            averageSpeed: Math.round(averageSpeed),
+            squawks,
+            highestVerticalSpeed,
+        };
+
+        
+    }
+
 
     return (
         <>
@@ -634,15 +705,53 @@ export default function LogbookEntry() {
 
                     <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
                         <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Recording</h1>
-                        {entry?.recording ? (
-                            <div>
+                        { entry?.recording ? 
+                        <>
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="space-y-1 p-4 bg-secondary rounded-lg ring-2 ring-white/25">
+                                    <div className="flex justify-between">
+                                        <span className="text-white/50">Highest Flight Level</span>
+                                        <span className="text-white/75 font-semibold">{calculateStats()?.highestLevel}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-white/50">Average Flight Level</span>
+                                        <span className="text-white/75 font-semibold">{calculateStats()?.averageLevel}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-white/50">Highest Vertical Speed</span>
+                                        <span className="text-white/75 font-semibold text-right">{calculateStats()?.highestVerticalSpeed}</span>
+                                    </div>
+                                </div>
+                                <div className="space-y-1 p-4 bg-secondary rounded-lg ring-2 ring-white/25">
+                                    <div className="flex justify-between">
+                                        <span className="text-white/50">Top Speed</span>
+                                        <span className="text-white/75 font-semibold">{calculateStats()?.topSpeed} <span className="opacity-50">kt</span></span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-white/50">Average Speed</span>
+                                        <span className="text-white/75 font-semibold">{calculateStats()?.averageSpeed} <span className="opacity-50">kt</span></span>
+                                    </div>
+                                </div>
+                                <div className="space-y-1 p-4 bg-secondary rounded-lg ring-2 ring-white/25">
+                                    <div className="flex justify-between">
+                                        <span className="text-white/50">Squawk</span>
+                                        <span className="text-white/75 font-semibold text-right">
+                                            {calculateStats()?.squawks ? calculateStats()?.squawks.map((s, i) => {
+                                                return <><span className={i !== 0 ? "opacity-25" : ""}>{s}</span><br/></>
+                                            }) : "N/A"}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-4">
+                                <h2 className="text-white text-center">Flight Overview</h2>
                                 <FlightDataChart recording={entry.recording} />
                             </div>
-                        ) : (
+                        </> : 
                             <span className="text-white/75 text-sm my-1">
                                 No flight recording available for this entry.
                             </span>
-                        )}
+                        }
                     </div>
                 </> : <PageLoader />}
             </div>
