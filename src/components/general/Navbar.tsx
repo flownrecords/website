@@ -30,7 +30,7 @@ export default function Navbar() {
                                 </Link>
                             </li>
                             <li
-                                className="relative"
+                                className="relative hidden"
                                 onMouseEnter={() => setToolsOpen(true)}
                                 onMouseLeave={() => setToolsOpen(false)}
                             >
@@ -155,7 +155,7 @@ export default function Navbar() {
                                 Get started
                             </Link>
                         </li>
-                        <li>
+                        <li className="hidden">
                             <Link
                                 to="/tools"
                                 className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150"

@@ -27,7 +27,7 @@ export default function MeEdit() {
 
     const organizations = [
         { id: "none", name: "None" },
-        { id: "nortavia", name: "Nortávia", logo: "https://i.imgur.com/Fl9IgTt.jpeg" },
+        //{ id: "nortavia", name: "Nortávia", logo: "https://i.imgur.com/Fl9IgTt.jpeg" },
     ];
 
     function handleSave() {
@@ -92,7 +92,20 @@ export default function MeEdit() {
         reader.readAsDataURL(file);
     }
 
+    async function fetchOrganizations() {
+        try {
+            const response = await axios.get(API + "/orgs");
+            if (response.status === 200) {
+                organizations.push(...response.data);
+            }
+        } catch (error) {
+            console.error("Error fetching organizations:", error);
+        }
+    }
+
     useEffect(() => {
+        fetchOrganizations();
+        
         if (!localStorage.getItem("accessToken")) {
             navigate("/login");
         }

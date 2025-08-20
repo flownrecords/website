@@ -55,11 +55,14 @@ export default function Register() {
 
     const organizations: Organization[] = [
         { id: "none", name: "None" },
-        { id: "nortavia", name: "Nortávia", logo: "https://i.imgur.com/Fl9IgTt.jpeg" },
+        // { id: "nortavia", name: "Nortávia", logo: "https://i.imgur.com/Fl9IgTt.jpeg" },
     ];
 
     useEffect(() => {
+
+
         autoLogin();
+        fetchOrganizations();
 
         const handleChange = () => {
             setTermsAccepted(terms.current?.checked ?? false);
@@ -69,6 +72,17 @@ export default function Register() {
         el?.addEventListener("change", handleChange);
         return () => el?.removeEventListener("change", handleChange);
     }, []);
+
+    async function fetchOrganizations() {
+        try {
+            const response = await axios.get(API + "/orgs");
+            if (response.status === 200) {
+                organizations.push(...response.data);
+            }
+        } catch (error) {
+            console.error("Error fetching organizations:", error);
+        }
+    }
 
     async function autoLogin() {
         const token = localStorage.getItem("accessToken");
