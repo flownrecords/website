@@ -174,7 +174,7 @@ export default function Me() {
                             )}
                         </div>
 
-                        <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg hidden lg:block">
+                        <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg block">
                             <div className="flex justify-between mb-2">
                                 <h1 className="font-semibold text-white/75">
                                     <Cloudy
