@@ -99,12 +99,12 @@ export default function ProfileCard(props: {
                         </span>
                     </span>
                     <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
-                        {!data || (data.location || "").length > 0 ? (<MapPin className="h-4 w-4 mr-1 opacity-25 shrink-0"/>) : null}
+                        <MapPin className="h-4 w-4 opacity-25 shrink-0"/>
                         {
                             data ? (
-                                (data && data.location && data.location.length > 0 && <span className="text-white/75 truncate">{(data.location).split(',')[0]}</span>)
+                                (data && data.location && data.location.length > 0 && <span className="text-white/75 truncate ml-1">{(data.location).split(',')[0]}</span>)
                             ) : (
-                                <Skeleton type="span" className="my-0.5"/>
+                                <Skeleton type="span" className="ml-1 my-0.5"/>
                             )
                         }
                     </span>

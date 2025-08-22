@@ -70,7 +70,7 @@ export default function ProfileHeader(props: { user: User | null }) {
 
     return (
         <>
-            <div className="px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-4 ring-2 ring-white/25 rounded-lg">
+            <div className="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4 ring-2 ring-white/25 rounded-lg">
                 <div className="flex flex-row items-center space-x-4 lg:col-span-3">
                     <div className="rounded-full ring-2 ring-white/25">
                         { user ? (
