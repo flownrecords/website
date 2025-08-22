@@ -23,8 +23,8 @@ export default function AboutUs() {
             <Splash uppertext="About" />
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
-                <div className="">
-                    <h1 className="text-4xl font-bold">About the Platform</h1>
+                <div className="ring-2 ring-white/25 rounded-lg p-4">
+                    <h1 className="text-xl font-semibold text-white">About the Platform</h1>
                     <div className="mt-1 opacity-75">
                         <p>Our mission is to turn raw flight data into meaningful insights, stories, and visuals. Whether you're a student pilot logging your first solo, an instructor tracking progress, or simply an aviation enthusiast, Flown Records helps you see your flying journey in a whole different perspective.</p>
                         <p>With smart data import tools, you can upload your flight logs from different sources and instantly transform them into interactive charts, statistics, and summaries.</p>
@@ -33,8 +33,8 @@ export default function AboutUs() {
                     </div>
                 </div>
 
-                <div className="mt-4">
-                    <h1 className="text-4xl font-bold">Our Team</h1>
+                <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
+                    <h1 className="text-xl font-semibold text-white">Our Team</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-2 ">
                         { Team.map((member) => (
                             <ProfileCard data={member} />
@@ -42,8 +42,8 @@ export default function AboutUs() {
                     </div>
                 </div>
 
-                <div className="mt-4">
-                    <h1 className="text-4xl font-bold">More information</h1>
+                <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
+                    <h1 className="text-xl font-semibold text-white">More information</h1>
                     <div className="grid lg:grid-cols-4 mt-2 gap-4">
                         <div className="bg-secondary rounded-lg p-4">
                             <h1 className="font-medium">Open Source Code</h1>

@@ -707,7 +707,7 @@ export default function LogbookEntry() {
                         <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Recording</h1>
                         { entry?.recording ? 
                         <>
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid lg:grid-cols-3 gap-4">
                                 <div className="space-y-1 p-4 bg-secondary rounded-lg">
                                     <div className="flex justify-between">
                                         <span className="text-white/75">Highest Flight Level</span>
