@@ -3,9 +3,9 @@ import { useState, useRef, useEffect } from "react";
 import Splash from "../../components/general/Splash";
 import { Link, useNavigate } from "react-router-dom";
 import useAlert from "../../components/alert/useAlert";
-import axios from "axios";
 import { useAuth } from "../../components/auth/AuthContext";
 import Footer from "../../components/general/Footer";
+import api, { ENDPOINTS } from "../../lib/api";
 
 type Role = {
     id: string;
@@ -19,12 +19,10 @@ type Organization = {
 };
 
 export default function Register() {
-    const API = import.meta.env.VITE_API_URL;
-
+    const { login, user } = useAuth();
     const alert = useAlert();
     const navigate = useNavigate();
 
-    const { login } = useAuth();
     const [termsAccepted, setTermsAccepted] = useState(false);
 
     const name = useRef<HTMLInputElement>(null);
@@ -53,14 +51,11 @@ export default function Register() {
         { id: "MANAGER", label: "Manager" },
     ];
 
-    const organizations: Organization[] = [
-        { id: "none", name: "None" },
-    ];
+    const organizations: Organization[] = [{ id: "none", name: "None" }];
 
     useEffect(() => {
+        if (user) navigate("/me");
 
-
-        autoLogin();
         fetchOrganizations();
 
         const handleChange = () => {
@@ -70,47 +65,15 @@ export default function Register() {
         const el = terms.current;
         el?.addEventListener("change", handleChange);
         return () => el?.removeEventListener("change", handleChange);
-    }, []);
+    }, [user]);
 
     async function fetchOrganizations() {
         try {
-            const response = await axios.get(API + "/orgs");
-            if (response.status === 200) {
-                organizations.push(...response.data);
-            }
+            api.get(ENDPOINTS.ORGS.LIST).then((res) => {
+                if (res.status === 200) organizations.push(...res.data);
+            });
         } catch (error) {
             console.error("Error fetching organizations:", error);
-        }
-    }
-
-    async function autoLogin() {
-        const token = localStorage.getItem("accessToken");
-        if (!token) return console.log("No access token found, skipping auto-login.");
-        try {
-            const request = await axios
-                .get(API + "/users/me", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-                .catch((e) => {
-                    if (e.response?.status === 401) {
-                        console.log("Unauthorized access, token may be invalid.");
-                        localStorage.removeItem("accessToken");
-                        return;
-                    }
-                });
-
-            if (request) {
-                return navigate("/me");
-            }
-        } catch (e) {
-            console.error("Error during auto-login:", e);
-            alert(
-                "Error",
-                "An error occurred while trying to log in automatically. Please try again later.",
-            );
-            return;
         }
     }
 
@@ -152,38 +115,37 @@ export default function Register() {
 
         if (formData.password.length < 8 || formData.password.length > 18) return;
 
-        try {
-            const response = await axios.post(API + "/auth/signup", formData, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (response.status === 200) {
-                const token = response.data.accessToken;
+        api.post(ENDPOINTS.USER.SIGNUP, formData, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                const token = response.accessToken;
                 if (!token) {
-                    alert(
+                    return alert(
                         "Error",
                         "An error occurred while creating your account. Please try again later. [1]",
                     );
-                    return;
                 }
 
-                login(token);
-                return navigate("/me");
-            } else {
+                if (response.meta.status === 200) {
+                    login(token);
+                    return navigate("/me");
+                } else {
+                    return alert(
+                        "Error",
+                        "An error occurred while creating your account. Please try again later. [2]",
+                    );
+                }
+            })
+            .catch((error) => {
+                console.error("Error sending registration data:", error);
                 alert(
                     "Error",
-                    "An error occurred while creating your account. Please try again later. [2]",
+                    "An error occurred while submitting your registration. Please try again later. [3]",
                 );
-            }
-        } catch (e) {
-            console.error("Error sending registration data:", e);
-            alert(
-                "Error",
-                "An error occurred while submitting your registration. Please try again later. [3]",
-            );
-        }
+            });
     }
 
     function handleSubmit(e: React.FormEvent) {

@@ -1,12 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-
-import axios from "axios";
+import { useRef, useState } from "react";
 
 import Button from "../../components/general/Button";
 import Splash from "../../components/general/Splash";
 import useAlert from "../../components/alert/useAlert";
-import type { User } from "../../lib/types";
 import { Loader, Pencil, Plus, Trash, UserRound } from "lucide-react";
 import Footer from "../../components/general/Footer";
 import Modal from "../../components/general/Modal";
@@ -14,11 +11,11 @@ import Modal from "../../components/general/Modal";
 import { captalize, parseDuration } from "../../lib/utils";
 import Skeleton from "../../components/general/Skeleton";
 import Icon from "../../assets/images/icon.png";
+import api, { ENDPOINTS } from "../../lib/api";
+import { useAuth } from "../../components/auth/AuthContext";
 
 export default function Logbook() {
-    const API = import.meta.env.VITE_API_URL;
-
-    const [user, setUser] = useState<User>(null);
+    const { user } = useAuth();
     const [manageMode, toggleManageMode] = useState(false);
     const [managedEntries, setManagedEntries] = useState<number[]>([]);
 
@@ -40,34 +37,6 @@ export default function Logbook() {
     const alert = useAlert();
 
     let navigate = useNavigate();
-
-    const token = localStorage.getItem("accessToken");
-
-    useEffect(() => {
-        if (!localStorage.getItem("accessToken")) {
-            navigate("/login");
-        }
-
-        axios
-            .get(API + "/users/me", {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
-            })
-            .then((response) => {
-                if (response.status === 200) {
-                    return setUser(response.data);
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching user data:", error);
-                if (error.response?.status === 401) {
-                    console.log("Unauthorized access, redirecting to login.");
-                    localStorage.removeItem("accessToken");
-                    navigate("/login");
-                }
-            });
-    }, []);
 
     const fileSources = [
         {
@@ -116,19 +85,13 @@ export default function Logbook() {
         form.append("file", file);
         form.append("source", source);
 
-        axios
-            .post(API + "/users/logbook/upload", form, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+        api.post(ENDPOINTS.LOGBOOK.UPLOAD, form, {
+            headers: { "Content-Type": "multipart/form-data" },
+        })
             .then((response) => {
-                if (response.status === 200) {
-                    console.log(response.data);
-                    if (response.data.length === 0) {
-                        setUploadInfo("No new logbook entries found in the file");
-                        return;
+                if (response.meta.status === 200) {
+                    if (response.length === 0) {
+                        return setUploadInfo("No new logbook entries found in the file");
                     }
 
                     toggleUploadModal(false);
@@ -136,7 +99,21 @@ export default function Logbook() {
                     setUploadInfo(undefined);
 
                     window.location.reload();
+                } else {
+                    setUploadInfo("Error uploading logbook");
+                    console.error("Error uploading logbook:", response);
+                    alert(
+                        "Error",
+                        "An error occurred while uploading the logbook. Please try again later.",
+                    );
                 }
+            })
+            .catch((error) => {
+                console.error("Error uploading logbook:", error);
+                alert(
+                    "Error",
+                    "An error occurred while uploading the logbook. Please try again later.",
+                );
             });
     }
 
@@ -150,22 +127,18 @@ export default function Logbook() {
             return;
         }
 
-        axios
-            .post(
-                API + "/users/logbook/delete",
-                {
-                    entryIds: managedEntries,
-                    userId: user.id,
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                },
-            )
+        api.post(
+            ENDPOINTS.LOGBOOK.DELETE,
+            {
+                entryIds: managedEntries,
+                userId: user.id,
+            },
+            {
+                headers: { "Content-Type": "application/json" },
+            },
+        )
             .then(() => {
-                window.location.reload();
+                return window.location.reload();
             })
             .catch((error) => {
                 console.error("Error deleting logbook entries:", error);
@@ -219,7 +192,11 @@ export default function Logbook() {
             <Splash
                 uppertext={
                     <>
-                    {user ? `${captalize(user?.firstName) ?? `@${user?.username}`}'s` : <span className="h-8 w-0.5 inline-block"></span>}
+                        {user ? (
+                            `${captalize(user?.firstName) ?? `@${user?.username}`}'s`
+                        ) : (
+                            <span className="h-8 w-0.5 inline-block"></span>
+                        )}
                     </>
                 }
                 title="Logbook"
@@ -233,32 +210,38 @@ export default function Logbook() {
                 >
                     <Link to="/me" className="flex items-center py-2">
                         <div className="rounded-full ring-2 ring-white/25">
-                        { user ? (
-                            <img
-                                className="h-8 w-8 rounded-full object-cover"
-                                draggable="false"
-                                src={
-                                    user?.profilePictureUrl ?? Icon
-                                }
-                                alt="User profile icon"
-                            />
-                        ) : (
-                            <img
-                                className="h-8 w-8 rounded-full object-cover animate-[pulse_2s_cubic-bezier(0.01,0.02,0.01,0.02)_infinite]"
-                                draggable="false"
-                                src={Icon}
-                                alt="User profile icon"
-                            />
-                        )}
-                    </div>
+                            {user ? (
+                                <img
+                                    className="h-8 w-8 rounded-full object-cover"
+                                    draggable="false"
+                                    src={user?.profilePictureUrl ?? Icon}
+                                    alt="User profile icon"
+                                />
+                            ) : (
+                                <img
+                                    className="h-8 w-8 rounded-full object-cover animate-[pulse_2s_cubic-bezier(0.01,0.02,0.01,0.02)_infinite]"
+                                    draggable="false"
+                                    src={Icon}
+                                    alt="User profile icon"
+                                />
+                            )}
+                        </div>
                         <h1 className="font-semibold ml-2">
-                            {user ? (captalize(user?.firstName) ?? `@${user?.username}`) : <Skeleton type="span"/>}
+                            {user ? (
+                                (captalize(user?.firstName) ?? `@${user?.username}`)
+                            ) : (
+                                <Skeleton type="span" />
+                            )}
                         </h1>
                     </Link>
 
                     <div className="hidden md:flex items-center font-semibold ">
                         <span className="text-sm text-white/50">
-                            {user && user.logbookEntries ? `${user?.logbookEntries.length ?? 0} flights` : <Skeleton type="span"/>}
+                            {user && user.logbookEntries ? (
+                                `${user?.logbookEntries.length ?? 0} flights`
+                            ) : (
+                                <Skeleton type="span" />
+                            )}
                         </span>
                     </div>
 
@@ -268,7 +251,10 @@ export default function Logbook() {
                                 to="/me"
                                 text={
                                     <>
-                                        <UserRound className="h-4 w-4 inline-block " strokeWidth={2}/>
+                                        <UserRound
+                                            className="h-4 w-4 inline-block "
+                                            strokeWidth={2}
+                                        />
                                         <span className="hidden lg:inline-block ml-2">Profile</span>
                                     </>
                                 }
@@ -280,7 +266,7 @@ export default function Logbook() {
                             type="button"
                             text={
                                 <>
-                                    <Plus className="h-4 w-4 inline-block" strokeWidth={2}/>
+                                    <Plus className="h-4 w-4 inline-block" strokeWidth={2} />
                                     <span className="hidden lg:inline-block ml-2">Add Entry</span>
                                 </>
                             }
@@ -293,7 +279,7 @@ export default function Logbook() {
                                 type="button"
                                 text={
                                     <>
-                                        <Trash className="h-4 w-4 inline-block" strokeWidth={2}/>
+                                        <Trash className="h-4 w-4 inline-block" strokeWidth={2} />
                                         <span className="hidden lg:inline-block ml-2">
                                             Delete Selected
                                         </span>
@@ -313,7 +299,7 @@ export default function Logbook() {
                             type="button"
                             text={
                                 <>
-                                    <Pencil className="h-4 w-4 inline-block" strokeWidth={2}/>
+                                    <Pencil className="h-4 w-4 inline-block" strokeWidth={2} />
                                     <span className="hidden lg:inline-block ml-2">Manage</span>
                                 </>
                             }
@@ -682,18 +668,17 @@ export default function Logbook() {
             </Modal>
 
             <Modal
-            isOpen={deleteModal}
-            onClose={() => toggleDeleteModal(false)}
-            title="Delete Logbook Entry"
-            buttons={
-                [<Button
-                    text="Confirm"
-                    onClick={proceedDeleteEntries}
-                    styleType="small"
-                />]
-            }
+                isOpen={deleteModal}
+                onClose={() => toggleDeleteModal(false)}
+                title="Delete Logbook Entry"
+                buttons={[
+                    <Button text="Confirm" onClick={proceedDeleteEntries} styleType="small" />,
+                ]}
             >
-                <h2 className="text-white/75">Confirm you want to delete {managedEntries.length} logbook entr{managedEntries.length === 1 ? "y" : "ies"}?</h2>
+                <h2 className="text-white/75">
+                    Confirm you want to delete {managedEntries.length} logbook entr
+                    {managedEntries.length === 1 ? "y" : "ies"}?
+                </h2>
 
                 <div className="w-full bg-primary rounded-lg mt-2 flex flex-row justify-between items-center"></div>
             </Modal>

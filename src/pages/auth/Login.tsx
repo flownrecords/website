@@ -1,81 +1,50 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 
 import Button from "../../components/general/Button";
 import Splash from "../../components/general/Splash";
 import useAlert from "../../components/alert/useAlert";
 import { useAuth } from "../../components/auth/AuthContext";
 import Footer from "../../components/general/Footer";
+import api, { ENDPOINTS } from "../../lib/api";
 
 export default function Login() {
-    const API = import.meta.env.VITE_API_URL;
-
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
 
     const alert = useAlert();
     const navigate = useNavigate();
 
-    const { login } = useAuth();
+    const { login, user } = useAuth();
 
     useEffect(() => {
-        autoLogin();
-    }, []);
-
-    async function autoLogin() {
-        const token = localStorage.getItem("accessToken");
-        if (!token) return console.log("No access token found, skipping auto-login.");
-        try {
-            const request = await axios
-                .get(API + "/users/me", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
-                .catch((e) => {
-                    if (e.response?.status === 401) {
-                        console.log("Unauthorized access, token may be invalid.");
-                        localStorage.removeItem("accessToken");
-                        return;
-                    }
-                });
-
-            if (request) {
-                login(token);
-                return navigate("/me");
-            }
-        } catch (e) {
-            console.error("Error during auto-login:", e);
-            alert(
-                "Error",
-                "An error occurred while trying to log in automatically. Please try again later.",
-            );
-            return;
-        }
-    }
+        if (user) navigate("/me");
+    }, [user]);
 
     function isEmail(input: string): boolean {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
     }
 
     function handleSubmit(e: React.FormEvent) {
-        e.preventDefault(); // prevent default form reload
+        e.preventDefault();
 
         if (!identifier || !password) {
             return alert("Error", "Please fill in both fields.");
         }
 
         const loginType = isEmail(identifier) ? "email" : "username";
-        const url = API + `/auth/signin?type=${loginType}`;
-
         const payload = { identifier, password };
 
-        axios
-            .post(url, payload)
+        api.post(ENDPOINTS.USER.SIGNIN, payload, {
+            requireAuth: false,
+            navigate,
+            params: {
+                type: loginType,
+            },
+        })
             .then((response) => {
-                if (response.status === 200) {
-                    const token = response.data.accessToken;
+                if (response.meta.status === 200) {
+                    const token = response.accessToken;
                     if (!token) {
                         alert("Login failed", "No token received.");
                         return;
@@ -84,7 +53,7 @@ export default function Login() {
                     login(token);
                     return navigate("/me");
                 } else {
-                    alert("Login Failed", response.data.message);
+                    alert("Login Failed", response.message);
                 }
             })
             .catch((error) => {
@@ -149,7 +118,8 @@ export default function Login() {
                 </div>
             </div>
 
-            <br/><br/>
+            <br />
+            <br />
             <Footer />
         </>
     );

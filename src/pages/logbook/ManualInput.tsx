@@ -8,7 +8,8 @@ import { Link, useNavigate } from "react-router-dom";
 import ProfileCard from "../../components/user/ProfileCard";
 import { timeDifference, applyUTC } from "../../lib/utils";
 import useAlert from "../../components/alert/useAlert";
-import axios from "axios";
+import api, { ENDPOINTS } from "../../lib/api";
+import { useAuth } from "../../components/auth/AuthContext";
 
 type EntryInput = {
     depAd: string | null;
@@ -43,7 +44,7 @@ type EntryInput = {
 };
 
 export default function LogbookManualInput() {
-    const API = import.meta.env.VITE_API_URL;
+    const { user } = useAuth();
 
     const query = new URLSearchParams(window.location.search);
     const queryData = {
@@ -108,37 +109,32 @@ export default function LogbookManualInput() {
             return;
         }
 
-        axios
-            .get(API + `/users/${username}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
-            })
-            .then((response) => {
-                if (response.status === 200) {
-                    const newMember = response.data;
-                    if (!newMember || !newMember.id) {
-                        return alert("Error", "User not found.");
-                    }
-
-                    if (crew && crew.some((member) => member?.id === newMember.id)) {
-                        return alert("Error", "This user is already assigned to the crew.");
-                    }
-
-                    setCrew((prev) => [...prev, newMember]);
-                    setEntryData((prev) => ({
-                        ...prev,
-                        crew: [...prev.crew, newMember],
-                    }));
+        api.get(ENDPOINTS.USER.USERNAME, {
+            requireAuth: true,
+            navigate,
+            replaceBy: [{ key: "{username}", value: username }],
+        })
+            .then((userData) => {
+                if (userData.metadata.status !== 200 || !userData || !userData.id) {
+                    alert("Error", "User not found.");
+                    return;
                 }
+
+                if (userData.id === user?.id)
+                    return alert("Error", "You cannot add yourself as a crew member.");
+                if (crew && crew.some((member) => member?.id === userData.id)) {
+                    return alert("Error", "This user is already assigned to the crew.");
+                }
+
+                setCrew((prev) => [...prev, userData]);
+                setEntryData((prev) => ({
+                    ...prev,
+                    crew: [...prev.crew, userData],
+                }));
             })
             .catch((error) => {
-                if (error.response?.status === 404 || error.response?.status === 500) {
-                    return alert("Error", "User not found.");
-                } else if (error.response?.status === 401) {
-                    console.log("Unauthorized access, redirecting to login.");
-                    localStorage.removeItem("accessToken");
-                    navigate("/login");
+                if (error.status === 404 || error.status === 500) {
+                    alert("Error", "User not found.");
                 } else {
                     alert(
                         "Error",
@@ -173,25 +169,21 @@ export default function LogbookManualInput() {
         const updated = { ...entryData, total, simTime: fstd ? total : 0 };
         setEntryData(updated);
 
-        console.log("Updated entry:", updated); // ✅ This will now show correct `total`
-
-        axios
-            .post(
-                API + "/users/logbook/add",
-                {
-                    ...updated,
-                    date: new Date(updated.offBlock as Date),
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                    },
-                },
-            )
+        api.post(
+            ENDPOINTS.LOGBOOK.ADD,
+            {
+                ...updated,
+                date: new Date(updated.offBlock as Date),
+            },
+            {
+                requireAuth: true,
+                navigate,
+            },
+        )
             .then((response) => {
-                if (response.status === 200) {
+                if (response.id) {
                     alert("Success", "Logbook entry added successfully.");
-                    //navigate("/me/logbook");
+                    navigate("/me/logbook");
                 } else {
                     alert("Error", "Failed to add logbook entry. Please try again.");
                 }

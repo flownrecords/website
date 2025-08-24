@@ -3,7 +3,7 @@ import type { ValueType, NameType } from "recharts/types/component/DefaultToolti
 import { parseDuration } from "../../lib/utils";
 
 interface ChartOptions extends TooltipProps<ValueType, NameType> {
-    type?: "time"
+    type?: "time";
 }
 
 export const ChartTooltip = ({ active, payload, label, type }: ChartOptions) => {
@@ -17,13 +17,14 @@ export const ChartTooltip = ({ active, payload, label, type }: ChartOptions) => 
                     <span style={{ color: entry.color }}>{entry.name}:</span>
                     <span>
                         {/* @ts-ignore */}
-                        {entry?.name?.includes("Time") || type === "time"
-                            ? 
+                        {entry?.name?.includes("Time") || type === "time" ? (
                             <>
                                 {parseDuration(entry.value as any)}
                                 <span className="text-xs opacity-50">h</span>
                             </>
-                            : entry.value}
+                        ) : (
+                            entry.value
+                        )}
                     </span>
                 </div>
             ))}

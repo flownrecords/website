@@ -2,15 +2,15 @@ import { useEffect, useState } from "react";
 import Splash from "../../components/general/Splash";
 import Button from "../../components/general/Button";
 import ProfileCard from "../../components/user/ProfileCard";
-import axios from "axios";
 import type { User } from "../../lib/types";
 import { useNavigate } from "react-router-dom";
 import useAlert from "../../components/alert/useAlert";
 import { roles } from "../../lib/roles";
 import { Save, Undo2 } from "lucide-react";
 
+import api, { ENDPOINTS } from "../../lib/api";
+
 export default function MeEdit() {
-    const API = import.meta.env.VITE_API_URL;
     const navigate = useNavigate();
     const alert = useAlert();
 
@@ -25,51 +25,30 @@ export default function MeEdit() {
     const [visibility, setVisibility] = useState(user?.publicProfile);
     const [base64Image, setBase64Image] = useState<string | null>(null);
 
-    const organizations = [
-        { id: "none", name: "None" },
-    ];
+    const organizations = [{ id: "none", name: "None" }];
 
     function handleSave() {
-        axios
-            .post(
-                API + "/users/me",
-                {
-                    firstName: name.split(" ")[0],
-                    lastName:
-                        name.split(" ").length > 1
-                            ? name.split(" ")[name.split(" ").length - 1]
-                            : "",
-                    location,
-                    bio,
-                    publicProfile: visibility,
-                    organizationId: organizationId === "none" ? null : organizationId,
-                    organizationRole,
-                    profilePictureUrl: base64Image,
-                    homeAirport,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                    },
-                },
-            )
-            .then((response) => {
-                if (response.status === 200) {
+        api.post(ENDPOINTS.USER.ME, {
+            firstName: name.split(" ")[0],
+            lastName: name.split(" ").length > 1 ? name.split(" ")[name.split(" ").length - 1] : "",
+            location,
+            bio,
+            publicProfile: visibility,
+            organizationId: organizationId === "none" ? null : organizationId,
+            organizationRole,
+            profilePictureUrl: base64Image,
+            homeAirport,
+        })
+            .then((res) => {
+                if (res.meta.status === 200) {
                     alert("Success", "Profile updated successfully!");
-                    setUser(response.data as User);
+                    setUser(res.data as User);
                     navigate("/me");
-                }
-            })
-            .catch((error) => {
-                console.error("Error updating profile:", error);
-                if (error.response?.status === 401) {
-                    console.log("Unauthorized access, redirecting to login.");
-                    localStorage.removeItem("accessToken");
-                    navigate("/login");
                 } else {
                     alert("Error", "Failed to update profile. Please try again.");
                 }
-            });
+            })
+            .catch((e) => console.error("Error updating user data:", e));
         return false; // Prevent default form submission
     }
 
@@ -78,8 +57,7 @@ export default function MeEdit() {
         if (!file) return;
 
         if (file.size > 4 * 1024 * 1024) {
-            // 4MB limit
-            alert("Error", "File too big! Max 2MB.");
+            alert("Error", "File too big! Max 4MB.");
             //@ts-ignore
             e.target.value = null; // reset input
         }
@@ -91,54 +69,28 @@ export default function MeEdit() {
         reader.readAsDataURL(file);
     }
 
-    async function fetchOrganizations() {
-        try {
-            const response = await axios.get(API + "/orgs");
-            if (response.status === 200) {
-                organizations.push(...response.data);
-            }
-        } catch (error) {
-            console.error("Error fetching organizations:", error);
-        }
-    }
-
     useEffect(() => {
-        fetchOrganizations();
-        
-        if (!localStorage.getItem("accessToken")) {
-            navigate("/login");
-        }
+        api.get(ENDPOINTS.ORGS.LIST).then((res) => {
+            if (res.status === 200) organizations.push(...res.data);
+        });
 
-        axios
-            .get(API + "/users/me", {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
-            })
-            .then((response) => {
-                if (response.status === 200) {
-                    setUser(response.data as User);
+        api.get(ENDPOINTS.USER.ME, {
+            requireAuth: true,
+            navigate,
+        })
+            .then((res) => {
+                setUser(res as User);
 
-                    setOrganizationId(response?.data?.organizationId ?? "none");
-                    setOrganizationRole(response?.data?.organizationRole ?? "");
-                    setName(
-                        `${response.data.firstName ?? ""} ${response.data.lastName ?? ""}`.trim(),
-                    );
-                    setLocation(response.data.location ?? "");
-                    setBio(response.data.bio ?? "");
-                    setVisibility(response.data.publicProfile ?? true);
-                    setBase64Image(response.data.profilePictureUrl ?? null);
-                    setHomeAirport(response.data.homeAirport ?? "");
-                }
+                setOrganizationId(res?.organizationId ?? "none");
+                setOrganizationRole(res?.organizationRole ?? "");
+                setName(`${res.firstName ?? ""} ${res.lastName ?? ""}`.trim());
+                setLocation(res.location ?? "");
+                setBio(res.bio ?? "");
+                setVisibility(res.publicProfile ?? true);
+                setBase64Image(res.profilePictureUrl ?? null);
+                setHomeAirport(res.homeAirport ?? "");
             })
-            .catch((error) => {
-                console.error("Error fetching user data:", error);
-                if (error.response?.status === 401) {
-                    console.log("Unauthorized access, redirecting to login.");
-                    localStorage.removeItem("accessToken");
-                    navigate("/login");
-                }
-            });
+            .catch((e) => console.error("Error fetching user data:", e));
     }, []);
 
     return (
@@ -303,23 +255,23 @@ export default function MeEdit() {
 
                 <div className="mt-4 rounded-lg ring-2 ring-white/25 p-4">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        <Button 
+                        <Button
                             text={
                                 <>
                                     <Undo2 className="h-4 w-4 inline-block" strokeWidth={2} />
                                     <span className="ml-2">Go Back</span>
                                 </>
                             }
-                            to="/me" 
+                            to="/me"
                         />
-                        <Button 
+                        <Button
                             text={
                                 <>
                                     <Save className="h-4 w-4 inline-block" strokeWidth={2} />
                                     <span className="ml-2">Save Changes</span>
                                 </>
-                            } 
-                            onClick={handleSave} 
+                            }
+                            onClick={handleSave}
                         />
                     </div>
                     <div></div>

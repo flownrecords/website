@@ -3,6 +3,8 @@ import Skeleton from "../general/Skeleton";
 import type { Organization } from "../../lib/types";
 import { roles } from "../../lib/roles";
 
+import Icon from "../../assets/images/icon.png";
+
 type ProfileCardData = {
     profilePictureUrl?: string | null;
     firstName?: string | null;
@@ -26,7 +28,7 @@ type ProfileCardData = {
     hide?: {
         bio?: boolean;
         visibility?: boolean;
-    }
+    };
 };
 
 export default function ProfileCard(props: {
@@ -39,17 +41,25 @@ export default function ProfileCard(props: {
         <>
             <div className="bg-secondary rounded-lg p-4 min-w-[300px]">
                 <div className="flex flex-row items-center space-x-4">
-                    <img
-                        className="h-9 w-9 md:h-14 md:w-14 rounded-full ring-2 ring-white/25 object-cover"
-                        draggable="false"
-                        loading="lazy"
-                        referrerPolicy="no-referrer"
-                        src={
-                            data?.profilePictureUrl ??
-                            `https://placehold.co/512/09090B/313ED8?font=roboto&text=${data?.firstName?.charAt(0) || ""}${data?.lastName?.charAt(0) || ""}`
-                        }
-                        alt="User profile icon"
-                    />
+                    {data.profilePictureUrl ? (
+                        <img
+                            className="h-9 w-9 md:h-14 md:w-14 rounded-full ring-2 ring-white/25 object-cover"
+                            draggable="false"
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                            src={data.profilePictureUrl}
+                            alt="User profile icon"
+                        />
+                    ) : (
+                        <img
+                            className="h-9 w-9 md:h-14 md:w-14 rounded-full ring-2 ring-white/25 object-cover animate-[pulse_2s_cubic-bezier(0.01,0.02,0.01,0.02)_infinite]"
+                            draggable="false"
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                            src={Icon}
+                            alt="User profile icon"
+                        />
+                    )}
                     <div>
                         <h1 className="text-xl lg:text-2xl font-bold capitalize">
                             {data?.firstName || data.lastName || data.username ? (
@@ -58,7 +68,7 @@ export default function ProfileCard(props: {
                                     : `@${data?.username}`
                                 ).substring(0, 20)
                             ) : (
-                                <Skeleton type="h1" />
+                                <Skeleton type="span" />
                             )}
                         </h1>
                         <div className="font-medium text-base">
@@ -93,47 +103,57 @@ export default function ProfileCard(props: {
 
                 <div className="flex items-center space-x-2 mt-2">
                     <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
-                        <AtSign className="h-4 w-4 mr-1 opacity-25 shrink-0"/>
+                        <AtSign className="h-4 w-4 mr-1 opacity-25 shrink-0" />
                         <span className="text-white/75 truncate">
-                            {data ? data.username : <Skeleton type="span" className="my-0.5"/>}
+                            {data.username ? (
+                                data.username
+                            ) : (
+                                <Skeleton type="span" className="my-0.5" color="secondary" />
+                            )}
                         </span>
                     </span>
                     <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
-                        <MapPin className="h-4 w-4 opacity-25 shrink-0"/>
-                        {
-                            data ? (
-                                (data && data.location && data.location.length > 0 && <span className="text-white/75 truncate ml-1">{(data.location).split(',')[0]}</span>)
-                            ) : (
-                                <Skeleton type="span" className="ml-1 my-0.5"/>
+                        <MapPin className="h-4 w-4 opacity-25 shrink-0" />
+                        {data ? (
+                            data &&
+                            data.location &&
+                            data.location.length > 0 && (
+                                <span className="text-white/75 truncate ml-1">
+                                    {data.location.split(",")[0]}
+                                </span>
                             )
-                        }
+                        ) : (
+                            <Skeleton type="span" className="ml-1 my-0.5" />
+                        )}
                     </span>
                     <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm">
-                        {
-                            !data || data.publicProfile ? (
-                                <Globe className="h-4 w-4 inline-block my-0.5 opacity-25"/>
-                            ) : (
-                                <GlobeLock className="h-4 w-4 inline-block my-0.5 opacity-25"/>
-                            )
-                        }
-                        {
-                            data ? (
-                                <span className="">
-                                    { data ? <span className="ml-1 hidden md:inline text-white/75">{data?.publicProfile ? "Public" : "Private"}</span> : <Skeleton type="span" />}
-                                </span>
-                            ) : null
-                        }
+                        {!data || data.publicProfile ? (
+                            <Globe className="h-4 w-4 inline-block my-0.5 opacity-25" />
+                        ) : (
+                            <GlobeLock className="h-4 w-4 inline-block my-0.5 opacity-25" />
+                        )}
+                        {data ? (
+                            <span className="">
+                                {data ? (
+                                    <span className="ml-1 hidden md:inline text-white/75">
+                                        {data?.publicProfile ? "Public" : "Private"}
+                                    </span>
+                                ) : (
+                                    <Skeleton type="span" />
+                                )}
+                            </span>
+                        ) : null}
                     </span>
                 </div>
 
-                { !data.hide?.bio && 
+                {!data.hide?.bio && (
                     <div className="mt-2 bg-primary text-sm p-2 rounded-lg">
                         <label className="inline-block font-medium mb-1">Biography</label>
                         <div className="text-white/75 break-words whitespace-pre-wrap">
                             {data?.bio || "This user has not set a biography yet."}
                         </div>
                     </div>
-                }
+                )}
             </div>
         </>
     );

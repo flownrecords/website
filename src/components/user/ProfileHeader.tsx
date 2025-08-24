@@ -71,15 +71,13 @@ export default function ProfileHeader(props: { user: User | null }) {
     return (
         <>
             <div className="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4 ring-2 ring-white/25 rounded-lg">
-                <div className="flex flex-row items-center space-x-4 lg:col-span-3">
+                <div className="flex flex-row items-center space-x-4 lg:col-span-3 ">
                     <div className="rounded-full ring-2 ring-white/25">
-                        { user ? (
+                        {user ? (
                             <img
                                 className="h-18 w-18 md:h-28 md:w-28 rounded-full object-cover"
                                 draggable="false"
-                                src={
-                                    user?.profilePictureUrl ?? Icon
-                                }
+                                src={user?.profilePictureUrl ?? Icon}
                                 alt="User profile icon"
                             />
                         ) : (
@@ -148,40 +146,51 @@ export default function ProfileHeader(props: { user: User | null }) {
                                     <GlobeLock className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
                                 )}
 
-                                { user ? (user?.publicProfile ? "Public" : "Private") : <Skeleton type="span" />}
+                                {user ? (
+                                    user?.publicProfile ? (
+                                        "Public"
+                                    ) : (
+                                        "Private"
+                                    )
+                                ) : (
+                                    <Skeleton type="span" />
+                                )}
                             </span>
                         </div>
                     </div>
                 </div>
-                
+
                 <div className="md:hidden flex items-center space-x-2">
                     <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
-                        <AtSign className="h-4 w-4 mr-1 opacity-25 shrink-0"/>
+                        <AtSign className="h-4 w-4 mr-1 opacity-25 shrink-0" />
                         <span className="text-white/75 truncate">
-                            {user ? user.username : <Skeleton type="span" className="my-0.5"/>}
+                            {user ? user.username : <Skeleton type="span" className="my-0.5" />}
                         </span>
                     </span>
                     <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
-                        {!user || (user.location || "").length > 0 ? (<MapPin className="h-4 w-4 mr-1 opacity-25 shrink-0"/>) : null}
-                        {
-                            user ? (
-                                (user && user.location && user.location.length > 0 && <span className="text-white/75 truncate">{(user.location).split(',')[0]}</span>)
-                            ) : (
-                                <Skeleton type="span" className="my-0.5"/>
+                        {!user || (user.location || "").length > 0 ? (
+                            <MapPin className="h-4 w-4 mr-1 opacity-25 shrink-0" />
+                        ) : null}
+                        {user ? (
+                            user &&
+                            user.location &&
+                            user.location.length > 0 && (
+                                <span className="text-white/75 truncate">
+                                    {user.location.split(",")[0]}
+                                </span>
                             )
-                        }
+                        ) : (
+                            <Skeleton type="span" className="my-0.5" />
+                        )}
                     </span>
                     <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm">
-                        {
-                            !user || user.publicProfile ? (
-                                <Globe className="h-4 w-4 inline-block my-0.5 opacity-25"/>
-                            ) : (
-                                <GlobeLock className="h-4 w-4 inline-block my-0.5 opacity-25"/>
-                            )
-                        }
+                        {!user || user.publicProfile ? (
+                            <Globe className="h-4 w-4 inline-block my-0.5 opacity-25" />
+                        ) : (
+                            <GlobeLock className="h-4 w-4 inline-block my-0.5 opacity-25" />
+                        )}
                     </span>
                 </div>
-
 
                 <div className="lg:ml-2 lg:pl-4 text-md ">
                     <div className="space-y-1 p-4 bg-secondary rounded-lg ring-2 ring-white/25">
@@ -201,7 +210,9 @@ export default function ProfileHeader(props: { user: User | null }) {
                         </div>
                         <div className="flex justify-between">
                             <span className="text-white/50">Most visited airport</span>
-                            <span className="text-white/75 font-semibold">{mostVisitedAirport()}</span>
+                            <span className="text-white/75 font-semibold">
+                                {mostVisitedAirport()}
+                            </span>
                         </div>
                     </div>
                 </div>

@@ -136,7 +136,9 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         {
             name: "IFR",
             value: logbook.reduce(
-                (sum, e) => sum + ((Number(e.sepIfr) || 0) + (Number(e.meIfr) || 0) + (Number(e.simTime) || 0)),
+                (sum, e) =>
+                    sum +
+                    ((Number(e.sepIfr) || 0) + (Number(e.meIfr) || 0) + (Number(e.simTime) || 0)),
                 0,
             ),
         },
@@ -313,9 +315,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     <ResponsiveContainer width="100%" height={chartHeight}>
                         <PieChart margin={chartMargin}>
                             <Legend />
-                            <Tooltip
-                                content={<ChartTooltip type="time"/>}
-                            />
+                            <Tooltip content={<ChartTooltip type="time" />} />
 
                             <Pie
                                 data={dayNightData}
@@ -373,23 +373,19 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     onClick={() => {
                         slider.current?.prev();
                     }}
-                    text={<ChevronLeft className="h-5 w-5" strokeWidth={2}/>}
+                    text={<ChevronLeft className="h-5 w-5" strokeWidth={2} />}
                 />
 
-                <Button
-                    to="/me/stats"
-                    styleType="small"
-                    text="More Details"
-                />
+                <Button to="/me/stats" styleType="small" text="More Details" />
 
                 <Button
                     styleType="small"
-                    disabled={currentSlide === (slider.current?.slides.length ?? 0) - 1 }
+                    disabled={currentSlide === (slider.current?.slides.length ?? 0) - 1}
                     type="button"
                     onClick={() => {
                         slider.current?.next();
                     }}
-                    text={<ChevronRight className="h-5 w-5" strokeWidth={2}/>}
+                    text={<ChevronRight className="h-5 w-5" strokeWidth={2} />}
                 />
             </div>
         </div>

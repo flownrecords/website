@@ -18,7 +18,13 @@ type MapProps = {
     };
 };
 
-const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0, recording = null }) => {
+const RouteMap: React.FC<MapProps> = ({
+    type,
+    user,
+    dimensions,
+    entryId = 0,
+    recording = null,
+}) => {
     const API = import.meta.env.VITE_API_URL;
 
     const [aerodromes, setAerodromes] = useState<any[]>([]);
@@ -79,8 +85,11 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0, rec
                 )
                 .map((ad: any) => [ad.coords.lat, ad.coords.long]);
 
-            if(type === "ENTRY" && recording) {
-                const coords: [number, number][] = recording?.coords.map((point) => [point.latitude, point.longitude]);
+            if (type === "ENTRY" && recording) {
+                const coords: [number, number][] = recording?.coords.map((point) => [
+                    point.latitude,
+                    point.longitude,
+                ]);
                 visitedCoords.push(...coords);
             }
 
@@ -108,13 +117,14 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0, rec
                 ]}
                 className="h-full w-full"
             >
-                <MapToolbar 
-                initialBounds={mapBounds.length > 1 ? mapBounds : undefined}
-                initialCenterZoom={
-                    mapBounds.length === 1
-                    ? { center: mapBounds[0], zoom: 10 } // your default zoom for single point
-                    : undefined
-                }/>
+                <MapToolbar
+                    initialBounds={mapBounds.length > 1 ? mapBounds : undefined}
+                    initialCenterZoom={
+                        mapBounds.length === 1
+                            ? { center: mapBounds[0], zoom: 10 } // your default zoom for single point
+                            : undefined
+                    }
+                />
 
                 <TileLayer
                     url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png"
@@ -122,11 +132,7 @@ const RouteMap: React.FC<MapProps> = ({ type, user, dimensions, entryId = 0, rec
                     keepBuffer={6}
                 />
 
-                {type === "ENTRY" && recording && (
-                    <RecordingPlot
-                        recording={recording}
-                    />
-                )}
+                {type === "ENTRY" && recording && <RecordingPlot recording={recording} />}
 
                 {aerodromes.length > 0 && waypoints.length > 0 && (
                     <RoutePlot

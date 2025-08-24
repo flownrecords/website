@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import AirNavLogo from "../../assets/images/airnav.svg";
 import FlightTracker from "../../assets/images/flighttracker.png";
 
-import axios from "axios";
-
 import type { LogbookEntry, User } from "../../lib/types";
 import Button from "../../components/general/Button";
 import Footer from "../../components/general/Footer";
@@ -18,27 +16,32 @@ import { FilePlus2, Pencil, Plus, Save, Undo2 } from "lucide-react";
 import { parseDate, parseDuration } from "../../lib/utils";
 import Modal from "../../components/general/Modal";
 import FlightDataChart from "../../components/logbook/FlightDataChart";
+import { useAuth } from "../../components/auth/AuthContext";
+import api, { ENDPOINTS } from "../../lib/api";
 
-type RecordingStats = {
-    highestLevel: string, // "000" rounded to nearest 500ft
-    averageLevel: string, // "000" rounded to nearest 500ft
-    topSpeed: number,     // knots
-    averageSpeed: number, // knots
-    squawks: string[], // most-used first
-    highestVerticalSpeed: string, // ft per min (fpm)
-    } | undefined
+type RecordingStats =
+    | {
+          highestLevel: string; // "000" rounded to nearest 500ft
+          averageLevel: string; // "000" rounded to nearest 500ft
+          topSpeed: number; // knots
+          averageSpeed: number; // knots
+          squawks: string[]; // most-used first
+          highestVerticalSpeed: string; // ft per min (fpm)
+      }
+    | undefined;
 
 export default function LogbookEntry() {
-    const API = import.meta.env.VITE_API_URL;
-    const token = localStorage.getItem("accessToken");
-
+    const navigate = useNavigate();
+    const { user } = useAuth();
     const { entryId } = useParams();
 
-    const [user, setUser] = useState<User>(null);
+    if (!entryId) {
+        return navigate("/me/logbook");
+    }
+
     const [entry, setEntry] = useState<LogbookEntry | null>(null);
 
     const alert = useAlert();
-    const navigate = useNavigate();
 
     const [crewModal, setCrewModal] = useState<boolean>(false);
     const [recordModal, setRecordModal] = useState<boolean>(false);
@@ -50,53 +53,23 @@ export default function LogbookEntry() {
     const addCrewMemberRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (!localStorage.getItem("accessToken")) {
-            navigate("/login");
-        }
-
-        axios
-            .get(API + "/users/me", {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
-            })
+        api.get(ENDPOINTS.LOGBOOK.ENTRY, {
+            requireAuth: true,
+            navigate,
+            replaceBy: [{ key: "{id}", value: entryId }],
+        })
             .then((response) => {
-                if (response.status === 200) {
-                    if(!response.data) {
-                        navigate("/login");
-                        return;
-                    }
-                    setUser(response.data);
-                }            
-            })
-            .catch((error) => {
-                console.error("Error fetching user data:", error);
-                if (error.response?.status === 401) {
-                    console.log("Unauthorized access, redirecting to login.");
-                    localStorage.removeItem("accessToken");
-                    navigate("/login");
-                }
-            });
-
-        axios
-            .get(API + "/users/logbook/" + entryId, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
-            })
-            .then((response) => {
-                if (response.status === 200) {
-                    let entry = response.data;
-                    if (!entry) return navigate("/me/logbook");
-                    setEntry(entry);
+                if (response.meta.status === 200) {
+                    if (!response) return navigate("/me/logbook");
+                    setEntry(response);
                 }
             })
             .catch((error) => {
-                console.error("Error fetching user data:", error);
-                if (error.response?.status === 401) {
-                    console.log("Unauthorized access, redirecting to login.");
+                if (error?.status === 401) {
                     localStorage.removeItem("accessToken");
                     navigate("/login");
+                } else {
+                    navigate("/me/logbook");
                 }
             });
     }, []);
@@ -115,85 +88,67 @@ export default function LogbookEntry() {
             username = username.slice(1);
         }
 
-        axios
-            .get(API + `/users/${username}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
-            })
-            .then((response) => {
-                if (response.status === 200) {
-                    const newMember = response.data;
-                    if (!newMember || !newMember.id) {
-                        return alert("Error", "User not found.");
-                    }
+        if (!username) {
+            return alert("Error", "Please enter a valid username.");
+        }
 
-                    if (entry?.crew && entry.crew.some((member) => member?.id === newMember.id)) {
-                        return alert("Error", "This user is already assigned to the crew.");
-                    }
+        if (username === user?.username) {
+            return alert("Error", "You cannot add yourself as a crew member.");
+        }
 
-                    axios
-                        .post(
-                            API + `/users/logbook/crewAdd`,
-                            {
-                                entryId: entry?.id,
-                                crewUsername: newMember.username,
-                            },
-                            {
-                                headers: {
-                                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                                },
-                            },
-                        )
-                        .then((response) => {
-                            if (response.status === 200) {
-                                window.location.reload();
-                            }
-                        });
+        api.get(ENDPOINTS.USER.USERNAME, {
+            requireAuth: true,
+            navigate,
+            replaceBy: [{ key: "{username}", value: username }],
+        })
+            .then((userData) => {
+                if (userData.meta.status !== 200 || !userData || !userData.id) {
+                    return alert("Error", "User not found.");
                 }
+
+                if (entry && entry.crew.some((member) => member?.id === userData.id)) {
+                    return alert("Error", "This user is already assigned to the crew.");
+                }
+
+                api.post(
+                    ENDPOINTS.LOGBOOK.ADD_CREW,
+                    {
+                        entryId: entry?.id,
+                        crewUsername: username,
+                    },
+                    {
+                        requireAuth: true,
+                        navigate,
+                    },
+                ).then(() => {
+                    window.location.reload();
+                });
             })
             .catch((error) => {
                 console.error("Error fetching user data:", error);
-                if (error.response?.status === 404) {
-                    return alert("Error", "User not found.");
-                }
-                if (error.response?.status === 401) {
-                    console.log("Unauthorized access, redirecting to login.");
-                    localStorage.removeItem("accessToken");
-                    navigate("/login");
-                } else {
-                    alert(
-                        "Error",
-                        "An error occurred while trying to add the crew member. Please try again later.",
-                    );
-                }
+                return alert("Error", "User not found.");
             });
     }
 
     function removeCrewMember(memberUsername: string) {
         if (!entry || !entry.crew || !memberUsername) return;
 
-        axios
-            .post(
-                API + `/users/logbook/crewRemove`,
-                {
-                    entryId: entry.id,
-                    crewUsername: memberUsername,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                    },
-                },
-            )
-            .then((response) => {
-                if (response.status === 200) {
-                    window.location.reload();
-                }
+        api.post(
+            ENDPOINTS.LOGBOOK.REMOVE_CREW,
+            {
+                entryId: entry.id,
+                crewUsername: memberUsername,
+            },
+            {
+                requireAuth: true,
+                navigate,
+            },
+        )
+            .then(() => {
+                window.location.reload();
             })
-            .catch((error) => {
-                console.error("Error removing crew member:", error);
-                alert(
+            .catch(() => {
+                return alert(
                     "Error",
                     "An error occurred while trying to remove the crew member. Please try again later.",
                 );
@@ -213,10 +168,9 @@ export default function LogbookEntry() {
 
             setRecordingFile(file);
         }
-    };
+    }
 
     function recordUpload() {
-        // Handle the file upload logic here
         if (!selectedRecordingSource) {
             return setRecordUploadInfo("Please select a recording source.");
         }
@@ -225,44 +179,44 @@ export default function LogbookEntry() {
             return setRecordUploadInfo("Please select a KML file to upload.");
         }
 
-        if(!entry || !entry.id) {
-            return setRecordUploadInfo("No logbook entry found to associate with the recording. Try refreshing the page or ensure you are logged in.");
+        if (!entry || !entry.id) {
+            return setRecordUploadInfo(
+                "No logbook entry found to associate with the recording. Try refreshing the page or ensure you are logged in.",
+            );
         }
 
-        const form= new FormData();
+        const form = new FormData();
         form.append("file", recordingFile);
         form.append("fileSource", selectedRecordingSource);
         form.append("entryId", entry?.id.toString() || "");
 
-        axios
-            .post(API + "/users/recording/upload", form, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${token}`,
-                },
-            })
+        api.post(ENDPOINTS.RECORDING.UPLOAD, form, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
             .then((response) => {
-                if (response.status === 200) {
-                    if(response.data) {
-                        setRecordUploadInfo("Recording uploaded successfully.");
-                        setRecordModal(false);
-                        setRecordingFile(null);
-                        setSelectedRecordingSource(null);
-                        window.location.reload();
-                    }
+                if (response.meta.status === 200) {
+                    setRecordUploadInfo("Recording uploaded successfully.");
+                    setRecordModal(false);
+                    setRecordingFile(null);
+                    setSelectedRecordingSource(null);
+                    window.location.reload();
                 } else {
                     setRecordUploadInfo("Failed to upload the recording. Please try again.");
                 }
             })
             .catch((error) => {
                 console.error("Error uploading recording:", error);
-                setRecordUploadInfo("An error occurred while uploading the recording. Please try again later.");
+                setRecordUploadInfo(
+                    "An error occurred while uploading the recording. Please try again later.",
+                );
             });
     }
 
     function calculateStats(): RecordingStats {
         const recording = entry?.recording?.coords;
-        if(!recording) return undefined;
+        if (!recording) return undefined;
         if (!Array.isArray(recording) || recording.length === 0) {
             return {
                 highestLevel: "000",
@@ -270,14 +224,14 @@ export default function LogbookEntry() {
                 topSpeed: 0,
                 averageSpeed: 0,
                 squawks: [],
-                highestVerticalSpeed: "000fpm"
+                highestVerticalSpeed: "000fpm",
             };
         }
 
         // Extract altitude and speed values
-        const altitudes = recording.map(r => r.altitude?.value ?? 0);
-        const speeds = recording.map(r => r.groundSpeed ?? 0);
-        const verticalSpeeds = recording.map(r => r.verticalSpeed ?? 0);
+        const altitudes = recording.map((r) => r.altitude?.value ?? 0);
+        const speeds = recording.map((r) => r.groundSpeed ?? 0);
+        const verticalSpeeds = recording.map((r) => r.verticalSpeed ?? 0);
 
         // Stats
         const highestAltitude = Math.max(...altitudes);
@@ -301,13 +255,14 @@ export default function LogbookEntry() {
         // Sort squawks by frequency
         const squawks = Object.entries(squawkCounts)
             .sort((a, b) => b[1] - a[1]) // most used first
-            .map(([code]) => code).filter(code => code !== "----");
+            .map(([code]) => code)
+            .filter((code) => code !== "----");
 
-        const highestVerticalSpeedValue = verticalSpeeds.reduce((max, vs) =>
-            Math.abs(vs) > Math.abs(max) ? vs : max, 0
+        const highestVerticalSpeedValue = verticalSpeeds.reduce(
+            (max, vs) => (Math.abs(vs) > Math.abs(max) ? vs : max),
+            0,
         );
         const highestVerticalSpeed = `${highestVerticalSpeedValue >= 0 ? "+" : ""}${highestVerticalSpeedValue} fpm`;
-
 
         return {
             highestLevel: toFlightLevel(highestAltitude),
@@ -317,10 +272,7 @@ export default function LogbookEntry() {
             squawks,
             highestVerticalSpeed,
         };
-
-        
     }
-
 
     return (
         <>
@@ -334,19 +286,19 @@ export default function LogbookEntry() {
                     ) {
                         return (
                             <div>
-                                <h3 className="text-2xl md:text-3xl font-bold text-white/50">
+                                <h3 className="text-xl md:text-3xl font-bold text-white/50">
                                     {entry?.aircraftRegistration ?? ""}
                                 </h3>
-                                <h1 className="block text-7xl md:text-8xl font-bold">
-                                    {entry?.depAd} <span className="text-white/15">to</span> {entry?.arrAd}
+                                <h1 className="block text-5xl md:text-8xl font-bold">
+                                    {entry?.depAd} <span className="text-white/15">to</span>{" "}
+                                    {entry?.arrAd}
                                 </h1>
                                 <h3 className="font-semibold text-white/50">
                                     {entry.offBlock ? parseDate(entry.offBlock) : "N/A"}
                                 </h3>
                             </div>
                         );
-                    } 
-                    else if (typeof entry?.simTime === "number" && entry.simTime > 0) {
+                    } else if (typeof entry?.simTime === "number" && entry.simTime > 0) {
                         return (
                             <div>
                                 <h3 className="text-2xl md:text-3xl font-bold text-white/50">
@@ -360,8 +312,7 @@ export default function LogbookEntry() {
                                 </h3>
                             </div>
                         );
-                    } 
-                    else {
+                    } else {
                         return (
                             <div>
                                 <h3 className="text-2xl md:text-3xl font-bold text-white/50">
@@ -376,10 +327,14 @@ export default function LogbookEntry() {
                 })()}
             </div>
 
-
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="ring-2 ring-white/25 rounded-lg overflow-hidden">
-                    <RouteMap type="ENTRY" user={user} entryId={entry?.id} recording={entry?.recording} />
+                    <RouteMap
+                        type="ENTRY"
+                        user={user}
+                        entryId={entry?.id}
+                        recording={entry?.recording}
+                    />
                 </div>
 
                 <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
@@ -423,13 +378,7 @@ export default function LogbookEntry() {
                         />
 
                         <Button
-                            disabled={
-                                entry?.recording 
-                                    ? true : 
-                                    (
-                                        entry?.id ? false : true
-                                    )
-                            }
+                            disabled={entry?.recording ? true : entry?.id ? false : true}
                             styleType="small"
                             type="button"
                             onClick={() => {
@@ -447,118 +396,123 @@ export default function LogbookEntry() {
                         />
                     </div>
                 </div>
-                
-                { entry ? <>
-                    <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
-                        <h1 className="text-lg text-white/50 font-semibold mb-2">
-                            Details
-                        </h1>
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div>
-                                <h1 className="mb-1">Registration</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry ? entry.aircraftRegistration : "N/A"}
+
+                {entry ? (
+                    <>
+                        <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
+                            <h1 className="text-lg text-white/50 font-semibold mb-2">Details</h1>
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div>
+                                    <h1 className="mb-1">Registration</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry ? entry.aircraftRegistration : "N/A"}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <h1 className="mb-1">Departure</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry?.depAd && entry.depAd.length > 0 ? entry.depAd : "N/A"}
+                                <div>
+                                    <h1 className="mb-1">Departure</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry?.depAd && entry.depAd.length > 0
+                                            ? entry.depAd
+                                            : "N/A"}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <h1 className="mb-1">Arrival</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry?.arrAd && entry.arrAd.length > 0 ? entry.arrAd : "N/A"}
+                                <div>
+                                    <h1 className="mb-1">Arrival</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry?.arrAd && entry.arrAd.length > 0
+                                            ? entry.arrAd
+                                            : "N/A"}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <h1 className="mb-1">Uploaded on</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry
-                                        ? `${parseDate(entry.createdAt)} ${parseTime(entry.createdAt)}`
-                                        : "N/A"}
+                                <div>
+                                    <h1 className="mb-1">Uploaded on</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry
+                                            ? `${parseDate(entry.createdAt)} ${parseTime(entry.createdAt)}`
+                                            : "N/A"}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <h1 className="mb-1">Date</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry ? parseDate(entry.offBlock) : "N/A"}
+                                <div>
+                                    <h1 className="mb-1">Date</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry ? parseDate(entry.offBlock) : "N/A"}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <h1 className="mb-1">Off Block</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry ? parseTime(entry.offBlock) : "N/A"}
+                                <div>
+                                    <h1 className="mb-1">Off Block</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry ? parseTime(entry.offBlock) : "N/A"}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <h1 className="mb-1">On Block</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry ? parseTime(entry.onBlock) : "N/A"}
+                                <div>
+                                    <h1 className="mb-1">On Block</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry ? parseTime(entry.onBlock) : "N/A"}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <h1 className="mb-1">
-                                    {entry && typeof entry.total === "number" && entry.total > 0
-                                        ? ""
-                                        : "Synthetic"}{" "}
-                                    Flight Time
-                                </h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry
-                                        ? parseDuration(
-                                            typeof entry.total === "number" && entry.total > 0
-                                                ? entry.total
-                                                : entry.simTime,
-                                        )
-                                        : "00h00"}
+                                <div>
+                                    <h1 className="mb-1">
+                                        {entry && typeof entry.total === "number" && entry.total > 0
+                                            ? ""
+                                            : "Synthetic"}{" "}
+                                        Flight Time
+                                    </h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry
+                                            ? parseDuration(
+                                                  typeof entry.total === "number" && entry.total > 0
+                                                      ? entry.total
+                                                      : entry.simTime,
+                                              )
+                                            : "00h00"}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <h1 className="mb-1">Crew</h1>
-                                <div className="rounded-lg bg-secondary p-2 relative">
-                                    {entry?.crew && entry.crew.length > 0 ? (
-                                        entry.crew.map((m: User, i) => {
-                                            const fullName = m?.firstName
-                                                ? `${m.firstName} ${m.lastName ?? ""}`
-                                                : `@${m?.username}`;
+                                <div>
+                                    <h1 className="mb-1">Crew</h1>
+                                    <div className="rounded-lg bg-secondary p-2 relative">
+                                        {entry?.crew && entry.crew.length > 0 ? (
+                                            entry.crew.map((m: User, i) => {
+                                                const fullName = m?.firstName
+                                                    ? `${m.firstName} ${m.lastName ?? ""}`
+                                                    : `@${m?.username}`;
 
-                                            return (
-                                                <div
-                                                    className={`inline-block hover:mr-2 ${
-                                                        i !== 0 ? "-ml-1 hover:ml-1" : ""
-                                                    } transition-all duration-500`}
-                                                    key={i}
-                                                >
-                                                    <div className="relative group inline-block">
-                                                        <Link
-                                                            to={"/users/" + m?.id}
-                                                            className="inline-block"
-                                                            title={fullName} // still useful for screen readers
-                                                        >
-                                                            <img
-                                                                src={
-                                                                    m?.profilePictureUrl ??
-                                                                    `https://placehold.co/512/09090B/313ED8?font=roboto&text=${
-                                                                        m?.firstName?.charAt(0) || ""
-                                                                    }${m?.lastName?.charAt(0) || ""}`
-                                                                }
-                                                                className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"
-                                                            />
-                                                        </Link>
+                                                return (
+                                                    <div
+                                                        className={`inline-block hover:mr-2 ${
+                                                            i !== 0 ? "-ml-1 hover:ml-1" : ""
+                                                        } transition-all duration-500`}
+                                                        key={i}
+                                                    >
+                                                        <div className="relative group inline-block">
+                                                            <Link
+                                                                to={"/users/" + m?.id}
+                                                                className="inline-block"
+                                                                title={fullName} // still useful for screen readers
+                                                            >
+                                                                <img
+                                                                    src={
+                                                                        m?.profilePictureUrl ??
+                                                                        `https://placehold.co/512/09090B/313ED8?font=roboto&text=${
+                                                                            m?.firstName?.charAt(
+                                                                                0,
+                                                                            ) || ""
+                                                                        }${m?.lastName?.charAt(0) || ""}`
+                                                                    }
+                                                                    className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"
+                                                                />
+                                                            </Link>
 
-                                                        {/* Custom tooltip */}
-                                                        <div
-                                                            className="
+                                                            {/* Custom tooltip */}
+                                                            <div
+                                                                className="
                                                 fixed sm:absolute 
                                                     top-12 sm:top-auto 
                                                     left-1/2 
@@ -573,190 +527,275 @@ export default function LogbookEntry() {
                                                     group-hover:opacity-100 
                                                     transition-opacity duration-300 
                                                     z-10 shadow-xs"
-                                                        >
-                                                            <ProfileCard
-                                                                data={{
-                                                                    profilePictureUrl:
-                                                                        m?.profilePictureUrl ?? "",
-                                                                    firstName: m?.firstName ?? null,
-                                                                    lastName: m?.lastName ?? "",
-                                                                    username: m?.username ?? null,
-                                                                    location: m?.location ?? null,
-                                                                    publicProfile:
-                                                                        m?.publicProfile ?? false,
-                                                                    bio: m?.bio ?? null,
-                                                                    organizationId:
-                                                                        m?.organizationId ?? "",
-                                                                    organizationRole:
-                                                                        m?.organizationRole ?? "",
-                                                                    organization: m?.organization,
-                                                                }}
-                                                            />
+                                                            >
+                                                                <ProfileCard
+                                                                    data={{
+                                                                        profilePictureUrl:
+                                                                            m?.profilePictureUrl ??
+                                                                            "",
+                                                                        firstName:
+                                                                            m?.firstName ?? null,
+                                                                        lastName: m?.lastName ?? "",
+                                                                        username:
+                                                                            m?.username ?? null,
+                                                                        location:
+                                                                            m?.location ?? null,
+                                                                        publicProfile:
+                                                                            m?.publicProfile ??
+                                                                            false,
+                                                                        bio: m?.bio ?? null,
+                                                                        organizationId:
+                                                                            m?.organizationId ?? "",
+                                                                        organizationRole:
+                                                                            m?.organizationRole ??
+                                                                            "",
+                                                                        organization:
+                                                                            m?.organization,
+                                                                    }}
+                                                                />
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            );
-                                        })
-                                    ) : (
-                                        <span className="text-white/75 text-sm flex items-center h-4 my-1">
-                                            No crew assigned
+                                                );
+                                            })
+                                        ) : (
+                                            <span className="text-white/75 text-sm flex items-center h-4 my-1">
+                                                No crew assigned
+                                            </span>
+                                        )}
+
+                                        <span
+                                            className="absolute right-2 top-1/2 -translate-y-1/2 text-white/75 bg-primary px-2 py-1 rounded-lg cursor-pointer flex hover:opacity-75 transition-all duration-300"
+                                            onClick={() => setCrewModal(!crewModal)}
+                                        >
+                                            <Plus
+                                                className="h-4 w-4 inline-block text-white cursor-pointer lg:mr-1"
+                                                strokeWidth={2}
+                                            />
+                                            <span className="text-xs hidden lg:inline-block">
+                                                Add Crew
+                                            </span>
                                         </span>
-                                    )}
-
-                                    <span
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-white/75 bg-primary px-2 py-1 rounded-lg cursor-pointer flex hover:opacity-75 transition-all duration-300"
-                                        onClick={() => setCrewModal(!crewModal)}
-                                    >
-                                        <Plus
-                                            className="h-4 w-4 inline-block text-white cursor-pointer lg:mr-1"
-                                            strokeWidth={2}
-                                        />
-                                        <span className="text-xs hidden lg:inline-block">Add Crew</span>
-                                    </span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div>
-                                <h1 className="mb-1">Landings</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry ? (entry.landDay ?? 0) + (entry.landNight ?? 0) : "1"}
+                                <div>
+                                    <h1 className="mb-1">Landings</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry
+                                            ? (entry.landDay ?? 0) + (entry.landNight ?? 0)
+                                            : "1"}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="col-span-2">
-                                <h1 className="mb-1">Remarks</h1>
-                                <div className="rounded-lg bg-secondary p-2">
-                                    {entry?.remarks ? entry.remarks : "N/A"}
+                                <div className="col-span-2">
+                                    <h1 className="mb-1">Remarks</h1>
+                                    <div className="rounded-lg bg-secondary p-2">
+                                        {entry?.remarks ? entry.remarks : "N/A"}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
-                        <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Plan</h1>
-                        {entry?.plan ? (
-                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                                <div className="">
-                                    <h1 className="mb-1">Departure</h1>
-                                    <div className="rounded-lg bg-secondary p-2">
-                                        {entry && entry.plan ? entry.plan.depAd : "N/A"}
+                        <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
+                            <h1 className="text-lg text-white/50 font-semibold mb-2">
+                                Flight Plan
+                            </h1>
+                            {entry?.plan ? (
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <div className="">
+                                        <h1 className="mb-1">Departure</h1>
+                                        <div className="rounded-lg bg-secondary p-2">
+                                            {entry && entry.plan ? entry.plan.depAd : "N/A"}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="">
-                                    <h1 className="mb-1">ETD</h1>
-                                    <div className="rounded-lg bg-secondary p-2">
-                                        {entry && entry.plan ? parseTime(entry.plan.etd) : "N/A"}
+                                    <div className="">
+                                        <h1 className="mb-1">ETD</h1>
+                                        <div className="rounded-lg bg-secondary p-2">
+                                            {entry && entry.plan
+                                                ? parseTime(entry.plan.etd)
+                                                : "N/A"}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="">
-                                    <h1 className="mb-1">ETE</h1>{" "}
-                                    {/* Estimated Time Enroute eta - etd */}
-                                    <div className="rounded-lg bg-secondary p-2">
-                                        {entry && entry.plan && entry.plan.eta && entry.plan.etd
-                                            ? parseDuration(
-                                                (new Date(entry.plan.eta).getTime() -
-                                                    new Date(entry.plan.etd).getTime()) /
-                                                    1000 /
-                                                    60 /
-                                                    60,
-                                            )
-                                            : "N/A"}
+                                    <div className="">
+                                        <h1 className="mb-1">ETE</h1>{" "}
+                                        {/* Estimated Time Enroute eta - etd */}
+                                        <div className="rounded-lg bg-secondary p-2">
+                                            {entry && entry.plan && entry.plan.eta && entry.plan.etd
+                                                ? parseDuration(
+                                                      (new Date(entry.plan.eta).getTime() -
+                                                          new Date(entry.plan.etd).getTime()) /
+                                                          1000 /
+                                                          60 /
+                                                          60,
+                                                  )
+                                                : "N/A"}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="">
-                                    <h1 className="mb-1">Estimated Fuel</h1>
-                                    <div className="rounded-lg bg-secondary p-2">
-                                        {entry && entry.plan && entry.plan.fuelPlan
-                                            ? <><span>{Number(entry.plan.fuelPlan)}</span> <span className="font-semibold text-white/50" title="Liters">L</span></>
-                                            : "N/A"}
+                                    <div className="">
+                                        <h1 className="mb-1">Estimated Fuel</h1>
+                                        <div className="rounded-lg bg-secondary p-2">
+                                            {entry && entry.plan && entry.plan.fuelPlan ? (
+                                                <>
+                                                    <span>{Number(entry.plan.fuelPlan)}</span>{" "}
+                                                    <span
+                                                        className="font-semibold text-white/50"
+                                                        title="Liters"
+                                                    >
+                                                        L
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                "N/A"
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="col-span-4">
-                                    <h1 className="mb-1">Route</h1>
-                                    <div className="rounded-lg bg-secondary p-2">
-                                        {entry && entry.plan?.route ? entry.plan.route : "N/A"}
+                                    <div className="col-span-4">
+                                        <h1 className="mb-1">Route</h1>
+                                        <div className="rounded-lg bg-secondary p-2">
+                                            {entry && entry.plan?.route ? entry.plan.route : "N/A"}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="">
-                                    <h1 className="mb-1">Arrival</h1>
-                                    <div className="rounded-lg bg-secondary p-2">
-                                        {entry && entry.plan ? entry.plan.arrAd : "N/A"}
+                                    <div className="">
+                                        <h1 className="mb-1">Arrival</h1>
+                                        <div className="rounded-lg bg-secondary p-2">
+                                            {entry && entry.plan ? entry.plan.arrAd : "N/A"}
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div className="">
-                                    <h1 className="mb-1">ETA</h1>
-                                    <div className="rounded-lg bg-secondary p-2">
-                                        {entry && entry.plan ? parseTime(entry.plan.eta) : "N/A"}
+                                    <div className="">
+                                        <h1 className="mb-1">ETA</h1>
+                                        <div className="rounded-lg bg-secondary p-2">
+                                            {entry && entry.plan
+                                                ? parseTime(entry.plan.eta)
+                                                : "N/A"}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ) : (
-                            <span className="text-white/75 text-sm my-1">
-                                No flight plan available for this entry.
-                            </span>
-                        )}
-                    </div>
+                            ) : (
+                                <span className="text-white/75 text-sm my-1">
+                                    No flight plan available for this entry.
+                                </span>
+                            )}
+                        </div>
 
-                    <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
-                        <h1 className="text-lg text-white/50 font-semibold mb-2">Flight Recording</h1>
-                        { entry?.recording ? 
-                        <>
-                            <div className="grid lg:grid-cols-3 gap-4">
-                                <div className="space-y-1 p-4 bg-secondary rounded-lg">
-                                    <div className="flex justify-between">
-                                        <span className="text-white/75">Highest Flight Level</span>
-                                        <span className="font-semibold">{calculateStats()?.highestLevel}</span>
+                        <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
+                            <h1 className="text-lg text-white/50 font-semibold mb-2">
+                                Flight Recording
+                            </h1>
+                            {entry?.recording ? (
+                                <>
+                                    <div className="grid lg:grid-cols-3 gap-4">
+                                        <div className="space-y-1 p-4 bg-secondary rounded-lg">
+                                            <div className="flex justify-between">
+                                                <span className="text-white/75">
+                                                    Highest Flight Level
+                                                </span>
+                                                <span className="font-semibold">
+                                                    {calculateStats()?.highestLevel}
+                                                </span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-white/75">
+                                                    Average Flight Level
+                                                </span>
+                                                <span className="font-semibold">
+                                                    {calculateStats()?.averageLevel}
+                                                </span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-white/75">
+                                                    Highest Vertical Speed
+                                                </span>
+                                                <span className="font-semibold text-right">
+                                                    {calculateStats()?.highestVerticalSpeed}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1 p-4 bg-secondary rounded-lg">
+                                            <div className="flex justify-between">
+                                                <span className="text-white/75">Top Speed</span>
+                                                <span className="font-semibold">
+                                                    {calculateStats()?.topSpeed}{" "}
+                                                    <span className="opacity-50">kt</span>
+                                                    <span className="text-xs opacity-25">
+                                                        {" "}
+                                                        (
+                                                        {(
+                                                            (calculateStats()?.topSpeed ?? 0) *
+                                                            1.852
+                                                        ).toFixed(0)}{" "}
+                                                        km/h)
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span className="text-white/75">Average Speed</span>
+                                                <span className="font-semibold">
+                                                    {calculateStats()?.averageSpeed}{" "}
+                                                    <span className="opacity-50">kt</span>
+                                                    <span className="text-xs opacity-25">
+                                                        {" "}
+                                                        (
+                                                        {(
+                                                            (calculateStats()?.averageSpeed ?? 0) *
+                                                            1.852
+                                                        ).toFixed(0)}{" "}
+                                                        km/h)
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1 p-4 bg-secondary rounded-lg">
+                                            <div className="flex justify-between">
+                                                <span className="text-white/75">Squawk</span>
+                                                <span className="font-semibold text-right">
+                                                    {calculateStats()?.squawks
+                                                        ? calculateStats()?.squawks.map((s, i) => {
+                                                              return (
+                                                                  <span
+                                                                      className={
+                                                                          i !== 0
+                                                                              ? "opacity-25"
+                                                                              : ""
+                                                                      }
+                                                                      title={
+                                                                          i !== 0
+                                                                              ? "Previous squawk"
+                                                                              : undefined
+                                                                      }
+                                                                      key={s + i}
+                                                                  >
+                                                                      {s}
+                                                                      <br />
+                                                                  </span>
+                                                              );
+                                                          })
+                                                        : "N/A"}
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-white/75">Average Flight Level</span>
-                                        <span className="font-semibold">{calculateStats()?.averageLevel}</span>
+                                    <div className="mt-4">
+                                        <h2 className="text-white text-center">Flight Overview</h2>
+                                        <FlightDataChart recording={entry.recording} />
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-white/75">Highest Vertical Speed</span>
-                                        <span className="font-semibold text-right">{calculateStats()?.highestVerticalSpeed}</span>
-                                    </div>
-                                </div>
-                                <div className="space-y-1 p-4 bg-secondary rounded-lg">
-                                    <div className="flex justify-between">
-                                        <span className="text-white/75">Top Speed</span>
-                                        <span className="font-semibold">{calculateStats()?.topSpeed} <span className="opacity-50">kt</span>
-                                        <span className="text-xs opacity-25"> ({((calculateStats()?.topSpeed ?? 0) * 1.852).toFixed(0)} km/h)</span>
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-white/75">Average Speed</span>
-                                        <span className="font-semibold">{calculateStats()?.averageSpeed} <span className="opacity-50">kt</span> 
-                                        <span className="text-xs opacity-25"> ({((calculateStats()?.averageSpeed ?? 0) * 1.852).toFixed(0)} km/h)</span></span>
-                                    </div>
-                                </div>
-                                <div className="space-y-1 p-4 bg-secondary rounded-lg">
-                                    <div className="flex justify-between">
-                                        <span className="text-white/75">Squawk</span>
-                                        <span className="font-semibold text-right">
-                                            {calculateStats()?.squawks ? calculateStats()?.squawks.map((s, i) => {
-                                                return <><span className={i !== 0 ? "opacity-25" : ""} title={i !== 0 ? "Previous squawk" : undefined} key={s+i}>{s}</span><br/></>
-                                            }) : "N/A"}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mt-4">
-                                <h2 className="text-white text-center">Flight Overview</h2>
-                                <FlightDataChart recording={entry.recording} />
-                            </div>
-                        </> : 
-                            <span className="text-white/75 text-sm my-1">
-                                No flight recording available for this entry.
-                            </span>
-                        }
-                    </div>
-                </> : <PageLoader />}
+                                </>
+                            ) : (
+                                <span className="text-white/75 text-sm my-1">
+                                    No flight recording available for this entry.
+                                </span>
+                            )}
+                        </div>
+                    </>
+                ) : (
+                    <PageLoader />
+                )}
             </div>
 
             <Footer />
@@ -823,7 +862,11 @@ export default function LogbookEntry() {
                 </div>
             )}
 
-            <Modal isOpen={recordModal} onClose={() => setRecordModal(false)} title="Add Flight Recording">
+            <Modal
+                isOpen={recordModal}
+                onClose={() => setRecordModal(false)}
+                title="Add Flight Recording"
+            >
                 <div className="bg-primary rounded-lg p-4 mt-4">
                     <h2 className="text-xl font-semibold mb-4">Upload Recording</h2>
                     <div>
@@ -833,7 +876,12 @@ export default function LogbookEntry() {
                         <div className="flex flex-row space-x-4">
                             <Button
                                 text={
-                                    <img src={AirNavLogo} alt="AirNav" title="AirNav" className="inline-block h-8" />
+                                    <img
+                                        src={AirNavLogo}
+                                        alt="AirNav"
+                                        title="AirNav"
+                                        className="inline-block h-8"
+                                    />
                                 }
                                 styleType="small"
                                 type="button"
@@ -841,7 +889,7 @@ export default function LogbookEntry() {
                                 onClick={() => {
                                     setSelectedRecordingSource("AIRNAV");
                                     setRecordUploadInfo("");
-                                    if(selectedRecordingSource === "AIRNAV") {
+                                    if (selectedRecordingSource === "AIRNAV") {
                                         setSelectedRecordingSource(null);
                                     }
                                 }}
@@ -849,7 +897,12 @@ export default function LogbookEntry() {
                             <Button
                                 disabled={true}
                                 text={
-                                    <img src={FlightTracker} alt="Flight Track" title="Flight Tracker" className="inline-block h-8" />
+                                    <img
+                                        src={FlightTracker}
+                                        alt="Flight Track"
+                                        title="Flight Tracker"
+                                        className="inline-block h-8"
+                                    />
                                 }
                                 styleType="small"
                                 type="button"
@@ -857,7 +910,7 @@ export default function LogbookEntry() {
                                 onClick={() => {
                                     setSelectedRecordingSource("FLIGHTTRACKER");
                                     setRecordUploadInfo("");
-                                    if(selectedRecordingSource === "FLIGHTTRACKER") {
+                                    if (selectedRecordingSource === "FLIGHTTRACKER") {
                                         setSelectedRecordingSource(null);
                                     }
                                 }}

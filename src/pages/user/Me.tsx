@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/general/Button";
@@ -11,55 +10,39 @@ import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
 import ProfileHeader from "../../components/user/ProfileHeader";
 
-export default function Me() {
-    const API = import.meta.env.VITE_API_URL;
+import api, { ENDPOINTS } from "../../lib/api";
 
+export default function Me() {
     const alert = useAlert();
     const navigate = useNavigate();
     const [user, setUser] = useState<User>(null);
 
-    const [localWeather, setLocalWeather] = useState<{
+    const [homeWx, setHomeWx] = useState<{
         metar?: string;
         taf?: string;
     }>({});
 
     useEffect(() => {
-        if (!localStorage.getItem("accessToken")) {
-            navigate("/login");
-        }
+        api.get(ENDPOINTS.USER.ME, {
+            requireAuth: true,
+            navigate,
+        })
+            .then((res) => {
+                setUser(res);
 
-        axios
-            .get(API + "/users/me", {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
+                api.get(ENDPOINTS.WX.AD, {
+                    params: { icao: res.homeAirport },
+                })
+                    .then((wx) => {
+                        setHomeWx({
+                            metar: wx.rawOb,
+                            taf: wx.rawTaf,
+                        });
+                    })
+                    .catch((e) => console.error("Error fetching weather data:", e));
             })
-            .then((response) => {
-                if (response.status === 200) {
-                    fetchLocalWeather(response.data?.homeAirport);
-                    return setUser(response.data as User);
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching user data:", error);
-                if (error.response?.status === 401) {
-                    console.log("Unauthorized access, redirecting to login.");
-                    localStorage.removeItem("accessToken");
-                    navigate("/login");
-                }
-            });
+            .catch((e) => console.error("Error fetching user data:", e));
     }, []);
-
-    const fetchLocalWeather = async (homeAirport?: string) => {
-        if (!homeAirport) return;
-
-        const response = await axios.get(`${API}/wx/ad?icao=${homeAirport}`);
-        setLocalWeather({
-            metar: response.data.rawOb,
-            taf: response.data.rawTaf,
-        });
-        return response;
-    };
 
     function share() {
         navigator
@@ -84,21 +67,38 @@ export default function Me() {
                             <div className="grid grid-cols-4 gap-4">
                                 <Button
                                     to="/me/edit"
-                                    text={ <PencilLine strokeWidth={1.25} className="h-6 w-6 inline-block" /> }
+                                    text={
+                                        <PencilLine
+                                            strokeWidth={1.25}
+                                            className="h-6 w-6 inline-block"
+                                        />
+                                    }
                                 />
 
                                 <Button
                                     to="/me/logbook"
-                                    text={ <Book strokeWidth={1.25} className="h-6 w-6 inline-block" /> }
+                                    text={
+                                        <Book strokeWidth={1.25} className="h-6 w-6 inline-block" />
+                                    }
                                 />
 
                                 <Button
                                     disabled={true}
-                                    text={ <FileText strokeWidth={1.25} className="h-6 w-6 inline-block" /> }
+                                    text={
+                                        <FileText
+                                            strokeWidth={1.25}
+                                            className="h-6 w-6 inline-block"
+                                        />
+                                    }
                                 />
                                 <Button
                                     onClick={share}
-                                    text={ <Forward strokeWidth={1.25} className="h-6 w-6 inline-block" /> }
+                                    text={
+                                        <Forward
+                                            strokeWidth={1.25}
+                                            className="h-6 w-6 inline-block"
+                                        />
+                                    }
                                 />
                             </div>
                         </div>
@@ -116,7 +116,10 @@ export default function Me() {
                                 <Button
                                     text={
                                         <>
-                                            <Pencil className="h-4 w-4 inline-block" strokeWidth={2}/>
+                                            <Pencil
+                                                className="h-4 w-4 inline-block"
+                                                strokeWidth={2}
+                                            />
                                             <span className="ml-2">Edit Profile</span>
                                         </>
                                     }
@@ -128,7 +131,10 @@ export default function Me() {
                                 <Button
                                     text={
                                         <>
-                                            <Book className="h-4 w-4 inline-block" strokeWidth={2}/>
+                                            <Book
+                                                className="h-4 w-4 inline-block"
+                                                strokeWidth={2}
+                                            />
                                             <span className="ml-2">Logbook</span>
                                         </>
                                     }
@@ -138,7 +144,10 @@ export default function Me() {
                                 <Button
                                     text={
                                         <>
-                                            <FileText className="h-4 w-4 inline-block" strokeWidth={2}/>
+                                            <FileText
+                                                className="h-4 w-4 inline-block"
+                                                strokeWidth={2}
+                                            />
                                             <span className="ml-2">Generate Report</span>
                                         </>
                                     }
@@ -149,7 +158,10 @@ export default function Me() {
                                 <Button
                                     text={
                                         <>
-                                            <Share className="h-4 w-4 inline-block" strokeWidth={2}/>
+                                            <Share
+                                                className="h-4 w-4 inline-block"
+                                                strokeWidth={2}
+                                            />
                                             <span className="ml-2">Share</span>
                                         </>
                                     }
@@ -189,8 +201,8 @@ export default function Me() {
                                 <div className="text-sm">
                                     <span className="text-white/50">METAR</span>
                                     <p className="text-sm text-white/75">
-                                        {localWeather.metar
-                                            ? localWeather.metar?.replace(/[A-Z]{4}/, "")
+                                        {homeWx.metar
+                                            ? homeWx.metar?.replace(/[A-Z]{4}/, "")
                                             : "No METAR available"}
                                     </p>
                                 </div>
@@ -198,8 +210,8 @@ export default function Me() {
                                 <div className="text-sm">
                                     <span className="text-white/50">TAF</span>
                                     <p className="text-sm text-white/75">
-                                        {localWeather.taf
-                                            ? localWeather.taf?.replace(/TAF [A-Z]{4}/, "")
+                                        {homeWx.taf
+                                            ? homeWx.taf?.replace(/TAF [A-Z]{4}/, "")
                                             : "No TAF available"}
                                     </p>
                                 </div>

@@ -1,10 +1,11 @@
 export default function Skeleton(props: {
     type: "p" | "h1" | "h3" | "button" | "span";
     className?: string;
+    color?: "primary" | "secondary";
 }) {
-    const { type, className = "" } = props;
+    const { type, className = "", color } = props;
 
-    const baseClass = "bg-secondary rounded animate-pulse";
+    const baseClass = `${color !== "secondary" ? "bg-secondary" : "bg-primary/50"} rounded animate-pulse`;
 
     if (type === "span") {
         return (

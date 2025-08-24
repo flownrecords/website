@@ -20,7 +20,7 @@ export default function Modal({
             <div className="bg-secondary p-4 rounded-lg min-w-96 lg:min-w-128 ring-2 ring-neutral-600">
                 <h1 className="text-xl font-semibold mb-2">{title}</h1>
                 {children}
-                <div className={`mt-4 space-x-2 ${buttons ? "flex flex-row" : "flex justify-end"}`}>
+                <div className={`mt-4 space-x-4 ${buttons ? "flex flex-row" : "flex justify-end"}`}>
                     <Button onClick={onClose} text="Close" styleType="small" />
                     {buttons}
                 </div>

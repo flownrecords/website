@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export function captalize(str?: string | null) {
     if (!str) return undefined;
     return String(str).charAt(0).toUpperCase() + String(str).slice(1);
@@ -50,4 +52,16 @@ export function parseDate(date?: string | Date | null, cut = false) {
 export function truncateString(str: string, maxLength: number): string {
     if (!str || str.length <= maxLength) return str;
     return str.slice(0, maxLength) + "...";
+}
+
+export function useIsMobile(breakpoint = 768) {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < breakpoint);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < breakpoint);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, [breakpoint]);
+
+    return isMobile;
 }

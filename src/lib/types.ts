@@ -107,7 +107,7 @@ export type FlightRecording = {
     logbookEntry: LogbookEntry | null;
 };
 
-export type FlightRecordingPlacemark ={
+export type FlightRecordingPlacemark = {
     id: number;
     latitude: number;
     longitude: number;
@@ -121,7 +121,7 @@ export type FlightRecordingPlacemark ={
     verticalSpeed?: number; // Optional vertical speed (ft/min)
     source?: string; // Source of the data
     squawk?: number; // Optional transponder code
-}
+};
 
 export type Organization = {
     id: string;
@@ -202,7 +202,7 @@ export type Navaid = {
     type: "VOR" | "VOR/DME" | "NDB" | "DME";
     freq: number;
     coords: Coordinates;
-}
+};
 
 export type Coordinates = {
     lat: number;

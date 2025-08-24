@@ -11,6 +11,11 @@ export default function Navbar() {
 
     const { user, logout } = useAuth();
 
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+    });
+
     return (
         <>
             <nav className="bg-secondary px-4 py-2 m-4 rounded-lg ring-2 ring-white/25">

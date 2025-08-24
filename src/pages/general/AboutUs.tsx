@@ -14,7 +14,7 @@ export default function AboutUs() {
             profilePictureUrl: "https://i.imgur.com/uBmS5GU.jpeg",
             publicProfile: true,
             location: "Porto",
-            hide: { bio: true }
+            hide: { bio: true },
         },
     ];
 
@@ -26,19 +26,37 @@ export default function AboutUs() {
                 <div className="ring-2 ring-white/25 rounded-lg p-4">
                     <h1 className="text-xl font-semibold text-white">About the Platform</h1>
                     <div className="mt-1 opacity-75">
-                        <p>Our mission is to turn raw flight data into meaningful insights, stories, and visuals. Whether you're a student pilot logging your first solo, an instructor tracking progress, or simply an aviation enthusiast, Flown Records helps you see your flying journey in a whole different perspective.</p>
-                        <p>With smart data import tools, you can upload your flight logs from different sources and instantly transform them into interactive charts, statistics, and summaries.</p>
-                        <p>We believe flying isn't just about hours logged, but about the experiences behind them. Flown Records gives you a personal dashboard to revisit those moments, celebrate milestones, and share your progress with others in the aviation community.</p>
-                        <p>Take your flight data further. Discover trends, set goals, and keep writing your story in the skies.</p>
+                        <p>
+                            Our mission is to turn raw flight data into meaningful insights,
+                            stories, and visuals. Whether you're a student pilot logging your first
+                            solo, an instructor tracking progress, or simply an aviation enthusiast,
+                            Flown Records helps you see your flying journey in a whole different
+                            perspective.
+                        </p>
+                        <p>
+                            With smart data import tools, you can upload your flight logs from
+                            different sources and instantly transform them into interactive charts,
+                            statistics, and summaries.
+                        </p>
+                        <p>
+                            We believe flying isn't just about hours logged, but about the
+                            experiences behind them. Flown Records gives you a personal dashboard to
+                            revisit those moments, celebrate milestones, and share your progress
+                            with others in the aviation community.
+                        </p>
+                        <p>
+                            Take your flight data further. Discover trends, set goals, and keep
+                            writing your story in the skies.
+                        </p>
                     </div>
                 </div>
 
                 <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
                     <h1 className="text-xl font-semibold text-white">Our Team</h1>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-2 ">
-                        { Team.map((member) => (
+                        {Team.map((member) => (
                             <ProfileCard data={member} />
-                        )) }
+                        ))}
                     </div>
                 </div>
 
@@ -47,7 +65,9 @@ export default function AboutUs() {
                     <div className="grid lg:grid-cols-4 mt-2 gap-4">
                         <div className="bg-secondary rounded-lg p-4">
                             <h1 className="font-medium">Open Source Code</h1>
-                            <p className="text-sm text-white/50">Explore the code behind Flown Records on our GitHub repository.</p>
+                            <p className="text-sm text-white/50">
+                                Explore the code behind Flown Records on our GitHub repository.
+                            </p>
 
                             <Button
                                 className="flex w-full mt-2"
@@ -72,14 +92,19 @@ export default function AboutUs() {
                         </div>
                         <div className="bg-secondary rounded-lg p-4">
                             <h1 className="font-medium">Sponsor this project</h1>
-                            <p className="text-sm text-white/50">Your support helps us maintain and improve Flown Records.</p>
+                            <p className="text-sm text-white/50">
+                                Your support helps us maintain and improve Flown Records.
+                            </p>
 
                             <Button
                                 className="flex w-full mt-2"
                                 styleType="small"
                                 text={
                                     <div className="flex justify-center items-center">
-                                        <Heart className="h-5 w-5 inline-block stroke-second-accent" strokeWidth={2}/>
+                                        <Heart
+                                            className="h-5 w-5 inline-block stroke-second-accent"
+                                            strokeWidth={2}
+                                        />
                                         <span className="ml-2">Sponsor Here</span>
                                     </div>
                                 }
@@ -98,14 +123,16 @@ export default function AboutUs() {
                                 styleType="small"
                                 text={
                                     <div className="flex justify-center items-center">
-                                        <MessageCircleQuestionMark className="h-5 w-5 inline-block" strokeWidth={2}/>
+                                        <MessageCircleQuestionMark
+                                            className="h-5 w-5 inline-block"
+                                            strokeWidth={2}
+                                        />
                                         <span className="ml-2">Discover</span>
                                     </div>
                                 }
                                 to="/faq"
                             />
                         </div>
-                        
                     </div>
                 </div>
             </div>
