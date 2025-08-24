@@ -51,12 +51,16 @@ export default function Register() {
         { id: "MANAGER", label: "Manager" },
     ];
 
-    const organizations: Organization[] = [{ id: "none", name: "None" }];
+    const [organizations, setOrganizations] = useState<Organization[]>([
+        { id: "none", name: "None" }
+    ]);
 
     useEffect(() => {
         if (user) navigate("/me");
 
-        fetchOrganizations();
+        api.get(ENDPOINTS.ORGS.LIST).then((res) => {
+            setOrganizations([{ id: "none", name: "None" }, ...res]);
+        });
 
         const handleChange = () => {
             setTermsAccepted(terms.current?.checked ?? false);
@@ -66,16 +70,6 @@ export default function Register() {
         el?.addEventListener("change", handleChange);
         return () => el?.removeEventListener("change", handleChange);
     }, [user]);
-
-    async function fetchOrganizations() {
-        try {
-            api.get(ENDPOINTS.ORGS.LIST).then((res) => {
-                if (res.status === 200) organizations.push(...res.data);
-            });
-        } catch (error) {
-            console.error("Error fetching organizations:", error);
-        }
-    }
 
     async function signUp() {
         if (

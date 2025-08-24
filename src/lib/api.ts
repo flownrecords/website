@@ -92,7 +92,7 @@ export class API {
             navigate?: (p: string) => void;
             replaceBy?: ReplaceBy;
         } = {},
-    ): Promise<ApiResponse<T>> {
+    ): Promise<ApiResponse<T> | Array<T>> {
         this.refreshToken();
 
         try {
@@ -122,7 +122,7 @@ export class API {
             navigate?: (p: string) => void;
             replaceBy?: ReplaceBy;
         } = {},
-    ): Promise<ApiResponse<T>> {
+    ): Promise<ApiResponse<T> | Array<T>> {
         this.refreshToken();
 
         try {
@@ -154,17 +154,21 @@ export class API {
         };
     }
 
-    private _format<T>(response: AxiosResponse<any>): ApiResponse<T> {
-        return {
-            ...(response.data as T),
-            meta: {
-                status: response.status,
-                statusText: response.statusText,
-                config: response.config,
-                headers: response.headers,
-                request: response.request,
-            },
-        };
+    private _format<T>(response: AxiosResponse<any>): ApiResponse<T> | Array<T> {
+        if(Array.isArray(response.data)) {
+            return response.data as Array<T>;
+        } else {
+            return {
+                ...(response.data as T),
+                meta: {
+                    status: response.status,
+                    statusText: response.statusText,
+                    config: response.config,
+                    headers: response.headers,
+                    request: response.request,
+                },
+            };
+        }
     }
 }
 

@@ -2,13 +2,19 @@ import { useEffect, useState } from "react";
 import Splash from "../../components/general/Splash";
 import Button from "../../components/general/Button";
 import ProfileCard from "../../components/user/ProfileCard";
-import type { User } from "../../lib/types";
 import { useNavigate } from "react-router-dom";
 import useAlert from "../../components/alert/useAlert";
 import { roles } from "../../lib/roles";
 import { Save, Undo2 } from "lucide-react";
 
 import api, { ENDPOINTS } from "../../lib/api";
+import type { User } from "../../lib/types";
+
+type Organization = {
+    id: string;
+    name: string;
+    logo?: string;
+};
 
 export default function MeEdit() {
     const navigate = useNavigate();
@@ -25,7 +31,9 @@ export default function MeEdit() {
     const [visibility, setVisibility] = useState(user?.publicProfile);
     const [base64Image, setBase64Image] = useState<string | null>(null);
 
-    const organizations = [{ id: "none", name: "None" }];
+    const [organizations, setOrganizations] = useState<Organization[]>([
+        { id: "none", name: "None" }
+    ]);
 
     function handleSave() {
         api.post(ENDPOINTS.USER.ME, {
@@ -71,7 +79,7 @@ export default function MeEdit() {
 
     useEffect(() => {
         api.get(ENDPOINTS.ORGS.LIST).then((res) => {
-            if (res.status === 200) organizations.push(...res.data);
+            setOrganizations([{ id: "none", name: "None" }, ...res]);
         });
 
         api.get(ENDPOINTS.USER.ME, {
