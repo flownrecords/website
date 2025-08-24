@@ -35,10 +35,6 @@ export default function LogbookEntry() {
     const { user } = useAuth();
     const { entryId } = useParams();
 
-    if (!entryId) {
-        return navigate("/me/logbook");
-    }
-
     const [entry, setEntry] = useState<LogbookEntry | null>(null);
 
     const alert = useAlert();
@@ -53,18 +49,19 @@ export default function LogbookEntry() {
     const addCrewMemberRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        api.get(ENDPOINTS.LOGBOOK.ENTRY, {
-            requireAuth: true,
-            navigate,
-            replaceBy: [{ key: "{id}", value: entryId }],
-        })
-            .then((response) => {
+        if (!entryId) {
+            navigate("/me/logbook");
+        } else {
+            api.get(ENDPOINTS.LOGBOOK.ENTRY, {
+                requireAuth: true,
+                navigate,
+                replaceBy: [{ key: "{id}", value: entryId }],
+            }).then((response) => {
                 if (response.meta.status === 200) {
                     if (!response) return navigate("/me/logbook");
                     setEntry(response);
                 }
-            })
-            .catch((error) => {
+            }).catch((error) => {
                 if (error?.status === 401) {
                     localStorage.removeItem("accessToken");
                     navigate("/login");
@@ -72,7 +69,8 @@ export default function LogbookEntry() {
                     navigate("/me/logbook");
                 }
             });
-    }, []);
+        }        
+    }, [entryId, navigate]);
 
     function parseTime(rawDate: Date | null): string {
         if (!rawDate) return "N/A";

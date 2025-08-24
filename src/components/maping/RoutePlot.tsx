@@ -84,7 +84,7 @@ export const RoutePlot = ({
                                     id: fix.id,
                                     type: "NAV",
                                     coords: [fix.coords.lat, fix.coords.long] as [number, number],
-                                    extra: { type: fix.type, freq: fix.frequency },
+                                    extra: { type: (fix as Navaid).type, freq: fix.frequency },
                                 };
                             } else {
                                 // Waypoint
