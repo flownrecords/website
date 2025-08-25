@@ -142,6 +142,15 @@ export default function Footer() {
                                         FAQ
                                     </Link>
                                 </li>
+                                <li>
+                                    <Link
+                                        to="/downloads"
+                                        className="hover:text-white"
+                                        title="Frequently Asked Questions"
+                                    >
+                                        Downloads
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
                     </div>

@@ -28,6 +28,7 @@ import {
 
 // Components
 import Navbar from "./components/general/Navbar";
+import Downloads from "./pages/general/Downloads";
 
 function App() {
     return (
@@ -38,6 +39,8 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/tools" element={<Tools />} />
                 <Route path="/about" element={<AboutUs />} />
+                <Route path="/downloads" element={<Downloads />} />
+                <Route path="/download/:fileId" element={<Downloads />} />
 
                 {/* AUTH ROUTES */}
                 <Route path="/login" element={<Login />} />
