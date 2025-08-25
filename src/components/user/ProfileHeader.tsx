@@ -94,7 +94,7 @@ export default function ProfileHeader(props: { user: User | null }) {
                         <h1 className="text-3xl md:text-4xl font-bold capitalize">
                             {user ? (
                                 (user?.firstName
-                                    ? `${user?.firstName} ${user?.lastName}`
+                                    ? `${user?.firstName} ${user?.lastName ?? ""}`
                                     : `@${user?.username}`
                                 ).substring(0, 20)
                             ) : (
@@ -135,10 +135,10 @@ export default function ProfileHeader(props: { user: User | null }) {
                                 <AtSign className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/15 opacity-50" />
                                 {user ? user?.username : <Skeleton type="span" />}
                             </span>
-                            <span className="text-sm text-white/75 ring-white/25 ring-2 rounded-md px-4 py-0.5 inline-block">
+                            { user?.location && <span className="text-sm text-white/75 ring-white/25 ring-2 rounded-md px-4 py-0.5 inline-block">
                                 <MapPin className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
                                 {user ? user?.location?.substring(0, 24) : <Skeleton type="span" />}
-                            </span>
+                            </span>}
                             <span className="text-sm text-white/75 ring-white/25 ring-2 rounded-md px-4 py-0.5 hidden lg:inline-block relative">
                                 {user?.publicProfile || !user ? (
                                     <Globe className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 import Button from "../../components/general/Button";
 import Splash from "../../components/general/Splash";
