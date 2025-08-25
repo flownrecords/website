@@ -14,6 +14,8 @@ import Icon from "../../assets/images/icon.png";
 import api, { ENDPOINTS } from "../../lib/api";
 import { useAuth } from "../../components/auth/AuthContext";
 
+import FlightLogger from "../../assets/images/flightlogger.png";
+
 export default function Logbook() {
     const { user } = useAuth();
     const [manageMode, toggleManageMode] = useState(false);
@@ -21,30 +23,14 @@ export default function Logbook() {
 
     const [entryModal, toggleEntryModal] = useState(false);
     const [uploadModal, toggleUploadModal] = useState(false);
-    const [manualModal, toggleManualModal] = useState<boolean>(false);
     const [deleteModal, toggleDeleteModal] = useState<boolean>(false);
 
     const [uploadInfo, setUploadInfo] = useState<string>();
     const [file, setFile] = useState<File | null>(null);
 
-    const [meAircraftReg, setMeAircraftReg] = useState<string | null>(null);
-    const [meAircraftType, setMeAircraftType] = useState<string | null>(null);
-    const [meDeparture, setMeDeparture] = useState<string | null>(null);
-    const [meArrival, setMeArrival] = useState<string | null>(null);
-
-    const selectedSource = useRef<HTMLSelectElement>(null);
-
     const alert = useAlert();
 
     let navigate = useNavigate();
-
-    const fileSources = [
-        {
-            id: "flightLogger",
-            name: "FlightLogger",
-            logo: "https://d308f3rtp9iyib.cloudfront.net/assets/my_flightlogger_icon-99fc56ba222dde06d0b11a88e430a81cc59dbb07027548a1f3666e398f2cfea0.png",
-        },
-    ];
 
     function parseDate(date?: string | Date | null, cut = false) {
         return new Date(date as any)
@@ -70,7 +56,7 @@ export default function Logbook() {
     function uploadLogbook() {
         setUploadInfo(undefined);
 
-        let source = selectedSource.current?.value;
+        let source = "flightLogger";
         if (!source) {
             setUploadInfo("Please select a file source");
             return;
@@ -89,7 +75,7 @@ export default function Logbook() {
             headers: { "Content-Type": "multipart/form-data" },
         })
             .then((response) => {
-                if (response.meta.status === 200) {
+                if (response) {
                     if (response.length === 0) {
                         return setUploadInfo("No new logbook entries found in the file");
                     }
@@ -148,45 +134,7 @@ export default function Logbook() {
                 );
             });
     }
-
-    function handleManualEntrySubmit(skip: boolean = false) {
-        return () => {
-            const data = {
-                acftReg: meAircraftReg?.toUpperCase().trim() || "",
-                acftType: meAircraftType?.toUpperCase().trim() || "",
-                depAd: meDeparture?.toUpperCase().trim() || "",
-                arrAd: meArrival?.toUpperCase().trim() || "",
-            };
-
-            if (skip) return navigate(`/me/logbook/manual?${new URLSearchParams(data).toString()}`);
-
-            if (!meAircraftReg || !meAircraftType || !meDeparture || !meArrival) {
-                return alert("Error", "Please fill in all fields before submitting the entry");
-            }
-
-            if (data.depAd?.length !== 4 || data.arrAd?.length !== 4) {
-                return alert(
-                    "Error",
-                    "Departure and arrival airport codes must be 4 characters long",
-                );
-            }
-
-            if (!data.acftReg || data.acftReg.length < 1) {
-                return alert("Error", "Aircraft registration must be at least 1 character long");
-            }
-
-            if (data.acftReg.length > 8) {
-                return alert("Error", "Aircraft registration cannot be longer than 8 characters");
-            }
-
-            if (!data.acftType || data.acftType.length < 3 || data.acftType.length > 4) {
-                return alert("Error", "Aircraft type must be between 3 and 4 characters long");
-            }
-
-            return navigate(`/me/logbook/manual?${new URLSearchParams(data).toString()}`);
-        };
-    }
-
+    
     return (
         <>
             <Splash
@@ -512,159 +460,67 @@ export default function Logbook() {
                 onClose={() => toggleEntryModal(false)}
                 title="Add Logbook Entry"
             >
-                <h2 className="text-white/75">Choose your source</h2>
+                <div className="bg-primary rounded-lg p-4 mt-4">
+                    <h2 className="text-xl font-semibold mb-4">Choose your source</h2>
 
-                <div className="w-full bg-primary rounded-lg mt-2 flex flex-row justify-between items-center">
-                    <div className="w-[45%] py-2 px-4">
-                        <Button
-                            type="button"
-                            className="w-full text-center"
-                            styleType="small"
-                            text="Manual Entry"
-                            onClick={() => {
-                                toggleManualModal(!manualModal);
-                                toggleUploadModal(false);
-                            }}
-                        />
-                    </div>
-                    <div className="py-2 px-4 text-white/25 font-semibold">or</div>
-                    <div className="w-[45%] py-2 px-4">
-                        <Button
-                            type="button"
-                            className="w-full text-center"
-                            styleType="small"
-                            text="Upload Entry"
-                            onClick={() => {
-                                toggleUploadModal(!uploadModal);
-                                toggleManualModal(false);
-                            }}
-                        />
+                    <div>
+                        <label className="inline-block text-sm text-white/75 mb-1">
+                            entry source
+                        </label>
+                        <div className="flex flex-row space-x-4">
+                            <Button
+                                styleType="small"
+                                type="button"
+                                className={`w-full ${uploadModal ? "opacity-100" : "opacity-50"}`}
+                                onClick={() => {
+                                    toggleUploadModal(!uploadModal);
+                                }}
+                                text={
+                                    <img 
+                                        src={FlightLogger}
+                                        alt="FlightLogger"
+                                        title="FlightLogger"
+                                        className="inline-block h-6 object-fill"
+                                    />
+                                }
+                            />
+                            <Button
+                                text={
+                                    <h1 className="h-8 text-xl flex justify-center items-center font-medium text-white/75">
+                                        Manual Entry
+                                    </h1>
+                                }
+                                styleType="small"
+                                type="button"
+                                className="w-full opacity-50 hover:opacity-100"
+                                to="/me/logbook/manual"
+                            />
+                        </div>
+
+                        {
+                            uploadModal && (
+                                <>
+                                    <div className="flex flex-col mb-4">
+                                        <label className="text-sm text-white/75 mt-4 mb-1">CSV file</label>
+                                        <input
+                                            onChange={handleFileChange}
+                                            type="file"
+                                            accept=".csv"
+                                            className="bg-secondary ring-2 ring-white/25 rounded-lg px-2 py-2 file:text-white file:bg-primary/50 file:border-0 file:rounded-md file:px-3"
+                                        />
+                                    </div>
+
+                                    {uploadInfo && (
+                                        <div className="text-sm text-second-accent mb-4">{uploadInfo}</div>
+                                    )}
+                                    <div className="flex justify-start space-x-4">
+                                        <Button text="Submit" onClick={uploadLogbook} styleType="small" />
+                                    </div>
+                                </>
+                            )
+                        }
                     </div>
                 </div>
-
-                {uploadModal && (
-                    <div className="bg-primary rounded-lg p-4 mt-4">
-                        <h2 className="text-xl font-semibold mb-4">Upload Entry</h2>
-                        <div>
-                            <label className="inline-block text-sm text-white/75 mb-1">
-                                file source
-                            </label>
-                            <select
-                                ref={selectedSource}
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-2 py-2 focus:outline-none focus:ring-white/50 w-full"
-                                required
-                            >
-                                {fileSources.map((source) => (
-                                    <option key={source.id} value={source.id}>
-                                        {source.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex flex-col mb-4">
-                            <label className="text-sm text-white/75 mt-4 mb-1">CSV file</label>
-                            <input
-                                onChange={handleFileChange}
-                                type="file"
-                                accept=".csv"
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-2 py-2 file:text-white file:bg-primary/50 file:border-0 file:rounded-md file:px-3"
-                            />
-                        </div>
-                        {uploadInfo && (
-                            <div className="text-sm text-second-accent mb-4">{uploadInfo}</div>
-                        )}
-                        <div className="flex justify-start space-x-4">
-                            <Button text="Submit" onClick={uploadLogbook} styleType="small" />
-                        </div>
-                    </div>
-                )}
-
-                {manualModal && (
-                    <div className="bg-primary rounded-lg p-4 mt-4">
-                        <h2 className="text-xl font-semibold mb-4">Manual Entry</h2>
-
-                        <div className="grid grid-cols-1 gap-4">
-                            <div className="flex flex-col">
-                                <label className="text-sm text-white/75 mb-1">aircraft reg.</label>
-                                <input
-                                    type="text"
-                                    autoComplete="me-aircraft-reg"
-                                    className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
-                                    maxLength={8}
-                                    onChange={(e) => {
-                                        e.target.value = e.target.value.replace(
-                                            /[^a-zA-Z0-9-]/g,
-                                            "",
-                                        );
-                                        e.target.value = e.target.value.toUpperCase();
-                                        setMeAircraftReg(e.target.value);
-                                    }}
-                                />
-                            </div>
-
-                            <div className="flex flex-col">
-                                <label className="text-sm text-white/75 mb-1">aircraft type</label>
-                                <input
-                                    type="text"
-                                    autoComplete="me-aircraft-reg"
-                                    className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
-                                    minLength={3}
-                                    maxLength={4}
-                                    onChange={(e) => {
-                                        e.target.value = e.target.value.replace(
-                                            /[^a-zA-Z0-9-]/g,
-                                            "",
-                                        );
-                                        e.target.value = e.target.value.toUpperCase();
-                                        setMeAircraftType(e.target.value);
-                                    }}
-                                />
-                            </div>
-
-                            <div className="flex flex-col">
-                                <label className="text-sm text-white/75 mb-1">departure</label>
-                                <input
-                                    type="text"
-                                    autoComplete="me-departure"
-                                    className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
-                                    minLength={4}
-                                    maxLength={4}
-                                    onChange={(e) => {
-                                        e.target.value = e.target.value.toUpperCase();
-                                        setMeDeparture(e.target.value);
-                                    }}
-                                />
-                            </div>
-                            <div className="flex flex-col">
-                                <label className="text-sm text-white/75 mb-1">arrival</label>
-                                <input
-                                    type="text"
-                                    autoComplete="me-arrival"
-                                    className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
-                                    minLength={4}
-                                    maxLength={4}
-                                    onChange={(e) => {
-                                        e.target.value = e.target.value.toUpperCase();
-                                        setMeArrival(e.target.value);
-                                    }}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex justify-start mt-4 space-x-4">
-                            <Button
-                                text="Submit"
-                                onClick={handleManualEntrySubmit(false)}
-                                styleType="small"
-                            />
-                            <Button
-                                text="Open"
-                                onClick={handleManualEntrySubmit(true)}
-                                styleType="small"
-                            />
-                        </div>
-                    </div>
-                )}
             </Modal>
 
             <Modal
