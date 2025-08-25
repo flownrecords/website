@@ -6,9 +6,10 @@ import { AerodromesLayer } from "./AerodromesLayer";
 import { RoutePlot } from "./RoutePlot";
 import { MapToolbar } from "./MapToolbar";
 import RecordingPlot from "./RecordingPlot";
+import SigmetMap from "./Sigmets";
 
 type MapProps = {
-    type: "OVERVIEW" | "PLANNING" | "ENTRY";
+    type: "OVERVIEW" | "PLANNING" | "ENTRY" | "SIGMET";
     entryId?: number;
     recording?: FlightRecording | null;
     user: User;
@@ -31,6 +32,7 @@ const RouteMap: React.FC<MapProps> = ({
     const [waypoints, setWaypoints] = useState<any[]>([]);
     const [navaids, setNavaids] = useState<any[]>([]);
     const [mapBounds, setMapBounds] = useState<[number, number][]>([]);
+    const [displaySigmets, toggleDisplaySigmets] = useState<boolean>(false);
 
     const visitedIcaos = useMemo(() => {
         const set = new Set<string>();
@@ -124,6 +126,11 @@ const RouteMap: React.FC<MapProps> = ({
                             ? { center: mapBounds[0], zoom: 10 } // your default zoom for single point
                             : undefined
                     }
+                    sigmets={{
+                        toggle: () => toggleDisplaySigmets((prev) => !prev),
+                        status: displaySigmets,
+                        disable: type === "ENTRY"
+                    }}
                 />
 
                 <TileLayer
@@ -151,6 +158,8 @@ const RouteMap: React.FC<MapProps> = ({
                         options={{ highlightVisited: true, type: type }}
                     />
                 )}
+
+                <SigmetMap displaySigmets={displaySigmets} />
 
                 {/* waypoints.length > 0 && (
                 <WaypointsLayer navdata={ waypoints } user={ user } options={{}} />

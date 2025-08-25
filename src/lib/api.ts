@@ -22,6 +22,7 @@ export const ENDPOINTS = {
     NAVDATA: {},
     WX: {
         AD: "/wx/ad",
+        SIGMET: "/wx/sigmet",
     },
     GEN: {},
     ORGS: {

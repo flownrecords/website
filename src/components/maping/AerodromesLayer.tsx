@@ -8,7 +8,7 @@ export const AerodromesLayer = ({
 }: {
     options: {
         highlightVisited?: boolean;
-        type: "OVERVIEW" | "PLANNING" | "ENTRY";
+        type: "OVERVIEW" | "PLANNING" | "ENTRY" | "SIGMET";
         entryId?: number;
     };
     navdata: Aerodrome[];

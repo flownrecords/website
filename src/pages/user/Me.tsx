@@ -107,7 +107,7 @@ export default function Me() {
                             <RouteMap
                                 type="OVERVIEW"
                                 user={user}
-                                dimensions={{ height: "400px" }}
+                                dimensions={{ height: "450px" }}
                             />
                         </div>
 

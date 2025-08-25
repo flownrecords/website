@@ -391,7 +391,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                 </div>
 
                 <div className="keen-slider__slide">
-                    <h2 className="text-white text-center">Monthly Landings</h2>
+                    <h2 className="text-white text-center">Flights by Day of Week</h2>
                     <ResponsiveContainer width="100%" height={chartHeight}>
                         <BarChart
                             data={flightsByDayOfWeekArray}
