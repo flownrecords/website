@@ -179,6 +179,32 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         })
         .slice(isMobile ? -4 : -6);
 
+    // Count flights by weekday
+    const flightsByDayOfWeek = logbook.reduce((acc, entry) => {
+    const date = new Date(entry.date as any);
+    const day = date.toLocaleString("en-US", { weekday: "long" }); // "Monday", "Tuesday", etc.
+
+    if (!acc[day]) acc[day] = { name: day, flights: 0 };
+    acc[day].flights += 1;
+
+    return acc;
+    }, {} as Record<string, { name: string; flights: number }>);
+
+    // Convert to sorted array (Mon → Sun)
+    const orderedWeekdays = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+    ];
+
+    const flightsByDayOfWeekArray = orderedWeekdays.map(day => 
+        flightsByDayOfWeek[day] || { name: day, flights: 0 }
+    );
+
     return (
         <div className="relative">
             <div ref={sliderRef} className="keen-slider">
@@ -358,6 +384,32 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                                 dataKey="landings"
                                 name="Landings"
                                 fill="#62BF58"
+                                radius={[5, 5, 0, 0]}
+                            />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+
+                <div className="keen-slider__slide">
+                    <h2 className="text-white text-center">Monthly Landings</h2>
+                    <ResponsiveContainer width="100%" height={chartHeight}>
+                        <BarChart
+                            data={flightsByDayOfWeekArray}
+                            margin={{
+                                left: -30,
+                            }}
+                        >
+                            <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25} />
+                            <XAxis dataKey="name" fontSize={isMobile ? 12 : 14} />
+                            <YAxis fontSize={isMobile ? 10 : 12} />
+                            <Tooltip
+                                cursor={{ fill: "rgba(255, 255, 255, 0.01)" }}
+                                content={<ChartTooltip />}
+                            />
+                            <Bar
+                                dataKey="flights"
+                                name="Day"
+                                fill="#732EDC"
                                 radius={[5, 5, 0, 0]}
                             />
                         </BarChart>
