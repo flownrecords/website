@@ -21,8 +21,8 @@ export default function Navbar() {
             <nav className="bg-secondary px-4 py-2 m-4 rounded-lg ring-2 ring-white/25">
                 <div className="hidden md:flex container mx-auto justify-between items-center">
                     <div className="flex space-x-4 items-center">
-                        <Link to="/" className="text-lg font-semibold">
-                            Flown Records
+                        <Link to="/" className="text-lg font-semibold flex justify-center items-center space-x-2">
+                            <img src={Icon} alt="Flown Records" className="h-6"/> <span>Flown Records</span>
                         </Link>
 
                         <ul className="flex space-x-6 mx-10">
