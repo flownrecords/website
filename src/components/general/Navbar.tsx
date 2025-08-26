@@ -69,6 +69,14 @@ export default function Navbar() {
                             </li>
                             <li>
                                 <Link
+                                    to="/guides"
+                                    className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150"
+                                >
+                                    Guides
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
                                     to="/about"
                                     className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150"
                                 >

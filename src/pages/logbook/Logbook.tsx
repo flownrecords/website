@@ -4,7 +4,7 @@ import { useState } from "react";
 import Button from "../../components/general/Button";
 import Splash from "../../components/general/Splash";
 import useAlert from "../../components/alert/useAlert";
-import { Loader, Pencil, Plus, Trash, UserRound } from "lucide-react";
+import { InfoIcon, Loader, Pencil, Plus, Trash, UserRound } from "lucide-react";
 import Footer from "../../components/general/Footer";
 import Modal from "../../components/general/Modal";
 
@@ -500,7 +500,7 @@ export default function Logbook() {
                         {
                             uploadModal && (
                                 <>
-                                    <div className="flex flex-col mb-4">
+                                    <div className="flex flex-col mb-2">
                                         <label className="text-sm text-white/75 mt-4 mb-1">CSV file</label>
                                         <input
                                             onChange={handleFileChange}
@@ -508,6 +508,12 @@ export default function Logbook() {
                                             accept=".csv"
                                             className="bg-secondary ring-2 ring-white/25 rounded-lg px-2 py-2 file:text-white file:bg-primary/50 file:border-0 file:rounded-md file:px-3"
                                         />
+                                    </div>
+
+                                    <div className="flex flex-row my-4">
+                                        <Link to="/guides#flightlogger" className="text-accent font-medium cursor-pointer hover:opacity-75 transition-all duration-300">
+                                            <InfoIcon className="inline-block h-6 w-6"/><span className="text-sm ml-2">How to retrieve your CSV logbook file</span>
+                                        </Link>
                                     </div>
 
                                     {uploadInfo && (

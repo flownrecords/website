@@ -29,6 +29,8 @@ import {
 // Components
 import Navbar from "./components/general/Navbar";
 import Downloads from "./pages/general/Downloads";
+import Guides from "./pages/general/Guides";
+import Organizations from "./pages/organizations/Organizations";
 
 function App() {
     return (
@@ -39,6 +41,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/tools" element={<Tools />} />
                 <Route path="/about" element={<AboutUs />} />
+                <Route path="/guides" element={<Guides />} />
                 <Route path="/downloads" element={<Downloads />} />
                 <Route path="/download/:fileId" element={<Downloads />} />
 
@@ -60,11 +63,14 @@ function App() {
                 <Route path="/me/logbook" element={<Logbook />} />
                 <Route path="/me/logbook/:entryId" element={<LogbookEntry />} />
                 <Route path="/me/logbook/manual" element={<LogbookManualInput />} />
+                {/* <Route path="/u/:userId" element={<Logbook/>} /> */}
 
                 {/* DATA ROUTES */}
                 <Route path="/navdata" element={<Navdata />} />
 
-                {/* <Route path="/u/:userId" element={<Logbook/>} /> */}
+                {/* ORGANIZATION ROUTES */}
+                <Route path="/organizations" element={<Organizations />} />
+                <Route path="/org/:orgId" element={<Organizations />} />
 
                 {/* Catch-all route for 404 Not Found */}
                 <Route path="*" element={<NotFound />} />
