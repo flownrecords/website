@@ -145,7 +145,8 @@ export default function LogbookEntry() {
             .then(() => {
                 window.location.reload();
             })
-            .catch(() => {
+            .catch((error) => {
+                console.error("Error removing crew member:", error);
                 return alert(
                     "Error",
                     "An error occurred while trying to remove the crew member. Please try again later.",
@@ -571,7 +572,7 @@ export default function LogbookEntry() {
                                                 strokeWidth={2}
                                             />
                                             <span className="text-xs hidden lg:inline-block">
-                                                Add Crew
+                                                {entry?.crew && entry.crew.length > 0 ? "Edit" : "Add"} Crew
                                             </span>
                                         </span>
                                     </div>

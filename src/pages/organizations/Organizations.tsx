@@ -1,8 +1,9 @@
+import Splash from "../../components/general/Splash";
+
 export default function Organizations() {
     return (
-        <div>
-            <h1>Main Organization Page</h1>
-            <p>This is the main page for organizations.</p>
-        </div>
+        <>
+            <Splash uppertext="" title="Work in Progress" />
+        </>
     );
 }
