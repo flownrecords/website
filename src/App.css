@@ -84,3 +84,11 @@ html {
 .recharts-brush-slide {
     padding: 10px !important;
 }
+
+.recharts-wrapper *:focus {
+  outline: none;
+}
+
+.recharts-wrapper:focus {
+  outline: none;
+}
