@@ -68,6 +68,16 @@ export default function ProfileHeader(props: { user: User | null }) {
         return mostFlownAcft || "None";
     }
 
+    function totalLandings() {
+        if (!user?.logbookEntries || user.logbookEntries.length === 0) {
+            return 0;
+        }
+
+        const entries = user.logbookEntries.filter((entry) => entry.includeInFt);
+
+        return entries.reduce((acc, entry) => acc + (entry.landDay || 0) + (entry.landNight || 0), 0);
+    }
+
     return (
         <>
             <div className="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4 ring-2 ring-white/25 rounded-lg">
@@ -103,7 +113,7 @@ export default function ProfileHeader(props: { user: User | null }) {
                         </h1>
                         <div>
                             {user ? (
-                                <div className="font-semibold text-lg">
+                                <div className="font-medium text-lg">
                                     {user?.organizationRole && (
                                         <span className="text-white/50">
                                             {roles.find(
@@ -113,7 +123,7 @@ export default function ProfileHeader(props: { user: User | null }) {
                                     )}
 
                                     {user?.organizationId && user?.organizationRole && (
-                                        <span className="text-white/25 px-2"> @ </span>
+                                        <AtSign className="h-5 w-5 inline-block top-1/2 transform -translate-y-1/15 opacity-25 mx-4" strokeWidth={2} />
                                     )}
 
                                     {user?.organizationId && (
@@ -212,6 +222,12 @@ export default function ProfileHeader(props: { user: User | null }) {
                             <span className="text-white/50">Most visited airport</span>
                             <span className="text-white/75 font-semibold">
                                 {mostVisitedAirport()}
+                            </span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-white/50">Total Landings</span>
+                            <span className="text-white/75 font-semibold">
+                                {totalLandings()}
                             </span>
                         </div>
                     </div>
