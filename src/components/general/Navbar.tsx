@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 
 import Icon from "../../assets/images/icon.png";
-import { ChevronDown } from "lucide-react";
+import { AlignRight, ChevronDown } from "lucide-react";
 
 export default function Navbar() {
     const [mobileMenu, toggleMobileMenu] = useState(false);
@@ -139,20 +139,7 @@ export default function Navbar() {
                         className="cursor-pointer text-white focus:outline-none hover:opacity-75 transition duration-150"
                         onClick={() => toggleMobileMenu(!mobileMenu)}
                     >
-                        <svg
-                            className="w-6 h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 6h16M4 12h16m-7 6h7"
-                            />
-                        </svg>
+                        <AlignRight className={`h-6 w-6 ${mobileMenu ? "ring-2 ring-white/25 rounded-lg p-1" : ""} transition-all duration-300`} />
                     </button>
                 </div>
             </nav>
@@ -174,6 +161,14 @@ export default function Navbar() {
                                 className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150"
                             >
                                 Tools
+                            </Link>
+                        </li>
+                        <li>
+                            <Link
+                                to="/guides"
+                                className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150"
+                            >
+                                Guides
                             </Link>
                         </li>
                         <li>
