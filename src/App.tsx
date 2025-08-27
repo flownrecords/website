@@ -18,19 +18,15 @@ import {
     LogbookEntry,
     LogbookManualInput,
     Tools,
-    Questions,
-    ManageQuestions,
-    ViewQuestion,
-    Planner,
+    Guides,
+    Downloads,
     Navdata,
     Stats,
+    Organizations,
 } from "./pages";
 
 // Components
 import Navbar from "./components/general/Navbar";
-import Downloads from "./pages/general/Downloads";
-import Guides from "./pages/general/Guides";
-import Organizations from "./pages/organizations/Organizations";
 
 function App() {
     return (
@@ -39,22 +35,15 @@ function App() {
             <Routes>
                 {/* GENERAL ROUTES */}
                 <Route path="/" element={<Home />} />
-                <Route path="/tools" element={<Tools />} />
-                <Route path="/about" element={<AboutUs />} />
                 <Route path="/guides" element={<Guides />} />
+                <Route path="/about" element={<AboutUs />} />
                 <Route path="/downloads" element={<Downloads />} />
                 <Route path="/download/:fileId" element={<Downloads />} />
+                <Route path="/navdata" element={<Navdata />} />
 
                 {/* AUTH ROUTES */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/getstarted" element={<Register />} />
-
-                {/* QUESTION ROUTES */}
-                <Route path="/questions" element={<Questions />} />
-                <Route path="/q/manage" element={<ManageQuestions />} />
-                <Route path="/q/:questionId" element={<ViewQuestion />} />
-
-                <Route path="/planner" element={<Planner />} />
 
                 {/* USER ROUTES */}
                 <Route path="/me" element={<Me />} />
@@ -65,12 +54,12 @@ function App() {
                 <Route path="/me/logbook/manual" element={<LogbookManualInput />} />
                 {/* <Route path="/u/:userId" element={<Logbook/>} /> */}
 
-                {/* DATA ROUTES */}
-                <Route path="/navdata" element={<Navdata />} />
-
                 {/* ORGANIZATION ROUTES */}
                 <Route path="/organizations" element={<Organizations />} />
                 <Route path="/org/:orgId" element={<Organizations />} />
+
+                {/* TOOLS ROUTES */}
+                <Route path="/tools" element={<Tools />} />
 
                 {/* Catch-all route for 404 Not Found */}
                 <Route path="*" element={<NotFound />} />
