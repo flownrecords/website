@@ -5,7 +5,7 @@ import Button from "../../components/general/Button";
 import type { User } from "../../lib/types";
 import ChartCarousel from "../../components/user/ChartCarousel";
 import Footer from "../../components/general/Footer";
-import { Book, Cloudy, FileText, Forward, Loader, Pencil, PencilLine, Share } from "lucide-react";
+import { Book, Cloudy, FileText, Forward, Loader, PencilLine, Share, UserPen, Users } from "lucide-react";
 import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
 import ProfileHeader from "../../components/user/ProfileHeader";
@@ -116,7 +116,7 @@ export default function Me() {
                                 <Button
                                     text={
                                         <>
-                                            <Pencil
+                                            <UserPen
                                                 className="h-4 w-4 inline-block"
                                                 strokeWidth={2}
                                             />
@@ -144,11 +144,25 @@ export default function Me() {
                                 <Button
                                     text={
                                         <>
+                                            <Users
+                                                className="h-4 w-4 inline-block"
+                                                strokeWidth={2}
+                                            />
+                                            <span className="ml-2">Crew</span>
+                                        </>
+                                    }
+                                    disabled={true}
+                                    to="/me/crew"
+                                />
+
+                                <Button
+                                    text={
+                                        <>
                                             <FileText
                                                 className="h-4 w-4 inline-block"
                                                 strokeWidth={2}
                                             />
-                                            <span className="ml-2">Generate Report</span>
+                                            <span className="ml-2">Reports</span>
                                         </>
                                     }
                                     disabled={true}
