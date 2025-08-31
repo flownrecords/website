@@ -27,7 +27,7 @@ export type User = {
     disabled: boolean;
 
     logbookEntries: LogbookEntry[];
-    crewFor: LogbookEntry[] | null;
+    crewForEntries: LogbookEntry[] | null;
     organization: Organization | null;
 } | null;
 

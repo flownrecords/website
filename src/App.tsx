@@ -23,6 +23,8 @@ import {
     Navdata,
     Stats,
     Organizations,
+    Plan,
+    CrewLogbook
 } from "./pages";
 
 // Components
@@ -49,6 +51,9 @@ function App() {
                 <Route path="/me" element={<Me />} />
                 <Route path="/me/edit" element={<MeEdit />} />
                 <Route path="/me/stats" element={<Stats />} />
+                <Route path="/me/plan" element={<Plan />} />
+                <Route path="/me/crew" element={<CrewLogbook />} />
+
                 <Route path="/me/logbook" element={<Logbook />} />
                 <Route path="/me/logbook/:entryId" element={<LogbookEntry />} />
                 <Route path="/me/logbook/manual" element={<LogbookManualInput />} />

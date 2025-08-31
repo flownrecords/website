@@ -364,10 +364,12 @@ export default function LogbookEntry() {
                         />
 
                         <Button
-                            disabled={true}
                             styleType="small"
                             type="button"
-                            onClick={() => {}}
+                            disabled={entry?.plan !== null}
+                            onClick={() => {
+                                navigate(`/me/plan?entry=${entry?.id}`)
+                            }}
                             text={
                                 <>
                                     <FilePlus2 className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
@@ -509,7 +511,6 @@ export default function LogbookEntry() {
                                                                 />
                                                             </Link>
 
-                                                            {/* Custom tooltip */}
                                                             <div
                                                                 className="
                                                 fixed sm:absolute 

@@ -5,7 +5,7 @@ import Button from "../../components/general/Button";
 import type { User } from "../../lib/types";
 import ChartCarousel from "../../components/user/ChartCarousel";
 import Footer from "../../components/general/Footer";
-import { Book, Cloudy, FileText, Forward, Loader, Share, UserPen, Users } from "lucide-react";
+import { Book, Cloudy, FileChartLine, FileText, Forward, Loader, Share, UserPen, Users } from "lucide-react";
 import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
 import ProfileHeader from "../../components/user/ProfileHeader";
@@ -151,7 +151,6 @@ export default function Me() {
                                             <span className="ml-2">Crew</span>
                                         </>
                                     }
-                                    disabled={true}
                                     to="/me/crew"
                                 />
 
@@ -159,6 +158,19 @@ export default function Me() {
                                     text={
                                         <>
                                             <FileText
+                                                className="h-4 w-4 inline-block"
+                                                strokeWidth={2}
+                                            />
+                                            <span className="ml-2">Flight Plan</span>
+                                        </>
+                                    }
+                                    to="/me/plan"
+                                />
+
+                                <Button
+                                    text={
+                                        <>
+                                            <FileChartLine
                                                 className="h-4 w-4 inline-block"
                                                 strokeWidth={2}
                                             />
