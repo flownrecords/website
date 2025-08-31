@@ -112,20 +112,17 @@ export default function ProfileCard(props: {
                             )}
                         </span>
                     </span>
-                    <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
-                        <MapPin className="h-4 w-4 opacity-25 shrink-0" />
-                        {data ? (
-                            data &&
-                            data.location &&
-                            data.location.length > 0 && (
+                    
+                    { data &&
+                        data.location &&
+                        data.location.length > 0 && (
+                            <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
+                                <MapPin className="h-4 w-4 opacity-25 shrink-0" />
                                 <span className="text-white/75 truncate ml-1">
                                     {data.location.split(",")[0]}
                                 </span>
-                            )
-                        ) : (
-                            <Skeleton type="span" className="ml-1 my-0.5" />
-                        )}
-                    </span>
+                            </span>
+                        ) }
                     <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm">
                         {!data || data.publicProfile ? (
                             <Globe className="h-4 w-4 inline-block my-0.5 opacity-25" />
