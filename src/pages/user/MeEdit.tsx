@@ -46,6 +46,9 @@ export default function MeEdit() {
             organizationRole,
             profilePictureUrl: base64Image,
             homeAirport,
+        },{
+            requireAuth: true,
+            navigate,
         })
             .then((res) => {
                 if (res.meta.status === 200) {
