@@ -6,6 +6,9 @@ export const ENDPOINTS = {
         USERNAME: "/users/{username}",
         SIGNIN: "/auth/signin",
         SIGNUP: "/auth/signup",
+        ADD_PLAN: "/users/plan/add",
+        GET_PLANS: "/users/plan/list",
+        EDIT_PLAN: "/users/plan/edit",
     },
     LOGBOOK: {
         UPLOAD: "/users/logbook/upload",
@@ -15,6 +18,7 @@ export const ENDPOINTS = {
         ENTRY: "/users/logbook/{id}",
         ADD_CREW: "/users/logbook/crewAdd",
         REMOVE_CREW: "/users/logbook/crewRemove",
+        CREW: "/users/logbook/crew"
     },
     RECORDING: {
         UPLOAD: "/users/recording/upload",
