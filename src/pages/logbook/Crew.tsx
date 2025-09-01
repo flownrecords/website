@@ -9,6 +9,7 @@ import api, { ENDPOINTS } from "../../lib/api";
 import { Undo2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../../components/general/Footer";
+import PageLoader from "../../components/general/Loader";
 
 export default function CrewLogbook() {
     const { user } = useAuth();
@@ -93,7 +94,7 @@ export default function CrewLogbook() {
                     <h3 className="mb-2 text-white/75">
                         Logbook of flights you are crew of
                     </h3>
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid lg:grid-cols-4 gap-4">
                         <div className="flex justify-between px-4 py-2 bg-secondary rounded-lg ring-2 ring-white/25">
                             <span className="text-white/50">Flight Time</span>
                             <span className="text-white/75 font-semibold">{totalFlightTime()}</span>
@@ -131,7 +132,7 @@ export default function CrewLogbook() {
                 </div>
 
                 <div className="mt-4 bg-primary ring-2 ring-white/25 rounded-lg p-4">
-                    <div className="grid grid-cols-6 px-2 mb-4">
+                    <div className="flex justify-between md:grid md:grid-cols-6 pb-2 px-4">
                         <span>Date</span>
 
                         <span className="hidden md:block"> Registration </span>
@@ -149,8 +150,8 @@ export default function CrewLogbook() {
                         <span className="flex items-center justify-end px-4"></span>
                     </div>
                     { logbook &&
-                        logbook.length > 0 &&
-                        logbook
+                        logbook.length > 0
+                        ? logbook
                         .sort(
                             (a, b) =>
                                 new Date(b.date as any).getTime() -
@@ -160,20 +161,20 @@ export default function CrewLogbook() {
                             <div
                                 key={index}
                                 className={`
-                                grid grid-cols-6 py-4 px-2 items-center
+                                flex justify-between md:grid md:grid-cols-6 py-4 px-4 items-center
                                 transition-all duration-150
                                 ${index % 2 === 0 ? "bg-primary hover:bg-primary/75" : "bg-gradient-to-br to-neutral-900 from-neutral-800 hover:from-neutral-800/75"} 
-                                rounded-xl not:disabled:cursor-pointer
+                                rounded-lg not:disabled:cursor-pointer
                                 `}
                                 aria-disabled={true}
                                 onClick={() => {
                                     //navigate(`/me/logbook/${entry.id}`);
                                 }}
                             >
-                                <span className="text-xs md:text-sm text-white/50 ml-2 hidden">
+                                <span className="text-xs md:text-sm text-white/50 hidden">
                                     {parseDate(entry.date, false)}
                                 </span>
-                                <span className="text-xs md:text-sm text-white/50 ml-2 md:block">
+                                <span className="text-xs md:text-sm text-white/50 md:block">
                                     {parseDate(entry.date, true)}
                                 </span>
                                 <span className="text-xs md:text-sm text-white/50">
@@ -194,7 +195,7 @@ export default function CrewLogbook() {
                                             : entry.simTime,
                                     ) || "-"}
                                 </span>
-                                <span className="flex justify-between px-2 items-center">
+                                <span className="flex lg:justify-between justify-end items-center">
                                     <div className="relative group inline-block">
                                         <img
                                             className="h-6 w-6 rounded-full object-cover ring-2 ring-white/25"
@@ -260,7 +261,7 @@ export default function CrewLogbook() {
                                 </span>
                             </div>
                         ))
-                    }
+                    : <PageLoader/>}
                 </div>
             </div>
 

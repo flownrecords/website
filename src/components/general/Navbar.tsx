@@ -21,7 +21,7 @@ export default function Navbar() {
                 <div className="hidden md:flex container mx-auto justify-between items-center">
                     <div className="flex space-x-4 items-center">
                         <Link to="/" className="text-lg font-semibold flex justify-center items-center space-x-2">
-                            <img src={Icon} alt="Flown Records" className="h-6"/> <span>Flown Records</span>
+                            <img src={Icon} alt="Flown Records" className="h-6" draggable="false"/> <span>Flown Records</span>
                         </Link>
 
                         <ul className="flex space-x-6 mx-10">

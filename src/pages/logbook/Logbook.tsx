@@ -260,25 +260,25 @@ export default function Logbook() {
 
                 {user?.logbookEntries ? (
                     <div className="mt-4 bg-primary ring-2 ring-white/25 rounded-lg p-4">
-                        <div className="grid grid-cols-6 px-2 mb-4">
+                        <div className="grid grid-cols-6 pb-2 px-2 md:px-4">
                             <span>Date</span>
 
                             <span className="hidden md:block"> Registration </span>
                             <span className="block md:hidden"> Reg. </span>
 
                             <span className="hidden md:block"> Departure </span>
-                            <span className="block md:hidden"> Dep. </span>
+                            <span className="block md:hidden text-center"> Dep. </span>
 
                             <span className="hidden md:block"> Arrival </span>
-                            <span className="block md:hidden"> Arr. </span>
+                            <span className="block md:hidden text-center"> Arr. </span>
 
                             <span className="hidden md:block"> Flight Time </span>
-                            <span className="block md:hidden"> Time </span>
+                            <span className="block md:hidden text-right"> Time </span>
 
                             <span className="flex items-center justify-end px-4">
                                 {manageMode && (
                                     <>
-                                        <div className="flex items-center cursor-pointer relative mr-2 md:mr-5">
+                                        <div className="flex items-center cursor-pointer relative mr-2 md:mr-3">
                                             <input
                                                 onClick={(e) => {
                                                     const isChecked = (e.target as HTMLInputElement)
@@ -310,7 +310,7 @@ export default function Logbook() {
                                                     }
                                                 }}
                                                 type="checkbox"
-                                                className="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded border border-white/25 checked:bg-accent/25 checked:border-accent"
+                                                className="peer h-4 w-4 md:h-5 md:w-5 cursor-pointer transition-all appearance-none rounded border border-white/25 checked:bg-accent/25 checked:border-accent"
                                             />
                                             <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                                                 <svg
@@ -348,19 +348,19 @@ export default function Logbook() {
                                     <div
                                         key={index}
                                         className={`
-                  grid grid-cols-6 py-4 px-2 items-center
+                  grid grid-cols-6 py-4 px-2 md:px-4 items-center
                   transition-all duration-150
                   ${index % 2 === 0 ? "bg-primary hover:bg-primary/75" : "bg-gradient-to-br to-neutral-900 from-neutral-800 hover:from-neutral-800/75"} 
-                  rounded-xl cursor-pointer
+                  rounded-lg cursor-pointer
                   `}
                                         onClick={() => {
                                             navigate(`/me/logbook/${entry.id}`);
                                         }}
                                     >
-                                        <span className="text-xs md:text-sm text-white/50 ml-2 hidden">
+                                        <span className="text-xs md:text-sm text-white/50 ml-1 hidden">
                                             {parseDate(entry.date, false)}
                                         </span>
-                                        <span className="text-xs md:text-sm text-white/50 ml-2 md:block">
+                                        <span className="text-xs md:text-sm text-white/50 ml-1 md:block">
                                             {parseDate(entry.date, true)}
                                         </span>
                                         <span className="text-xs md:text-sm text-white/50">
@@ -368,20 +368,20 @@ export default function Logbook() {
                                                 ? entry.aircraftRegistration.split(" ")[0]
                                                 : "-"}
                                         </span>
-                                        <span className="text-xs md:text-sm text-white/50">
+                                        <span className="text-xs md:text-sm text-white/50 text-center md:text-left">
                                             {entry.depAd || "-"}
                                         </span>
-                                        <span className="text-xs md:text-sm text-white/50">
+                                        <span className="text-xs md:text-sm text-white/50 text-center md:text-left">
                                             {entry.arrAd || "-"}
                                         </span>
-                                        <span className="text-xs md:text-sm text-white/50">
+                                        <span className="text-xs md:text-sm text-white/50 text-right md:text-left">
                                             {parseDuration(
                                                 typeof entry.total === "number" && entry.total > 0
                                                     ? entry.total
                                                     : entry.simTime,
                                             ) || "-"}
                                         </span>
-                                        <span className="flex justify-end px-2">
+                                        <span className="flex justify-end px-2 md:px-0">
                                             {manageMode && (
                                                 <div className="flex items-center cursor-pointer relative mr-4">
                                                     <input
@@ -413,7 +413,7 @@ export default function Logbook() {
                                                             }
                                                         }}
                                                         type="checkbox"
-                                                        className="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded border border-white/25 checked:bg-accent/25 checked:border-accent"
+                                                        className="peer h-4 w-4 md:h-5 md:w-5 cursor-pointer transition-all appearance-none rounded border border-white/25 checked:bg-accent/25 checked:border-accent"
                                                     />
                                                     <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                                                         <svg

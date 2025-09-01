@@ -4,10 +4,11 @@ import Button from "../../components/general/Button";
 import Splash from "../../components/general/Splash";
 import Footer from "../../components/general/Footer";
 import { useAuth } from "../../components/auth/AuthContext";
-import { FolderInput } from "lucide-react";
+import { FolderInput, Undo2 } from "lucide-react";
 import api, { ENDPOINTS } from "../../lib/api";
 import { useNavigate } from "react-router";
 import useAlert from "../../components/alert/useAlert";
+import { parseDate, truncateString } from "../../lib/utils";
 
 type SubmitPlan = {
     depAd: string | undefined;
@@ -77,19 +78,21 @@ export default function Plan() {
         });
     }
 
+    const flightPlans = user?.logbookEntries?.filter((entry) => entry.plan);
+
     return (
         <>
             <Splash uppertext="Logbook" title="Flight Plan" />
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="ring-2 ring-white/25 rounded-lg p-4">
-                    <div className="grid grid-cols-4 gap-4">
-                        <div className="flex flex-col col-span-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                        <div className="flex flex-col lg:col-span-4">
                             <label className="text-sm text-white/75 mb-1">
                                 Logbook Entry
                             </label>
                             <select
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 w-full"
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 lg:w-full"
                                 value={selectedEntry}
                                 onChange={(e) => {
                                     setSelectedEntry(Number(e.target.value));
@@ -126,7 +129,6 @@ export default function Plan() {
                                 }}
                             />
                         </div>
-
                         <div className="flex flex-col">
                             <label className="text-sm text-white/75 mb-1">ETD</label>
                             <input
@@ -143,7 +145,6 @@ export default function Plan() {
                                 }}
                             />
                         </div>
-
                         <div className="flex flex-col">
                             <label className="text-sm text-white/75 mb-1">
                                 Cruise Speed
@@ -180,7 +181,6 @@ export default function Plan() {
                                 />
                             </div>
                         </div>
-
                         <div className="flex flex-col">
                             <label className="text-sm text-white/75 mb-1">
                                 Cruise Altitude
@@ -218,8 +218,7 @@ export default function Plan() {
                                 />
                             </div>
                         </div>
-
-                        <div className="flex flex-col col-span-4">
+                        <div className="flex flex-col lg:col-span-4">
                             <label className="text-sm text-white/75 mb-1">Route</label>
                             <input
                                 className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
@@ -237,7 +236,6 @@ export default function Plan() {
                                 }}
                             />
                         </div>
-
                         <div className="flex flex-col">
                             <label className="text-sm text-white/75 mb-1">
                                 Destination (ICAO)
@@ -255,7 +253,6 @@ export default function Plan() {
                                 }}
                             />
                         </div>
-
                         <div className="flex flex-col">
                             <label className="text-sm text-white/75 mb-1">ETA</label>
                             <input
@@ -272,7 +269,6 @@ export default function Plan() {
                                 }}
                             />
                         </div>
-
                         <div className="flex flex-col">
                             <label className="text-sm text-white/75 mb-1">
                                 Alternate (ICAO)
@@ -290,7 +286,6 @@ export default function Plan() {
                                 }}
                             />
                         </div>
-
                         <div className="flex flex-col">
                             <label className="text-sm text-white/75 mb-1">
                                 Expected Fuel
@@ -317,8 +312,7 @@ export default function Plan() {
                                 />
                             </div>
                         </div>
-
-                        <div className="flex flex-col col-span-4">
+                        <div className="flex flex-col lg:col-span-4">
                             <label className="text-sm text-white/75 mb-1">
                                 Remarks
                             </label>
@@ -339,8 +333,7 @@ export default function Plan() {
                                 }}
                             />
                         </div>
-
-                        <div className="flex flex-col col-span-4">
+                        <div className="flex flex-col lg:col-span-4">
                             <label className="text-sm text-white/75 mb-1">
                                 Weather
                             </label>
@@ -359,8 +352,18 @@ export default function Plan() {
                             />
                         </div>
                     </div>
-                    <div className="grid grid-cols-4 mt-4 gap-4">
-                        <div className="col-span-3"></div>
+                </div>
+                <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
+                    <div className="grid lg:grid-cols-4 gap-4">
+                        <Button
+                            text={
+                                <>
+                                    <Undo2 className="h-4 w-4 inline-block" strokeWidth={2} />
+                                    <span className="ml-2">Go Back</span>
+                                </>
+                            }
+                            to="/me"
+                        />
                         <Button
                             text={
                                 <>
@@ -371,6 +374,70 @@ export default function Plan() {
                             onClick={submitPlan}
                         />
                     </div>
+                </div>
+                <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
+                    <h3 className="font-semibold text-white/75">
+                        Filed Flight Plans
+                    </h3>
+                    <div className="flex justify-between md:grid md:grid-cols-6 pb-2 px-4">
+                            <span>Saved</span>
+
+                            <span className="hidden md:block"> Registration </span>
+                            <span className="block md:hidden"> Reg. </span>
+
+                            <span className="hidden md:block"> Departure </span>
+                            <span className="block md:hidden"> Dep. </span>
+
+                            <span className="hidden md:block"> Arrival </span>
+                            <span className="block md:hidden"> Arr. </span>
+
+                            <span className="hidden md:block"> Route </span>
+
+                        </div>
+                        {
+                            flightPlans?.sort((a, b) => ((a.plan?.createdAt as Date) > (b.plan?.createdAt as Date) ? -1 : 1))?.map((entry, index) => {
+                                return <>
+                                <div key={index} className={`
+                                    flex justify-between md:grid md:grid-cols-6 py-4 px-4 items-center
+                                    transition-all duration-150
+                                    ${index % 2 === 0 ? "bg-primary hover:bg-primary/75" : "bg-gradient-to-br to-neutral-900 from-neutral-800 hover:from-neutral-800/75"} 
+                                    rounded-lg cursor-pointer
+                                    `}
+                                    onClick={() => {
+                                        navigate(`/me/logbook/${entry.id}`);
+                                    }}
+                                    > 
+                                        <span className="text-xs md:text-sm text-white/50 hidden">
+                                            {parseDate(entry.plan?.createdAt, false)}
+                                        </span>
+                                        <span className="text-xs md:text-sm text-white/50 md:block">
+                                            {parseDate(entry.plan?.createdAt, true)}
+                                        </span>
+
+                                        <span className="text-xs md:text-sm text-white/50 ml-1">
+                                            { entry.aircraftRegistration ?? "N/A" }
+                                        </span>
+                                        <span className="text-xs md:text-sm text-white/50 ml-1">
+                                            { entry.plan?.depAd ?? entry.depAd ?? "N/A" }
+                                        </span>
+                                        <span className="text-xs md:text-sm text-white/50 ml-1">
+                                            { entry.plan?.arrAd ?? entry.arrAd ?? "N/A" }
+                                        </span>
+                                        <span className="text-xs md:text-sm text-white/50 ml-1 hidden md:inline-block">
+                                            { truncateString(entry.plan?.route ?? "", 16) ?? "N/A" }
+                                        </span>
+                                        <span className="hidden md:flex md:justify-end">
+                                            <Button
+                                                to={`/me/logbook/${entry.id}`}
+                                                text="View"
+                                                styleType="small"
+                                                className="text-sm"
+                                            />
+                                        </span>
+                                    </div>
+                                </>
+                            })
+                        }
                 </div>
             </div>
 
