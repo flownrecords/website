@@ -5,7 +5,7 @@ import Button from "../../components/general/Button";
 import type { User } from "../../lib/types";
 import ChartCarousel from "../../components/user/ChartCarousel";
 import Footer from "../../components/general/Footer";
-import { Book, Cloudy, FileChartLine, FileText, Forward, Loader, Share, UserPen, Users } from "lucide-react";
+import { Book, Cloudy, FileChartLine, FileText, Loader, Share, UserPen, Users } from "lucide-react";
 import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
 import ProfileHeader from "../../components/user/ProfileHeader";
@@ -64,7 +64,7 @@ export default function Me() {
                 {user ? (
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
                         <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg block lg:hidden">
-                            <div className="grid grid-cols-4 gap-4">
+                            <div className="grid grid-cols-5 gap-4">
                                 <Button
                                     to="/me/edit"
                                     text={
@@ -83,9 +83,19 @@ export default function Me() {
                                 />
 
                                 <Button
+                                    to="/me/crew"
+                                    text={
+                                        <Users
+                                            strokeWidth={1.25}
+                                            className="h-6 w-6 inline-block"
+                                        />
+                                    }
+                                />
+
+                                <Button
                                     disabled={true}
                                     text={
-                                        <FileText
+                                        <FileChartLine
                                             strokeWidth={1.25}
                                             className="h-6 w-6 inline-block"
                                         />
@@ -94,7 +104,7 @@ export default function Me() {
                                 <Button
                                     onClick={share}
                                     text={
-                                        <Forward
+                                        <Share
                                             strokeWidth={1.25}
                                             className="h-6 w-6 inline-block"
                                         />

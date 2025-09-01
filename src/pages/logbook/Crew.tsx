@@ -91,7 +91,7 @@ export default function CrewLogbook() {
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="ring-2 ring-white/25 rounded-lg p-4">
-                    <h3 className="mb-2 text-white/75">
+                    <h3 className="font-semibold text-white/75 mb-2">
                         Logbook of flights you are crew of
                     </h3>
                     <div className="grid lg:grid-cols-4 gap-4">
