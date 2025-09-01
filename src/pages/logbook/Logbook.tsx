@@ -4,7 +4,7 @@ import { useState } from "react";
 import Button from "../../components/general/Button";
 import Splash from "../../components/general/Splash";
 import useAlert from "../../components/alert/useAlert";
-import { InfoIcon, Loader, Pencil, Plus, Trash, UserRound } from "lucide-react";
+import { InfoIcon, Pencil, Plus, Trash, UserRound } from "lucide-react";
 import Footer from "../../components/general/Footer";
 import Modal from "../../components/general/Modal";
 
@@ -15,6 +15,7 @@ import api, { ENDPOINTS } from "../../lib/api";
 import { useAuth } from "../../components/auth/AuthContext";
 
 import FlightLogger from "../../assets/images/flightlogger.png";
+import PageLoader from "../../components/general/Loader";
 
 export default function Logbook() {
     const { user } = useAuth();
@@ -258,8 +259,7 @@ export default function Logbook() {
                     </div>
                 </div>
 
-                {user?.logbookEntries ? (
-                    <div className="mt-4 bg-primary ring-2 ring-white/25 rounded-lg p-4">
+                <div className="mt-4 bg-primary ring-2 ring-white/25 rounded-lg p-4">
                         <div className="grid grid-cols-6 pb-2 px-2 md:px-4">
                             <span>Date</span>
 
@@ -337,7 +337,7 @@ export default function Logbook() {
                             </span>
                         </div>
                         {user?.logbookEntries &&
-                            user?.logbookEntries.length > 0 &&
+                            user?.logbookEntries.length > 0 ?
                             user?.logbookEntries
                                 .sort(
                                     (a, b) =>
@@ -444,15 +444,12 @@ export default function Logbook() {
                                             </span>
                                         </span>
                                     </div>
-                                ))}
+                                )) : <>
+                                    {
+                                        (user?.logbookEntries && user?.logbookEntries?.length === 0) ? <><p className="text-center text-white/25">No entries found.</p></> : <PageLoader/>
+                                    }
+                                </>}
                     </div>
-                ) : (
-                    <div className="container mx-auto max-w-6xl p-4 h-screen">
-                        <div className="flex justify-center items-center h-64">
-                            <Loader className="animate-spin w-12 h-12 text-white/25" />
-                        </div>
-                    </div>
-                )}
             </div>
 
             <Modal

@@ -261,7 +261,11 @@ export default function CrewLogbook() {
                                 </span>
                             </div>
                         ))
-                    : <PageLoader/>}
+                    : <>
+                        {
+                            (logbook && logbook?.length === 0) ? <><p className="text-center text-white/25">No entries found.</p></> : <PageLoader/>
+                        }
+                    </>}
                 </div>
             </div>
 
