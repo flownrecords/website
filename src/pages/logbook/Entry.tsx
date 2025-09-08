@@ -257,10 +257,14 @@ export default function LogbookEntry() {
             .map(([code]) => code)
             .filter((code) => code !== "----");
 
-        const highestVerticalSpeedValue = verticalSpeeds.reduce(
+        let highestVerticalSpeedValue = verticalSpeeds.reduce(
             (max, vs) => (Math.abs(vs) > Math.abs(max) ? vs : max),
             0,
         );
+        const vsLimit = topSpeed * 7.5;
+        if (Math.abs(highestVerticalSpeedValue) > vsLimit) {
+            highestVerticalSpeedValue = vsLimit * (highestVerticalSpeedValue >= 0 ? 1 : -1);
+        }
         const highestVerticalSpeed = `${highestVerticalSpeedValue >= 0 ? "+" : ""}${highestVerticalSpeedValue} fpm`;
 
         return {
