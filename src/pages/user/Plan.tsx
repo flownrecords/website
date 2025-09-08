@@ -86,6 +86,31 @@ export default function Plan() {
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="ring-2 ring-white/25 rounded-lg p-4">
+                    <div className="grid lg:grid-cols-4 gap-4">
+                        <Button
+                            styleType="small"
+                            text={
+                                <>
+                                    <Undo2 className="h-4 w-4 inline-block" strokeWidth={2} />
+                                    <span className="ml-2">Go Back</span>
+                                </>
+                            }
+                            to="/me"
+                        />
+                        <Button
+                            styleType="small"
+                            text={
+                                <>
+                                    <FolderInput className="h-4 w-4 inline-block mr-2" />
+                                    Submit
+                                </>
+                            }
+                            onClick={submitPlan}
+                        />
+                    </div>
+                </div>
+
+                <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
                         <div className="flex flex-col lg:col-span-4">
                             <label className="text-sm text-white/75 mb-1">
@@ -353,28 +378,7 @@ export default function Plan() {
                         </div>
                     </div>
                 </div>
-                <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
-                    <div className="grid lg:grid-cols-4 gap-4">
-                        <Button
-                            text={
-                                <>
-                                    <Undo2 className="h-4 w-4 inline-block" strokeWidth={2} />
-                                    <span className="ml-2">Go Back</span>
-                                </>
-                            }
-                            to="/me"
-                        />
-                        <Button
-                            text={
-                                <>
-                                    <FolderInput className="h-4 w-4 inline-block mr-2" />
-                                    Submit
-                                </>
-                            }
-                            onClick={submitPlan}
-                        />
-                    </div>
-                </div>
+                
                 <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
                     <h3 className="font-semibold text-white/75">
                         Filed Flight Plans

@@ -91,9 +91,22 @@ export default function CrewLogbook() {
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
                 <div className="ring-2 ring-white/25 rounded-lg p-4">
-                    <h3 className="font-semibold text-white/75 mb-2">
-                        Logbook of flights you are crew of
-                    </h3>
+                    <div className="flex flex-col lg:grid grid-cols-4 gap-4">
+                        <Button
+                            styleType="small"
+                            type="button"
+                            onClick={() => navigate(-1)}
+                            text={
+                                <>
+                                    <Undo2 className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                    <span>Go Back</span>
+                                </>
+                            }
+                        />
+                    </div>
+                </div>
+
+                <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
                     <div className="grid lg:grid-cols-4 gap-4">
                         <div className="flex justify-between px-4 py-2 bg-secondary rounded-lg ring-2 ring-white/25">
                             <span className="text-white/50">Flight Time</span>
@@ -113,21 +126,6 @@ export default function CrewLogbook() {
                             <span className="text-white/50">Most visited airport</span>
                             <span className="text-white/75 font-semibold">{mostVisitedAirport()}</span>
                         </div>
-                    </div>
-                </div>
-                <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
-                    <div className="flex flex-col lg:grid grid-cols-4 gap-4">
-                        <Button
-                            styleType="small"
-                            type="button"
-                            onClick={() => navigate(-1)}
-                            text={
-                                <>
-                                    <Undo2 className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
-                                    <span>Go Back</span>
-                                </>
-                            }
-                        />
                     </div>
                 </div>
 
