@@ -53,46 +53,48 @@ export default function Navbar() {
                     </div>
 
                     <div>
-                        {user ? (
-                            <ul className="flex space-x-6">
-                                <li>
-                                    <Link
-                                        to="/me"
-                                        className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 capitalize flex items-center"
-                                    >
-                                        <img
-                                            src={
-                                                user?.profilePictureUrl ??
-                                                "https://placehold.co/512x512"
-                                            }
-                                            draggable="false"
-                                            className="rounded-full h-5 w-5 mx-2 object-cover"
-                                            alt="User profile icon"
-                                        />
-                                        {user?.firstName ?? `@${user.username}`}
-                                    </Link>
-                                </li>
-                                <li>
-                                    <button
-                                        onClick={logout}
-                                        className="decoration-second-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 cursor-pointer"
-                                    >
-                                        Logout
-                                    </button>
-                                </li>
-                            </ul>
-                        ) : (
-                            <ul className="flex space-x-4">
-                                <li>
-                                    <Link
-                                        to="/login"
-                                        className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150"
-                                    >
-                                        Login
-                                    </Link>
-                                </li>
-                            </ul>
-                        )}
+                        <ul className="flex space-x-6">
+                            {
+                                user ? (
+                                    <>
+                                        <li className="flex items-center">
+                                            <Link
+                                                to="/me"
+                                                className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 capitalize flex items-center"
+                                            >
+                                                <img
+                                                    src={
+                                                        user?.profilePictureUrl ??
+                                                        "https://placehold.co/512x512"
+                                                    }
+                                                    draggable="false"
+                                                    className="rounded-full h-5 w-5 mx-2 object-cover"
+                                                    alt="User profile icon"
+                                                />
+                                                {user?.firstName ?? `@${user.username}`}
+                                            </Link>
+                                        </li>
+                                        <li className="flex items-center">
+                                            <button
+                                                onClick={logout}
+                                                className="decoration-second-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 cursor-pointer"
+                                            >
+                                                Logout
+                                            </button>
+                                        </li>
+                                    </>
+                                ) : (
+                                    <li className="flex items-center">
+                                        <Link
+                                            to="/login"
+                                            className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-15"
+                                        >
+                                            Login
+                                        </Link>
+                                    </li>
+                                )
+                            }
+                        </ul>
                     </div>
                 </div>
 
