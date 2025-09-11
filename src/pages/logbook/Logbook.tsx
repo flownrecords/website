@@ -157,7 +157,7 @@ export default function Logbook() {
           flex justify-between items-center
           "
                 >
-                    <Link to="/me" className="flex items-center py-2">
+                    <Link to="/me" className="flex items-center py-2 hover:opacity-75 transition-all duration-150">
                         <div className="rounded-full ring-2 ring-white/25">
                             {user ? (
                                 <img
@@ -195,7 +195,7 @@ export default function Logbook() {
                     </div>
 
                     <div className="space-x-4">
-                        <div className="hidden lg:inline-block">
+                        <div className="hidden">
                             <Button
                                 to="/me"
                                 text={
@@ -211,21 +211,12 @@ export default function Logbook() {
                             />
                         </div>
 
-                        <Button
-                            type="button"
-                            text={
-                                <>
-                                    <Plus className="h-4 w-4 inline-block" strokeWidth={2} />
-                                    <span className="hidden lg:inline-block ml-2">Add Entry</span>
-                                </>
-                            }
-                            onClick={() => toggleEntryModal(!entryModal)}
-                            styleType="small"
-                        />
+                        
 
                         {manageMode && (
                             <Button
                                 type="button"
+                                disabled={managedEntries.length === 0}
                                 text={
                                     <>
                                         <Trash className="h-4 w-4 inline-block" strokeWidth={2} />
@@ -255,6 +246,17 @@ export default function Logbook() {
                             className={`${manageMode ? "underline decoration-2 decoration-accent" : ""}`}
                             styleType="small"
                             onClick={() => toggleManageMode(!manageMode)}
+                        />
+                        <Button
+                            type="button"
+                            text={
+                                <>
+                                    <Plus className="h-4 w-4 inline-block" strokeWidth={2} />
+                                    <span className="hidden lg:inline-block ml-2">Add Entry</span>
+                                </>
+                            }
+                            onClick={() => toggleEntryModal(!entryModal)}
+                            styleType="small"
                         />
                     </div>
                 </div>
@@ -449,7 +451,7 @@ export default function Logbook() {
                                         (user?.logbookEntries && user?.logbookEntries?.length === 0) ? <><p className="text-center text-white/25">No entries found.</p></> : <PageLoader/>
                                     }
                                 </>}
-                    </div>
+                </div>
             </div>
 
             <Modal

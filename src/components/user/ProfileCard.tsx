@@ -4,6 +4,8 @@ import type { Organization } from "../../lib/types";
 import { roles } from "../../lib/roles";
 
 import Icon from "../../assets/images/icon.png";
+import { useEffect, useState } from "react";
+import api, { ENDPOINTS } from "../../lib/api";
 
 type ProfileCardData = {
     profilePictureUrl?: string | null;
@@ -36,6 +38,23 @@ export default function ProfileCard(props: {
     organizations?: { id: string; name: string }[];
 }) {
     const { data } = props;
+
+    const [organizations, setOrganizations] = (
+        useState<{ id: string; name: string }[]>(props.organizations ?? [])
+    );
+
+    useEffect(() => {
+        api.get(ENDPOINTS.ORGS.LIST)
+            .then((res) => {
+                console.log(res)
+                if (Array.isArray(res)) {
+                    setOrganizations(res);
+                }
+            })
+            .catch(() => {
+                // Do nothing
+            });
+    }, []);
 
     return (
         <>
@@ -90,7 +109,7 @@ export default function ProfileCard(props: {
 
                                     {data?.organizationId && data.organizationId !== "none" && (
                                         <span className="text-white/50 capitalize">
-                                            {data?.organization?.name ?? data?.organizationId}
+                                            {data?.organization?.name ?? organizations.find((o) => o.id === data?.organizationId)?.name ?? data?.organizationId}
                                         </span>
                                     )}
                                 </div>

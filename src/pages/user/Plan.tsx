@@ -380,7 +380,7 @@ export default function Plan() {
                 </div>
                 
                 <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
-                    <h3 className="font-semibold text-white/75">
+                    <h3 className="font-semibold text-white/75 mb-2">
                         Filed Flight Plans
                     </h3>
                     <div className="flex justify-between md:grid md:grid-cols-6 pb-2 px-4">

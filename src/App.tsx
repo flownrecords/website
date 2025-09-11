@@ -24,7 +24,8 @@ import {
     Stats,
     Organizations,
     Plan,
-    CrewLogbook
+    CrewLogbook,
+    CrewEntry
 } from "./pages";
 
 // Components
@@ -53,6 +54,7 @@ function App() {
                 <Route path="/me/stats" element={<Stats />} />
                 <Route path="/me/plan" element={<Plan />} />
                 <Route path="/me/crew" element={<CrewLogbook />} />
+                <Route path="/me/crew/:entryId" element={<CrewEntry />} />
 
                 <Route path="/me/logbook" element={<Logbook />} />
                 <Route path="/me/logbook/:entryId" element={<LogbookEntry />} />

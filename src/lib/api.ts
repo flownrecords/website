@@ -18,7 +18,7 @@ export const ENDPOINTS = {
         ENTRY: "/users/logbook/{id}",
         ADD_CREW: "/users/logbook/crewAdd",
         REMOVE_CREW: "/users/logbook/crewRemove",
-        CREW: "/users/logbook/crew"
+        CREW: "/users/logbook/crew",
     },
     RECORDING: {
         UPLOAD: "/users/recording/upload",
