@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Splash from "../../components/general/Splash";
-import Button from "../../components/general/Button";
 
 import Step1Guide1 from "../../assets/guides/guide_11.jpg";
 import Step2Guide1 from "../../assets/guides/guide_12.jpg";
@@ -16,6 +15,7 @@ import Step6Guide2 from "../../assets/guides/guide_26.jpg";
 
 import { Link } from "react-router-dom";
 import Footer from "../../components/general/Footer";
+import { truncateString } from "../../lib/utils";
 
 export default function Guides() {
 
@@ -25,7 +25,7 @@ export default function Guides() {
         if (guidesOnDisplay.includes(guide)) {
             setGuidesOnDisplay(guidesOnDisplay.filter((g) => g !== guide));
         } else {
-            setGuidesOnDisplay([...guidesOnDisplay, guide]);
+            setGuidesOnDisplay([guide]);
         }
     };
 
@@ -34,6 +34,7 @@ export default function Guides() {
     const guides = [
         {
             id: "flightlogger",
+            shortTitle: "Import FlightLogger logbook",
             title: "How to upload your FlightLogger logbook into FlownRecords",
             content: <>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -62,6 +63,7 @@ export default function Guides() {
         },
         {
             id: "airnavradar",
+            shortTitle: "Import AirNav flight recording",
             title: "How to upload flight data from AirNav Radar to a logbook entry",
             content: <>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -101,7 +103,7 @@ export default function Guides() {
         {
             id: "logbookreport",
             title: "How to export your FlownRecords logbook",
-            content: <><span className="text-white/25">No steps available for this guide.</span></>
+            
         }
     ]
 
@@ -110,21 +112,47 @@ export default function Guides() {
             <Splash uppertext="Introduction Guide" />
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0 space-y-4">
-                {
-                    guides.map((guide) => {
-                        return (
-                            <div className="ring-2 ring-white/25 rounded-lg p-4" id={guide.id}>
-                                <div className="lg:flex lg:flex-row lg:justify-between items-center">
-                                    <h1 className="text-lg lg:text-xl font-semibold text-white">{guide.title}</h1>
-                                    <Button text={guidesOnDisplay.includes(guide.id) ? "Close Guide" : "Open Guide"} styleType="small" onClick={() => toggleGuide(guide.id)} className="mt-2 lg:mt-0 w-full lg:w-auto"/>
+                <div className="grid grid-cols-4 gap-4">
+                    <div className="ring-2 ring-white/25 rounded-lg p-4 min-h-56">
+                        <h1 className="font-semibold text-white/75">Available Guides</h1>
+                        <div className="flex flex-col gap-2 mt-2 bg-secondary p-2 rounded-lg ring-2 ring-white/25">
+                            {guides.map((guide) => {
+                                return (
+                                    <span className="cursor-pointer decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150" onClick={() => toggleGuide(guide.id)}>
+                                        {truncateString(guide.shortTitle ? guide.shortTitle : guide.title, 56)}
+                                    </span>
+                                )
+                            })}
+                        </div>
+                    </div>
+                    <div className="ring-2 ring-white/25 rounded-lg p-4 col-span-3">
+                        {guidesOnDisplay.map((guide) => {
+                            const foundGuide = guides.find((g) => g.id === guide);
+                            if (!foundGuide || !foundGuide.content)
+                            return (
+                            <div>
+                                <h1 className="font-semibold text-white mb-4">{foundGuide?.title ? foundGuide?.title : "Untitled Guide"}</h1>
+                                <span className="text-white/25">No content available for this guide.</span>
+                            </div>);
+
+
+                            return (
+                                <div>
+                                    <h1 className="font-semibold text-white mb-4">{foundGuide.title}</h1>
+                                    <div>
+                                        {foundGuide.content}
+                                    </div>
                                 </div>
-                                {guidesOnDisplay.includes(guide.id) && (
-                                    <div className="mt-4">{guide.content}</div>
-                                )}
+                            )
+                        })}
+                        {guidesOnDisplay.length === 0 && (
+                            <div className="flex flex-col items-center justify-center h-full text-center">
+                                <h1 className="font-semibold text-white mb-4">No guide selected</h1>
+                                <span className="text-white/25">Select a guide from the left to see its content.</span>
                             </div>
-                        )
-                    })
-                }
+                        )}
+                    </div>
+                </div>
             </div>
 
             <Footer/>
