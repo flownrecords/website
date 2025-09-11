@@ -112,8 +112,8 @@ export default function Guides() {
             <Splash uppertext="Introduction Guide" />
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0 space-y-4">
-                <div className="grid grid-cols-4 gap-4">
-                    <div className="ring-2 ring-white/25 rounded-lg p-4 min-h-56">
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                    <div className="ring-2 ring-white/25 rounded-lg p-4 min-h-auto lg:min-h-56">
                         <h1 className="font-semibold text-white/75">Available Guides</h1>
                         <div className="flex flex-col gap-2 mt-2 bg-secondary p-2 rounded-lg ring-2 ring-white/25">
                             {guides.map((guide) => {
@@ -125,7 +125,7 @@ export default function Guides() {
                             })}
                         </div>
                     </div>
-                    <div className="ring-2 ring-white/25 rounded-lg p-4 col-span-3">
+                    <div className="ring-2 ring-white/25 rounded-lg p-4 col-span-1 lg:col-span-3">
                         {guidesOnDisplay.map((guide) => {
                             const foundGuide = guides.find((g) => g.id === guide);
                             if (!foundGuide || !foundGuide.content)
