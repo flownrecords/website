@@ -67,8 +67,7 @@ export default function CrewLogbook() {
         api.post(
             ENDPOINTS.LOGBOOK.REMOVE_CREW,
             {
-                // to be done
-                entryId: [],
+                entryId: managedEntries,
                 crewUsername: user.username,
             },
             {
@@ -159,8 +158,8 @@ export default function CrewLogbook() {
 
                         {manageMode && (
                             <Button
+                                disabled={managedEntries.length === 0}
                                 type="button"
-                                disabled={true}
                                 text={
                                     <>
                                         <LogOut className="h-4 w-4 inline-block" strokeWidth={2} />
@@ -219,7 +218,7 @@ export default function CrewLogbook() {
                                                         .checked;
                                                     if (isChecked) {
                                                         const allEntryIds =
-                                                            user?.logbookEntries.map(
+                                                            logbook.map(
                                                                 (entry) => entry.id,
                                                             ) || [];
                                                         setManagedEntries(allEntryIds);
@@ -434,7 +433,7 @@ export default function CrewLogbook() {
                                     </div>
                                 )) : <>
                                     {
-                                        (user?.logbookEntries && user?.logbookEntries?.length === 0) ? <><p className="text-center text-white/25">No entries found.</p></> : <PageLoader/>
+                                        (logbook && logbook.length === 0) ? <><p className="text-center text-white/25">No entries found.</p></> : <PageLoader/>
                                     }
                                 </>}
                 </div>
@@ -445,7 +444,7 @@ export default function CrewLogbook() {
                 onClose={() => toggleRemoveModal(false)}
                 title="Delete Logbook Entry"
                 buttons={[
-                    <Button text="Confirm" onClick={proceedRemoveEntries} styleType="small" />,
+                    <Button text="Confirm" onClick={proceedRemoveEntries} styleType="small" key={'confirm-button'}/>,
                 ]}
             >
                 <h2 className="text-white/75">

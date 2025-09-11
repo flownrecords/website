@@ -46,14 +46,11 @@ export default function ProfileCard(props: {
     useEffect(() => {
         api.get(ENDPOINTS.ORGS.LIST)
             .then((res) => {
-                console.log(res)
                 if (Array.isArray(res)) {
                     setOrganizations(res);
                 }
             })
-            .catch(() => {
-                // Do nothing
-            });
+            .catch(() => { });
     }, []);
 
     return (
