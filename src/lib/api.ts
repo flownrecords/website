@@ -23,7 +23,10 @@ export const ENDPOINTS = {
     RECORDING: {
         UPLOAD: "/users/recording/upload",
     },
-    NAVDATA: {},
+    NAVDATA: {
+        ALL: "/navdata",
+        AD: "/navdata?ad=true",
+    },
     WX: {
         AD: "/wx/ad",
         SIGMET: "/wx/sigmet",

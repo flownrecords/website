@@ -12,7 +12,7 @@ import RouteMap from "../../components/maping/RouteMap";
 import ProfileCard from "../../components/user/ProfileCard";
 import PageLoader from "../../components/general/Loader";
 
-import { FilePlus2, Pencil, Plus, Save, Undo2 } from "lucide-react";
+import { FilePlus2, Pencil, Plus, Save, Trash, Undo2 } from "lucide-react";
 import { parseDate, parseDuration } from "../../lib/utils";
 import Modal from "../../components/general/Modal";
 import FlightDataChart from "../../components/logbook/FlightDataChart";
@@ -157,6 +157,7 @@ export default function LogbookEntry() {
     function handleRecordingFileChange(event: React.ChangeEvent<HTMLInputElement>) {
         if (event.target.files && event.target.files.length > 0) {
             const file = event.target.files[0];
+            console.log(file.type);
             if (file.type !== "application/vnd.google-earth.kml+xml") {
                 alert("Error", "Please upload a valid KML file.");
                 setRecordingFile(null);
@@ -367,22 +368,36 @@ export default function LogbookEntry() {
                             }
                         />
 
-                        <Button
-                            styleType="small"
-                            type="button"
-                            disabled={entry?.plan !== null}
-                            onClick={() => {
-                                navigate(`/me/plan?entry=${entry?.id}`)
-                            }}
-                            text={
-                                <>
-                                    <FilePlus2 className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
-                                    <span>Add Flight Plan</span>
-                                </>
-                            }
-                        />
+                        {   !entry?.plan ? 
+                            <Button
+                                styleType="small"
+                                type="button"
+                                onClick={() => {
+                                    navigate(`/me/plan?entry=${entry?.id}`)
+                                }}
+                                text={
+                                    <>
+                                        <FilePlus2 className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                        <span>Add Flight Plan</span>
+                                    </>
+                                }
+                            /> : 
+                            <Button 
+                                styleType="small"
+                                type="button"
+                                disabled={true} // TODO: implement delete flight plan
+                                onClick={() => {}}
+                                text={
+                                    <>
+                                        <Trash className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                        <span>Delete Flight Plan</span>
+                                    </>
+                                }
+                            />
+                        }
 
-                        <Button
+                        {   !entry?.recording ?
+                            <Button
                             disabled={entry?.recording ? true : entry?.id ? false : true}
                             styleType="small"
                             type="button"
@@ -398,7 +413,20 @@ export default function LogbookEntry() {
                                     <span>Add Flight Record</span>
                                 </>
                             }
-                        />
+                            />  : 
+                            <Button 
+                            styleType="small"
+                            type="button"
+                            disabled={true} // TODO: implement delete flight plan
+                            onClick={() => {}}
+                            text={
+                                <>
+                                    <Trash className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                    <span>Delete Flight Recording</span>
+                                </>
+                            }
+                            />
+                        }
                     </div>
                 </div>
 
@@ -625,7 +653,6 @@ export default function LogbookEntry() {
 
                                     <div className="">
                                         <h1 className="mb-1">ETE</h1>{" "}
-                                        {/* Estimated Time Enroute eta - etd */}
                                         <div className="rounded-lg bg-secondary p-2">
                                             {entry && entry.plan && entry.plan.eta && entry.plan.etd
                                                 ? parseDuration(
