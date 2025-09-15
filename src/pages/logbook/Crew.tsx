@@ -433,7 +433,7 @@ export default function CrewLogbook() {
                                     </div>
                                 )) : <>
                                     {
-                                        (logbook && logbook.length === 0) ? <><p className="text-center text-white/25">No entries found.</p></> : <PageLoader/>
+                                        (logbook && logbook.length === 0) ? <><p className="text-center text-white/25 h-64 flex justify-center items-center">No entries found.</p></> : <PageLoader/>
                                     }
                                 </>}
                 </div>

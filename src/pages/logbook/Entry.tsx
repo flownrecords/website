@@ -12,7 +12,7 @@ import RouteMap from "../../components/maping/RouteMap";
 import ProfileCard from "../../components/user/ProfileCard";
 import PageLoader from "../../components/general/Loader";
 
-import { FilePlus2, Pencil, Plus, Save, Trash, Undo2 } from "lucide-react";
+import { FilePlus2, FileText, Pencil, Plus, Save, Trash, Undo2 } from "lucide-react";
 import { parseDate, parseDuration } from "../../lib/utils";
 import Modal from "../../components/general/Modal";
 import FlightDataChart from "../../components/logbook/FlightDataChart";
@@ -41,6 +41,7 @@ export default function LogbookEntry() {
 
     const [crewModal, setCrewModal] = useState<boolean>(false);
     const [recordModal, setRecordModal] = useState<boolean>(false);
+    const [fplModal, setFplModal] = useState<boolean>(false);
 
     const [selectedRecordingSource, setSelectedRecordingSource] = useState<string | null>(null);
     const [recordingFile, setRecordingFile] = useState<File | null>(null);
@@ -385,12 +386,11 @@ export default function LogbookEntry() {
                             <Button 
                                 styleType="small"
                                 type="button"
-                                disabled={true} // TODO: implement delete flight plan
-                                onClick={() => {}}
+                                onClick={() => setFplModal(!fplModal)}
                                 text={
                                     <>
-                                        <Trash className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
-                                        <span>Delete Flight Plan</span>
+                                        <FileText className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                        <span>Flight Plan Options</span>
                                     </>
                                 }
                             />
@@ -965,6 +965,38 @@ export default function LogbookEntry() {
                     <div className="flex justify-start space-x-4">
                         <Button text="Submit" onClick={recordUpload} styleType="small" />
                     </div>
+                </div>
+            </Modal>
+
+            <Modal
+                isOpen={fplModal}
+                title="Flight Plan Options"
+                onClose={() => setFplModal(false)}>
+                <div className="bg-primary p-4 rounded-lg flex flex-col space-y-4">
+                    <Button
+                        disabled={true} // TODO: implement delete flight plan
+                        text={
+                            <>
+                                <Pencil className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                <span>Edit Flight Plan</span>
+                            </>
+                        }
+                        styleType="small"
+                        type="button"
+                        onClick={() => {}}
+                    />
+                    <Button
+                        disabled={true} // TODO: implement delete flight plan
+                        text={
+                            <>
+                                <Trash className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                <span>Delete Flight Plan</span>
+                            </>
+                        }
+                        styleType="small"
+                        type="button"
+                        onClick={() => {}}
+                    />
                 </div>
             </Modal>
         </>
