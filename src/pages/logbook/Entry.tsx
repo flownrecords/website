@@ -831,67 +831,69 @@ export default function LogbookEntry() {
 
             <Footer />
 
-            {crewModal && (
-                <div className="fixed inset-0 bg-black/50 z-3000 flex items-center justify-center">
-                    <div className="bg-secondary p-4 rounded-lg w-96">
-                        <h2 className="text-xl font-semibold mb-4">Edit flight crew</h2>
-                        <ul>
-                            {entry?.crew?.map((member, index) => (
-                                <li key={index} className="flex items-center justify-between mb-4">
-                                    <Link
-                                        to={`/user/${member?.id}`}
-                                        className="flex items-center space-x-"
-                                    >
-                                        <img
-                                            src={
-                                                member?.profilePictureUrl ??
-                                                "https://placehold.co/128x128"
-                                            }
-                                            alt={`${member?.firstName} ${member?.lastName}`}
-                                            className="h-8 w-8 rounded-full ring-2 ring-neutral-600 mr-2"
-                                        />
-                                        <span>
-                                            {member?.firstName} {member?.lastName}
-                                        </span>
-                                    </Link>
-                                    <Button
-                                        text="Remove"
-                                        styleType="small"
-                                        type="button"
-                                        onClick={() => {
-                                            if (!member?.id) return;
-                                            removeCrewMember(member.username);
-                                        }}
+            <Modal 
+                isOpen={crewModal}
+                onClose={() => setCrewModal(false)}
+                title="Add Flight Recording"
+            >
+                <div className="bg-primary p-4 rounded-lg">
+                    <h2 className="text-xl font-semibold mb-4">Edit flight crew</h2>
+                    <ul>
+                        {entry?.crew?.map((member, index) => (
+                            <li key={index} className="flex items-center justify-between mb-4">
+                                <Link
+                                    to={`/user/${member?.id}`}
+                                    className="flex items-center space-x-"
+                                >
+                                    <img
+                                        src={
+                                            member?.profilePictureUrl ??
+                                            "https://placehold.co/128x128"
+                                        }
+                                        alt={`${member?.firstName} ${member?.lastName}`}
+                                        className="h-8 w-8 rounded-full ring-2 ring-neutral-600 mr-2"
                                     />
-                                </li>
-                            ))}
-                        </ul>
+                                    <span>
+                                        {member?.firstName} {member?.lastName}
+                                    </span>
+                                </Link>
+                                <Button
+                                    text="Remove"
+                                    styleType="small"
+                                    type="button"
+                                    onClick={() => {
+                                        if (!member?.id) return;
+                                        removeCrewMember(member.username);
+                                    }}
+                                />
+                            </li>
+                        ))}
+                    </ul>
 
-                        <div className="flex flex-col">
-                            <label className="text-sm text-white/75 mb-1">add crew @username</label>
-                            <input
-                                className="bg-primary/5 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
-                                ref={addCrewMemberRef}
-                                type="text"
-                            />
-                            <Button
-                                text="Add Crew"
-                                styleType="small"
-                                type="button"
-                                className="mt-4"
-                                onClick={addCrewMember}
-                            />
-                            <Button
-                                text="Close"
-                                styleType="small"
-                                type="button"
-                                className="mt-4"
-                                onClick={() => setCrewModal(!crewModal)}
-                            />
-                        </div>
+                    <div className="flex flex-col">
+                        <label className="text-sm text-white/75 mb-1">add crew @username</label>
+                        <input
+                            className="bg-primary/5 ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                            ref={addCrewMemberRef}
+                            type="text"
+                        />
+                        <Button
+                            text="Add Crew"
+                            styleType="small"
+                            type="button"
+                            className="mt-4"
+                            onClick={addCrewMember}
+                        />
+                        <Button
+                            text="Close"
+                            styleType="small"
+                            type="button"
+                            className="mt-4"
+                            onClick={() => setCrewModal(!crewModal)}
+                        />
                     </div>
                 </div>
-            )}
+            </Modal>
 
             <Modal
                 isOpen={recordModal}
