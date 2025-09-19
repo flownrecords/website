@@ -707,6 +707,24 @@ export default function LogbookEntry() {
                                                 : "N/A"}
                                         </div>
                                     </div>
+
+                                    <div className="col-span-2">
+                                        <h1 className="mb-1">Remarks</h1>
+                                        <div className="rounded-lg bg-secondary p-2">
+                                            {entry && entry.plan.remarks
+                                                ? entry.plan.remarks
+                                                : "N/A"}
+                                        </div>
+                                    </div>
+
+                                    <div className="col-span-4">
+                                        <h1 className="mb-1">Weather</h1>
+                                        <div className="rounded-lg bg-secondary p-2">
+                                            {entry && entry.plan.weather
+                                                ? entry.plan.weather
+                                                : "N/A"}
+                                        </div>
+                                    </div>
                                 </div>
                             ) : (
                                 <span className="text-white/75 text-sm my-1">
@@ -883,13 +901,6 @@ export default function LogbookEntry() {
                             type="button"
                             className="mt-4"
                             onClick={addCrewMember}
-                        />
-                        <Button
-                            text="Close"
-                            styleType="small"
-                            type="button"
-                            className="mt-4"
-                            onClick={() => setCrewModal(!crewModal)}
                         />
                     </div>
                 </div>

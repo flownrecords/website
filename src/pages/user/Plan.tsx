@@ -9,6 +9,7 @@ import api, { ENDPOINTS } from "../../lib/api";
 import { useNavigate } from "react-router";
 import useAlert from "../../components/alert/useAlert";
 import { parseDate, truncateString } from "../../lib/utils";
+import WxPlan from "../../components/planning/WxPlan";
 
 type SubmitPlan = {
     depAd: string | undefined;
@@ -362,19 +363,7 @@ export default function Plan() {
                             <label className="text-sm text-white/75 mb-1">
                                 Weather
                             </label>
-                            <input
-                                disabled={true}
-                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50 opacity-25"
-                                type="text"
-                                maxLength={512}
-                                onChange={(e) => {
-                                    e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9/ -]/g, "");
-                                    updatePlan((prev) => ({
-                                        ...prev,
-                                        weather: e.target.value,
-                                    }));
-                                }}
-                            />
+                            <WxPlan updatePlan={updatePlan} />
                         </div>
                     </div>
                 </div>

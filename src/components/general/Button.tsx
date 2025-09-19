@@ -29,8 +29,8 @@ const Button: React.FC<ButtonProps> = ({
 
     ${className}
 
-    ${styleType === "small" ? "text-sm" : "text-base"}
-    ${styleType === "small" ? "py-1" : ""}
+    ${styleType === "small" ? "md:text-sm" : "text-base"}
+    ${styleType === "small" ? "py-2 md:py-1" : ""}
 
     inline-block
     bg-gradient-to-t 

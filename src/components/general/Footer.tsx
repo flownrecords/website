@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function Footer() {
     return (
         <>
-            <footer className="bg-secondary p-4 mt-30 w-full block lg:hidden">
+            <footer className="bg-secondary p-4 mt-42 w-full block lg:hidden">
                 <div className="container mx-auto">
                     <div>
                         <h2 className="text-lg font-semibold text-white mb-2">Flown Records</h2>

@@ -72,7 +72,7 @@ export default function Downloads() {
                                     <h1 className="font-medium">{file.name}</h1>
                                     
                                     <Button 
-                                        className="w-full mt-2"
+                                        className="w-full mt-4"
                                         text="Download" 
                                         styleType="small" 
                                         onClick={() => downloadFile(file)}
