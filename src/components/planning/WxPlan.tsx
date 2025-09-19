@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api, { ENDPOINTS } from "../../lib/api";
 import Button from "../general/Button";
+import { Loader, Search } from "lucide-react";
 
 export default function WxPlan({ updatePlan }: { updatePlan: (val: any) => void }) {
     const [query, setQuery] = useState("");
@@ -68,9 +69,17 @@ export default function WxPlan({ updatePlan }: { updatePlan: (val: any) => void 
                 }}
             />
             <Button
-                text={loading ? "Loading..." : "Fetch TAF"}
+                text={
+                    loading ? <>
+                        <Loader className="animate-spin h-4 w-4 inline-block md:mr-2" strokeWidth={2} />
+                        <span className="hidden md:inline-block">Loading...</span>
+                    </> : <>
+                        <Search className="h-4 w-4 inline-block md:mr-2" strokeWidth={2} />
+                        <span className="hidden md:inline-block">Fetch TAF</span>
+                    </>
+                }
                 onClick={() => {
-                if (query.length === 4) fetchTAF(query);
+                    if (query.length === 4) fetchTAF(query);
                 }}
                 disabled={loading || query.length !== 4}
             />

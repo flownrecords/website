@@ -78,7 +78,10 @@ export default function Me() {
                                 <Button
                                     to="/me/logbook"
                                     text={
-                                        <Book strokeWidth={1.25} className="h-6 w-6 inline-block" />
+                                        <Book
+                                            strokeWidth={1.25}
+                                            className="h-6 w-6 inline-block"
+                                        />
                                     }
                                 />
 
