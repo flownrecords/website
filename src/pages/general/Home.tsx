@@ -10,7 +10,8 @@ export default function Home() {
 
     const { user } = useAuth();
     const [ stats, setStats ] = useState<any>(null);
-    const [ uptime, setUptime ] = useState<string>("");
+    const [ uptime, setUptime ] = useState<string>("0d 0h 0m 0s");
+    const [ lastUpdate, setLastUpdate ] = useState<any>(null);
 
     function highlight() {
         const button = document.getElementById("get-started-button") as HTMLButtonElement;
@@ -68,15 +69,21 @@ export default function Home() {
 
     useEffect(() => {
         api.get(ENDPOINTS.GEN.STATS)
-            .then((response) => {
-                setStats(response);
-                if(response.uptime) {
-                    updateUptime();
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching stats:", error);
-            });
+        .then((response) => {
+            setStats(response);
+            if(response.uptime) {
+                updateUptime();
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching stats:", error);
+        });
+
+        fetch("https://api.github.com/repos/flownrecords/website")
+        .then(async (response) => {
+            const data = await response.json();
+            if(data.updated_at) setLastUpdate(humanDate(data.updated_at));
+        })
     }, []);
 
     const gradient = " bg-gradient-to-br from-neutral-900 to-neutral-800";
@@ -169,7 +176,7 @@ export default function Home() {
                                     <div className="text-sm text-white/75">Uptime</div>
                                 </div>
                                 <div className={`${gradient} p-4 rounded-lg ring-2 ring-white/25`}>
-                                    <div className="text-3xl font-bold text-white">{ humanDate('2025-09-22') }</div>
+                                    <div className="text-3xl font-bold text-white">{ lastUpdate }</div>
                                     <div className="text-sm text-white/75">Last Update</div>
                                 </div>
                             </div>
