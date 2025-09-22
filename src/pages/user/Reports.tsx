@@ -115,7 +115,7 @@ export default function Reports() {
                                     <img
                                         src={
                                             URL +
-                                            `/reports/year?hours=${totalFlightTime()}&flights=${user?.logbookEntries.length}&aircraft=${mostFlownAcft()}&airport=${mostVisitedAd}`
+                                            `/reports/Year?hours=${totalFlightTime()}&flights=${user?.logbookEntries.length}&aircraft=${mostFlownAcft()}&airport=${mostVisitedAd}`
                                         }
                                         className="rounded-lg w-full object-cover lg:max-h-vh"
                                     />
