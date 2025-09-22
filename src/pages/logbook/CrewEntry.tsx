@@ -9,14 +9,12 @@ import { LogOut, Share, Undo2 } from "lucide-react";
 import PageLoader from "../../components/general/Loader";
 import Icon from "../../assets/images/icon.png";
 import ProfileCard from "../../components/user/ProfileCard";
-// import { useAuth } from "../../components/auth/AuthContext";
 import Skeleton from "../../components/general/Skeleton";
 import Footer from "../../components/general/Footer";
 import MapNotAvailable from "../../components/maping/MapNotAvail";
 
 export default function CrewEntry() {
     const navigate = useNavigate();
-    // const { user } = useAuth();
     const { entryId } = useParams();
     const [entry, setEntry] = useState<LogbookEntry | null>(null);
 

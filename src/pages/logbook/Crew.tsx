@@ -25,9 +25,21 @@ export default function CrewLogbook() {
     const [removeModal, toggleRemoveModal] = useState<boolean>(false);
 
     useEffect(() => {
-        api.get(ENDPOINTS.USER.ME).then((response) => {
+        api.get(ENDPOINTS.USER.ME, {
+            requireAuth: true,
+            navigate,
+        })
+        .then((response) => {
             if (response.meta.status === 200) {
                 setLogbook(response.crewForEntries);
+            }
+        })
+        .catch((error) => {
+            if (error?.status === 401) {
+                localStorage.removeItem("accessToken");
+                navigate("/login");
+            } else {
+                navigate("/me");
             }
         });
     }, []);
