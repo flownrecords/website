@@ -19,7 +19,7 @@ export default function WxPlan({ updatePlan }: { updatePlan: (val: any) => void 
                 return;
             }
 
-            const tafs = [res.rawTaf]; // For now we handle single TAF responses. Adjust if API changes.
+            const tafs = [res.rawTaf];
 
             if (!tafs.length || tafs.length === 0) {
                 setTafOptions([]);
@@ -28,11 +28,11 @@ export default function WxPlan({ updatePlan }: { updatePlan: (val: any) => void 
             }
 
             setTafOptions(tafs);
-            setSelectedTaf(null); // user must choose
+            setSelectedTaf(null);
         } catch (err) {
             setTafOptions([]);
             setSelectedTaf(null);
-            updatePlan((prev: any) => ({ ...prev, weather: code })); // fallback to manual entry
+            updatePlan((prev: any) => ({ ...prev, weather: code }));
         } finally {
             setLoading(false);
         }
@@ -41,7 +41,7 @@ export default function WxPlan({ updatePlan }: { updatePlan: (val: any) => void 
     function handleSelectTaf(taf: string) {
         setSelectedTaf(taf);
         updatePlan((prev: any) => ({ ...prev, weather: taf }));
-        setTafOptions([]); // close dropdown after select
+        setTafOptions([]);
     }
 
     return (
@@ -84,9 +84,6 @@ export default function WxPlan({ updatePlan }: { updatePlan: (val: any) => void 
                 disabled={loading || query.length !== 4}
             />
 
-            
-
-            {/* Dropdown of options */}
             {tafOptions.length > 0 && (
                 <div className="bg-secondary ring-2 ring-white/25 rounded-lg col-span-4 p-2">
                     <h1 className="text-sm text-white/75 mb-1">
@@ -104,7 +101,6 @@ export default function WxPlan({ updatePlan }: { updatePlan: (val: any) => void 
                 </div>
             )}
 
-            {/* Selected TAF or manual entry */}
             <div className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 text-white/75 col-span-4">
                 { selectedTaf ? selectedTaf : query ? query : "No weather information" }
             </div>
