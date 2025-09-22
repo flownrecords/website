@@ -8,7 +8,7 @@ type MapToolbarProps = {
     initialBounds?: [number, number][]; // multiple points
     initialCenterZoom?: { center: [number, number]; zoom: number }; // single point
     sigmets: {
-        disable?: boolean
+        disable?: boolean;
         toggle: () => void;
         status: boolean;
     };
@@ -16,7 +16,7 @@ type MapToolbarProps = {
 
 export function MapToolbar({ initialBounds, initialCenterZoom, sigmets }: MapToolbarProps) {
     const map = useMap();
-    
+
     const style = `w-8 h-8 
     bg-gradient-to-t from-neutral-900 to-neutral-800 hover:opacity-75 transition duration-150
     ring-2 ring-white/25 rounded-lg 
@@ -69,15 +69,17 @@ export function MapToolbar({ initialBounds, initialCenterZoom, sigmets }: MapToo
                     <Crosshair className="w-4 h-4" />
                 </button>
 
-                {!sigmets.disable && <button
-                    title="Display Sigmets"
-                    onClick={() => {
-                        sigmets.toggle();
-                    }}
-                    className={style}
-                >
-                    <CloudAlert className="w-4 h-4" />
-                </button>}
+                {!sigmets.disable && (
+                    <button
+                        title="Display Sigmets"
+                        onClick={() => {
+                            sigmets.toggle();
+                        }}
+                        className={style}
+                    >
+                        <CloudAlert className="w-4 h-4" />
+                    </button>
+                )}
             </div>,
         );
 

@@ -140,16 +140,19 @@ export default function Stats() {
             return dateA.getTime() - dateB.getTime();
         })
         .slice(isMobile ? -5 : -12);
-    
-    const flightsByDayOfWeek = logbook.reduce((acc, entry) => {
-    const date = new Date(entry.date as any);
-    const day = date.toLocaleString("en-US", { weekday: "long" }); // "Monday", "Tuesday", etc.
 
-    if (!acc[day]) acc[day] = { name: day, flights: 0 };
-    acc[day].flights += 1;
+    const flightsByDayOfWeek = logbook.reduce(
+        (acc, entry) => {
+            const date = new Date(entry.date as any);
+            const day = date.toLocaleString("en-US", { weekday: "long" }); // "Monday", "Tuesday", etc.
 
-    return acc;
-    }, {} as Record<string, { name: string; flights: number }>);
+            if (!acc[day]) acc[day] = { name: day, flights: 0 };
+            acc[day].flights += 1;
+
+            return acc;
+        },
+        {} as Record<string, { name: string; flights: number }>,
+    );
 
     // Convert to sorted array (Mon → Sun)
     const orderedWeekdays = [
@@ -162,8 +165,8 @@ export default function Stats() {
         "Saturday",
     ];
 
-    const flightsByDayOfWeekArray = orderedWeekdays.map(day => 
-        flightsByDayOfWeek[day] || { name: day, flights: 0 }
+    const flightsByDayOfWeekArray = orderedWeekdays.map(
+        (day) => flightsByDayOfWeek[day] || { name: day, flights: 0 },
     );
 
     return (
@@ -418,7 +421,11 @@ export default function Stats() {
                                         left: -30,
                                     }}
                                 >
-                                    <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25} />
+                                    <CartesianGrid
+                                        stroke="#1E1E1E"
+                                        strokeLinecap="round"
+                                        opacity={0.25}
+                                    />
                                     <XAxis dataKey="name" fontSize={isMobile ? 12 : 14} />
                                     <YAxis fontSize={isMobile ? 10 : 12} />
                                     <Tooltip

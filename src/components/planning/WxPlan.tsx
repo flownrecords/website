@@ -13,7 +13,7 @@ export default function WxPlan({ updatePlan }: { updatePlan: (val: any) => void 
         setLoading(true);
         try {
             const res = await api.get(ENDPOINTS.WX.AD, { params: { icao: code } });
-                if (res.meta.status !== 200) {
+            if (res.meta.status !== 200) {
                 setTafOptions([]);
                 setSelectedTaf("Not found");
                 return;
@@ -63,20 +63,27 @@ export default function WxPlan({ updatePlan }: { updatePlan: (val: any) => void 
                     setSelectedTaf(null);
                 }}
                 onKeyDown={(e) => {
-                if (e.key === "Enter" && query.length === 4) {
-                    fetchTAF(query);
-                }
+                    if (e.key === "Enter" && query.length === 4) {
+                        fetchTAF(query);
+                    }
                 }}
             />
             <Button
                 text={
-                    loading ? <>
-                        <Loader className="animate-spin h-4 w-4 inline-block md:mr-2" strokeWidth={2} />
-                        <span className="hidden md:inline-block">Loading...</span>
-                    </> : <>
-                        <Search className="h-4 w-4 inline-block md:mr-2" strokeWidth={2} />
-                        <span className="hidden md:inline-block">Fetch TAF</span>
-                    </>
+                    loading ? (
+                        <>
+                            <Loader
+                                className="animate-spin h-4 w-4 inline-block md:mr-2"
+                                strokeWidth={2}
+                            />
+                            <span className="hidden md:inline-block">Loading...</span>
+                        </>
+                    ) : (
+                        <>
+                            <Search className="h-4 w-4 inline-block md:mr-2" strokeWidth={2} />
+                            <span className="hidden md:inline-block">Fetch TAF</span>
+                        </>
+                    )
                 }
                 onClick={() => {
                     if (query.length === 4) fetchTAF(query);
@@ -95,14 +102,14 @@ export default function WxPlan({ updatePlan }: { updatePlan: (val: any) => void 
                             className={`px-4 py-2 bg-primary hover:opacity-75 transition-all duration-300 cursor-pointer rounded-lg ${idx !== tafOptions.length - 1 ? "mb-2" : ""}`}
                             onClick={() => handleSelectTaf(taf)}
                         >
-                        {taf}
+                            {taf}
                         </div>
                     ))}
                 </div>
             )}
 
             <div className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 text-white/75 col-span-4">
-                { selectedTaf ? selectedTaf : query ? query : "No weather information" }
+                {selectedTaf ? selectedTaf : query ? query : "No weather information"}
             </div>
         </div>
     );

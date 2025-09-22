@@ -6,7 +6,7 @@ import api, { ENDPOINTS } from "../../lib/api";
 import type { FIR } from "../../lib/types";
 
 export default function Reports() {
-    const { user}  = useAuth();
+    const { user } = useAuth();
     const URL = import.meta.env.VITE_API_URL;
 
     const [aerodromes, updateAerodromes] = useState<any[]>([]);
@@ -15,7 +15,7 @@ export default function Reports() {
         api.get(ENDPOINTS.NAVDATA.AD).then((res) => {
             const ads = res.flatMap((i: FIR) => i.ad);
             updateAerodromes(ads);
-            console.log(ads)
+            console.log(ads);
         });
     }, []);
 
@@ -62,7 +62,10 @@ export default function Reports() {
             : "None";
     }
 
-    const mostVisitedAd = aerodromes.find((ad) => ad.icao === mostVisitedAirport())?.name || mostVisitedAirport() || "None";
+    const mostVisitedAd =
+        aerodromes.find((ad) => ad.icao === mostVisitedAirport())?.name ||
+        mostVisitedAirport() ||
+        "None";
 
     function mostFlownAcft() {
         if (!user?.logbookEntries || user.logbookEntries.length === 0) {
@@ -80,27 +83,34 @@ export default function Reports() {
         return mostFlownAcft || "None";
     }
 
-    return <>
-        <Splash
-            uppertext={
-                <>
-                    {user ? (
-                        `${captalize(user?.firstName) ?? `@${user?.username}`}'s`
-                    ) : (
-                        <span className="h-8 w-0.5 inline-block"></span>
-                    )}
-                </>
-            }
-            title="Reports"
-        />
+    return (
+        <>
+            <Splash
+                uppertext={
+                    <>
+                        {user ? (
+                            `${captalize(user?.firstName) ?? `@${user?.username}`}'s`
+                        ) : (
+                            <span className="h-8 w-0.5 inline-block"></span>
+                        )}
+                    </>
+                }
+                title="Reports"
+            />
 
-        <div className="container mx-auto max-w-6xl p-4 xl:px-0">
-            <div className="grid grid-cols-4 gap-4">
-                <div className="ring-2 ring-white/25 rounded-lg overflow-hidden">
-                    <img src={URL + `/report?hours=${totalFlightTime()}&flights=${user?.logbookEntries.length}&aircraft=${mostFlownAcft()}&airport=${mostVisitedAd}`} className=""/>
+            <div className="container mx-auto max-w-6xl p-4 xl:px-0">
+                <div className="grid grid-cols-4 gap-4">
+                    <div className="ring-2 ring-white/25 rounded-lg overflow-hidden">
+                        <img
+                            src={
+                                URL +
+                                `/report?hours=${totalFlightTime()}&flights=${user?.logbookEntries.length}&aircraft=${mostFlownAcft()}&airport=${mostVisitedAd}`
+                            }
+                            className=""
+                        />
+                    </div>
                 </div>
-
             </div>
-        </div>
-    </>;
+        </>
+    );
 }

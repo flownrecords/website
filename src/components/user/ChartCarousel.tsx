@@ -180,15 +180,18 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         .slice(isMobile ? -4 : -6);
 
     // Count flights by weekday
-    const flightsByDayOfWeek = logbook.reduce((acc, entry) => {
-    const date = new Date(entry.date as any);
-    const day = date.toLocaleString("en-US", { weekday: "long" }); // "Monday", "Tuesday", etc.
+    const flightsByDayOfWeek = logbook.reduce(
+        (acc, entry) => {
+            const date = new Date(entry.date as any);
+            const day = date.toLocaleString("en-US", { weekday: "long" }); // "Monday", "Tuesday", etc.
 
-    if (!acc[day]) acc[day] = { name: day, flights: 0 };
-    acc[day].flights += 1;
+            if (!acc[day]) acc[day] = { name: day, flights: 0 };
+            acc[day].flights += 1;
 
-    return acc;
-    }, {} as Record<string, { name: string; flights: number }>);
+            return acc;
+        },
+        {} as Record<string, { name: string; flights: number }>,
+    );
 
     // Convert to sorted array (Mon → Sun)
     const orderedWeekdays = [
@@ -201,8 +204,8 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         "Saturday",
     ];
 
-    const flightsByDayOfWeekArray = orderedWeekdays.map(day => 
-        flightsByDayOfWeek[day] || { name: day, flights: 0 }
+    const flightsByDayOfWeekArray = orderedWeekdays.map(
+        (day) => flightsByDayOfWeek[day] || { name: day, flights: 0 },
     );
 
     return (

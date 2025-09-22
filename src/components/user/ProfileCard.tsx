@@ -39,8 +39,8 @@ export default function ProfileCard(props: {
 }) {
     const { data } = props;
 
-    const [organizations, setOrganizations] = (
-        useState<{ id: string; name: string }[]>(props.organizations ?? [])
+    const [organizations, setOrganizations] = useState<{ id: string; name: string }[]>(
+        props.organizations ?? [],
     );
 
     useEffect(() => {
@@ -50,7 +50,7 @@ export default function ProfileCard(props: {
                     setOrganizations(res);
                 }
             })
-            .catch(() => { });
+            .catch(() => {});
     }, []);
 
     return (
@@ -106,7 +106,11 @@ export default function ProfileCard(props: {
 
                                     {data?.organizationId && data.organizationId !== "none" && (
                                         <span className="text-white/50 capitalize">
-                                            {data?.organization?.name ?? organizations.find((o) => o.id === data?.organizationId)?.name ?? data?.organizationId}
+                                            {data?.organization?.name ??
+                                                organizations.find(
+                                                    (o) => o.id === data?.organizationId,
+                                                )?.name ??
+                                                data?.organizationId}
                                         </span>
                                     )}
                                 </div>
@@ -128,17 +132,15 @@ export default function ProfileCard(props: {
                             )}
                         </span>
                     </span>
-                    
-                    { data &&
-                        data.location &&
-                        data.location.length > 0 && (
-                            <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
-                                <MapPin className="h-4 w-4 opacity-25 shrink-0" />
-                                <span className="text-white/75 truncate ml-1">
-                                    {data.location.split(",")[0]}
-                                </span>
+
+                    {data && data.location && data.location.length > 0 && (
+                        <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm min-w-0">
+                            <MapPin className="h-4 w-4 opacity-25 shrink-0" />
+                            <span className="text-white/75 truncate ml-1">
+                                {data.location.split(",")[0]}
                             </span>
-                        ) }
+                        </span>
+                    )}
                     <span className="ring-2 ring-white/25 rounded-md px-2 py-0.5 inline-flex items-center text-sm">
                         {!data || data.publicProfile ? (
                             <Globe className="h-4 w-4 inline-block my-0.5 opacity-25" />

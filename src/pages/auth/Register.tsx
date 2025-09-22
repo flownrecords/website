@@ -52,7 +52,7 @@ export default function Register() {
     ];
 
     const [organizations, setOrganizations] = useState<Organization[]>([
-        { id: "none", name: "None" }
+        { id: "none", name: "None" },
     ]);
 
     useEffect(() => {

@@ -3,9 +3,9 @@ type ComponentProps = {
         width?: string;
         height?: string;
     };
-}
+};
 
-export default function MapNotAvailable({ dimensions } : ComponentProps) {
+export default function MapNotAvailable({ dimensions }: ComponentProps) {
     return (
         <div
             className="w-full overflow-hidden relative flex items-center justify-center"

@@ -20,8 +20,12 @@ export default function Navbar() {
             <nav className="bg-secondary px-4 py-2 m-4 rounded-lg ring-2 ring-white/25">
                 <div className="hidden md:flex container mx-auto justify-between items-center">
                     <div className="flex space-x-4 items-center">
-                        <Link to="/" className="text-lg font-semibold flex justify-center items-center space-x-2">
-                            <img src={Icon} alt="Flown Records" className="h-6" draggable="false"/> <span>Flown Records</span>
+                        <Link
+                            to="/"
+                            className="text-lg font-semibold flex justify-center items-center space-x-2"
+                        >
+                            <img src={Icon} alt="Flown Records" className="h-6" draggable="false" />{" "}
+                            <span>Flown Records</span>
                         </Link>
 
                         <ul className="flex space-x-6 mx-10">
@@ -54,46 +58,44 @@ export default function Navbar() {
 
                     <div>
                         <ul className="flex space-x-6">
-                            {
-                                user ? (
-                                    <>
-                                        <li className="flex items-center">
-                                            <Link
-                                                to="/me"
-                                                className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 capitalize flex items-center"
-                                            >
-                                                <img
-                                                    src={
-                                                        user?.profilePictureUrl ??
-                                                        "https://placehold.co/512x512"
-                                                    }
-                                                    draggable="false"
-                                                    className="rounded-full h-5 w-5 mx-2 object-cover"
-                                                    alt="User profile icon"
-                                                />
-                                                {user?.firstName ?? `@${user.username}`}
-                                            </Link>
-                                        </li>
-                                        <li className="flex items-center">
-                                            <button
-                                                onClick={logout}
-                                                className="decoration-second-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 cursor-pointer"
-                                            >
-                                                Logout
-                                            </button>
-                                        </li>
-                                    </>
-                                ) : (
+                            {user ? (
+                                <>
                                     <li className="flex items-center">
                                         <Link
-                                            to="/login"
-                                            className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-15"
+                                            to="/me"
+                                            className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 capitalize flex items-center"
                                         >
-                                            Login
+                                            <img
+                                                src={
+                                                    user?.profilePictureUrl ??
+                                                    "https://placehold.co/512x512"
+                                                }
+                                                draggable="false"
+                                                className="rounded-full h-5 w-5 mx-2 object-cover"
+                                                alt="User profile icon"
+                                            />
+                                            {user?.firstName ?? `@${user.username}`}
                                         </Link>
                                     </li>
-                                )
-                            }
+                                    <li className="flex items-center">
+                                        <button
+                                            onClick={logout}
+                                            className="decoration-second-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150 cursor-pointer"
+                                        >
+                                            Logout
+                                        </button>
+                                    </li>
+                                </>
+                            ) : (
+                                <li className="flex items-center">
+                                    <Link
+                                        to="/login"
+                                        className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-15"
+                                    >
+                                        Login
+                                    </Link>
+                                </li>
+                            )}
                         </ul>
                     </div>
                 </div>
@@ -107,7 +109,9 @@ export default function Navbar() {
                         className="cursor-pointer text-white focus:outline-none hover:opacity-75 transition duration-150"
                         onClick={() => toggleMobileMenu(!mobileMenu)}
                     >
-                        <AlignRight className={`h-6 w-6 ${mobileMenu ? "ring-2 ring-white/25 rounded-lg p-1" : ""} transition-all duration-300`} />
+                        <AlignRight
+                            className={`h-6 w-6 ${mobileMenu ? "ring-2 ring-white/25 rounded-lg p-1" : ""} transition-all duration-300`}
+                        />
                     </button>
                 </div>
             </nav>

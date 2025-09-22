@@ -130,7 +130,7 @@ const RouteMap: React.FC<MapProps> = ({
                     sigmets={{
                         toggle: () => toggleDisplaySigmets((prev) => !prev),
                         status: displaySigmets,
-                        disable: type === "ENTRY"
+                        disable: type === "ENTRY",
                     }}
                 />
 

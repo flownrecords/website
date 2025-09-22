@@ -32,24 +32,29 @@ export default function MeEdit() {
     const [base64Image, setBase64Image] = useState<string | null>(null);
 
     const [organizations, setOrganizations] = useState<Organization[]>([
-        { id: "none", name: "None" }
+        { id: "none", name: "None" },
     ]);
 
     function handleSave() {
-        api.post(ENDPOINTS.USER.ME, {
-            firstName: name.split(" ")[0],
-            lastName: name.split(" ").length > 1 ? name.split(" ")[name.split(" ").length - 1] : "",
-            location,
-            bio,
-            publicProfile: visibility,
-            organizationId: organizationId === "none" ? null : organizationId,
-            organizationRole,
-            profilePictureUrl: base64Image,
-            homeAirport,
-        },{
-            requireAuth: true,
-            navigate,
-        })
+        api.post(
+            ENDPOINTS.USER.ME,
+            {
+                firstName: name.split(" ")[0],
+                lastName:
+                    name.split(" ").length > 1 ? name.split(" ")[name.split(" ").length - 1] : "",
+                location,
+                bio,
+                publicProfile: visibility,
+                organizationId: organizationId === "none" ? null : organizationId,
+                organizationRole,
+                profilePictureUrl: base64Image,
+                homeAirport,
+            },
+            {
+                requireAuth: true,
+                navigate,
+            },
+        )
             .then((res) => {
                 if (res.meta.status === 200) {
                     alert("Success", "Profile updated successfully!");

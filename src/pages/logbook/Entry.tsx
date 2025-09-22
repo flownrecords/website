@@ -57,20 +57,22 @@ export default function LogbookEntry() {
                 requireAuth: true,
                 navigate,
                 replaceBy: [{ key: "{id}", value: entryId }],
-            }).then((response) => {
-                if (response.meta.status === 200) {
-                    if (!response) return navigate("/me/logbook");
-                    setEntry(response);
-                }
-            }).catch((error) => {
-                if (error?.status === 401) {
-                    localStorage.removeItem("accessToken");
-                    navigate("/login");
-                } else {
-                    navigate("/me/logbook");
-                }
-            });
-        }        
+            })
+                .then((response) => {
+                    if (response.meta.status === 200) {
+                        if (!response) return navigate("/me/logbook");
+                        setEntry(response);
+                    }
+                })
+                .catch((error) => {
+                    if (error?.status === 401) {
+                        localStorage.removeItem("accessToken");
+                        navigate("/login");
+                    } else {
+                        navigate("/me/logbook");
+                    }
+                });
+        }
     }, [entryId, navigate]);
 
     function parseTime(rawDate: Date | null): string {
@@ -369,64 +371,72 @@ export default function LogbookEntry() {
                             }
                         />
 
-                        {   !entry?.plan ? 
+                        {!entry?.plan ? (
                             <Button
                                 styleType="small"
                                 type="button"
                                 onClick={() => {
-                                    navigate(`/me/plan?entry=${entry?.id}`)
+                                    navigate(`/me/plan?entry=${entry?.id}`);
                                 }}
                                 text={
                                     <>
-                                        <FilePlus2 className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                        <FilePlus2
+                                            className="h-4 w-4 inline-block"
+                                            strokeWidth={2}
+                                        />{" "}
                                         <span>Add Flight Plan</span>
                                     </>
                                 }
-                            /> : 
-                            <Button 
+                            />
+                        ) : (
+                            <Button
                                 styleType="small"
                                 type="button"
                                 onClick={() => setFplModal(!fplModal)}
                                 text={
                                     <>
-                                        <FileText className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                        <FileText
+                                            className="h-4 w-4 inline-block"
+                                            strokeWidth={2}
+                                        />{" "}
                                         <span>Flight Plan Options</span>
                                     </>
                                 }
                             />
-                        }
+                        )}
 
-                        {   !entry?.recording ?
+                        {!entry?.recording ? (
                             <Button
-                            disabled={entry?.recording ? true : entry?.id ? false : true}
-                            styleType="small"
-                            type="button"
-                            onClick={() => {
-                                setRecordModal(true);
-                            }}
-                            text={
-                                <>
-                                    <Save
-                                        className="h-4 w-4 inline-block text-white/75"
-                                        strokeWidth={2}
-                                    />{" "}
-                                    <span>Add Flight Record</span>
-                                </>
-                            }
-                            />  : 
-                            <Button 
-                            styleType="small"
-                            type="button"
-                            disabled={true} // TODO: implement delete flight plan
-                            onClick={() => {}}
-                            text={
-                                <>
-                                    <Trash className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
-                                    <span>Delete Flight Recording</span>
-                                </>
-                            }
+                                disabled={entry?.recording ? true : entry?.id ? false : true}
+                                styleType="small"
+                                type="button"
+                                onClick={() => {
+                                    setRecordModal(true);
+                                }}
+                                text={
+                                    <>
+                                        <Save
+                                            className="h-4 w-4 inline-block text-white/75"
+                                            strokeWidth={2}
+                                        />{" "}
+                                        <span>Add Flight Record</span>
+                                    </>
+                                }
                             />
-                        }
+                        ) : (
+                            <Button
+                                styleType="small"
+                                type="button"
+                                disabled={true} // TODO: implement delete flight plan
+                                onClick={() => {}}
+                                text={
+                                    <>
+                                        <Trash className="h-4 w-4 inline-block" strokeWidth={2} />{" "}
+                                        <span>Delete Flight Recording</span>
+                                    </>
+                                }
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -605,7 +615,10 @@ export default function LogbookEntry() {
                                                 strokeWidth={2}
                                             />
                                             <span className="text-xs hidden lg:inline-block">
-                                                {entry?.crew && entry.crew.length > 0 ? "Edit" : "Add"} Crew
+                                                {entry?.crew && entry.crew.length > 0
+                                                    ? "Edit"
+                                                    : "Add"}{" "}
+                                                Crew
                                             </span>
                                         </span>
                                     </div>
@@ -849,7 +862,7 @@ export default function LogbookEntry() {
 
             <Footer />
 
-            <Modal 
+            <Modal
                 isOpen={crewModal}
                 onClose={() => setCrewModal(false)}
                 title="Add Flight Recording"
@@ -979,10 +992,7 @@ export default function LogbookEntry() {
                 </div>
             </Modal>
 
-            <Modal
-                isOpen={fplModal}
-                title="Flight Plan Options"
-                onClose={() => setFplModal(false)}>
+            <Modal isOpen={fplModal} title="Flight Plan Options" onClose={() => setFplModal(false)}>
                 <div className="bg-primary p-4 rounded-lg flex flex-col space-y-4">
                     <Button
                         disabled={true} // TODO: implement delete flight plan

@@ -135,7 +135,7 @@ export default function Logbook() {
                 );
             });
     }
-    
+
     return (
         <>
             <Splash
@@ -157,7 +157,10 @@ export default function Logbook() {
           flex justify-between items-center
           "
                 >
-                    <Link to="/me" className="flex items-center py-2 hover:opacity-75 transition-all duration-150">
+                    <Link
+                        to="/me"
+                        className="flex items-center py-2 hover:opacity-75 transition-all duration-150"
+                    >
                         <div className="rounded-full ring-2 ring-white/25">
                             {user ? (
                                 <img
@@ -211,8 +214,6 @@ export default function Logbook() {
                             />
                         </div>
 
-                        
-
                         {manageMode && (
                             <Button
                                 type="button"
@@ -262,195 +263,194 @@ export default function Logbook() {
                 </div>
 
                 <div className="mt-4 bg-primary ring-2 ring-white/25 rounded-lg p-4">
-                        <div className="grid grid-cols-6 pb-2 px-2 md:px-4">
-                            <span>Date</span>
+                    <div className="grid grid-cols-6 pb-2 px-2 md:px-4">
+                        <span>Date</span>
 
-                            <span className="hidden md:block"> Registration </span>
-                            <span className="block md:hidden"> Reg. </span>
+                        <span className="hidden md:block"> Registration </span>
+                        <span className="block md:hidden"> Reg. </span>
 
-                            <span className="hidden md:block"> Departure </span>
-                            <span className="block md:hidden text-center"> Dep. </span>
+                        <span className="hidden md:block"> Departure </span>
+                        <span className="block md:hidden text-center"> Dep. </span>
 
-                            <span className="hidden md:block"> Arrival </span>
-                            <span className="block md:hidden text-center"> Arr. </span>
+                        <span className="hidden md:block"> Arrival </span>
+                        <span className="block md:hidden text-center"> Arr. </span>
 
-                            <span className="hidden md:block"> Flight Time </span>
-                            <span className="block md:hidden text-right"> Time </span>
+                        <span className="hidden md:block"> Flight Time </span>
+                        <span className="block md:hidden text-right"> Time </span>
 
-                            <span className="flex items-center justify-end px-4">
-                                {manageMode && (
-                                    <>
-                                        <div className="flex items-center cursor-pointer relative mr-2 md:mr-3">
-                                            <input
-                                                onClick={(e) => {
-                                                    const isChecked = (e.target as HTMLInputElement)
-                                                        .checked;
-                                                    if (isChecked) {
-                                                        const allEntryIds =
-                                                            user?.logbookEntries.map(
-                                                                (entry) => entry.id,
-                                                            ) || [];
-                                                        setManagedEntries(allEntryIds);
+                        <span className="flex items-center justify-end px-4">
+                            {manageMode && (
+                                <>
+                                    <div className="flex items-center cursor-pointer relative mr-2 md:mr-3">
+                                        <input
+                                            onClick={(e) => {
+                                                const isChecked = (e.target as HTMLInputElement)
+                                                    .checked;
+                                                if (isChecked) {
+                                                    const allEntryIds =
+                                                        user?.logbookEntries.map(
+                                                            (entry) => entry.id,
+                                                        ) || [];
+                                                    setManagedEntries(allEntryIds);
 
-                                                        document
-                                                            .querySelectorAll(".peer")
-                                                            .forEach((checkbox) => {
-                                                                (
-                                                                    checkbox as HTMLInputElement
-                                                                ).checked = true;
-                                                            });
-                                                    } else {
-                                                        setManagedEntries([]);
+                                                    document
+                                                        .querySelectorAll(".peer")
+                                                        .forEach((checkbox) => {
+                                                            (checkbox as HTMLInputElement).checked =
+                                                                true;
+                                                        });
+                                                } else {
+                                                    setManagedEntries([]);
 
-                                                        document
-                                                            .querySelectorAll(".peer")
-                                                            .forEach((checkbox) => {
-                                                                (
-                                                                    checkbox as HTMLInputElement
-                                                                ).checked = false;
-                                                            });
-                                                    }
-                                                }}
-                                                type="checkbox"
-                                                className="peer h-4 w-4 md:h-5 md:w-5 cursor-pointer transition-all appearance-none rounded border border-white/25 checked:bg-accent/25 checked:border-accent"
-                                            />
-                                            <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    className="h-3.5 w-3.5"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                    stroke="currentColor"
-                                                    strokeWidth="1"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </span>
-                                        </div>
-                                        <span className="text-sm px-1 hidden md:inline-block">
-                                            Select all
+                                                    document
+                                                        .querySelectorAll(".peer")
+                                                        .forEach((checkbox) => {
+                                                            (checkbox as HTMLInputElement).checked =
+                                                                false;
+                                                        });
+                                                }
+                                            }}
+                                            type="checkbox"
+                                            className="peer h-4 w-4 md:h-5 md:w-5 cursor-pointer transition-all appearance-none rounded border border-white/25 checked:bg-accent/25 checked:border-accent"
+                                        />
+                                        <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className="h-3.5 w-3.5"
+                                                viewBox="0 0 20 20"
+                                                fill="currentColor"
+                                                stroke="currentColor"
+                                                strokeWidth="1"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
                                         </span>
-                                    </>
-                                )}
-                            </span>
-                        </div>
-                        {user?.logbookEntries &&
-                            user?.logbookEntries.length > 0 ?
-                            user?.logbookEntries
-                                .sort(
-                                    (a, b) =>
-                                        new Date(b.date as any).getTime() -
-                                        new Date(a.date as any).getTime(),
-                                )
-                                .map((entry, index) => (
-                                    <div
-                                        key={index}
-                                        className={`
+                                    </div>
+                                    <span className="text-sm px-1 hidden md:inline-block">
+                                        Select all
+                                    </span>
+                                </>
+                            )}
+                        </span>
+                    </div>
+                    {user?.logbookEntries && user?.logbookEntries.length > 0 ? (
+                        user?.logbookEntries
+                            .sort(
+                                (a, b) =>
+                                    new Date(b.date as any).getTime() -
+                                    new Date(a.date as any).getTime(),
+                            )
+                            .map((entry, index) => (
+                                <div
+                                    key={index}
+                                    className={`
                   grid grid-cols-6 py-4 px-2 md:px-4 items-center
                   transition-all duration-150
                   ${index % 2 === 0 ? "bg-primary hover:bg-primary/75" : "bg-gradient-to-br to-neutral-900 from-neutral-800 hover:from-neutral-800/75"} 
                   rounded-lg cursor-pointer
                   `}
-                                        onClick={() => {
-                                            navigate(`/me/logbook/${entry.id}`);
-                                        }}
-                                    >
-                                        <span className="text-xs md:text-sm text-white/50 ml-1 hidden">
-                                            {parseDate(entry.date, false)}
-                                        </span>
-                                        <span className="text-xs md:text-sm text-white/50 ml-1 md:block">
-                                            {parseDate(entry.date, true)}
-                                        </span>
-                                        <span className="text-xs md:text-sm text-white/50">
-                                            {entry.aircraftRegistration
-                                                ? entry.aircraftRegistration.split(" ")[0]
-                                                : "-"}
-                                        </span>
-                                        <span className="text-xs md:text-sm text-white/50 text-center md:text-left">
-                                            {entry.depAd || "-"}
-                                        </span>
-                                        <span className="text-xs md:text-sm text-white/50 text-center md:text-left">
-                                            {entry.arrAd || "-"}
-                                        </span>
-                                        <span className="text-xs md:text-sm text-white/50 text-right md:text-left">
-                                            {parseDuration(
-                                                typeof entry.total === "number" && entry.total > 0
-                                                    ? entry.total
-                                                    : entry.simTime,
-                                            ) || "-"}
-                                        </span>
-                                        <span className="flex justify-end px-2 md:px-0">
-                                            {manageMode && (
-                                                <div className="flex items-center cursor-pointer relative mr-4">
-                                                    <input
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
+                                    onClick={() => {
+                                        navigate(`/me/logbook/${entry.id}`);
+                                    }}
+                                >
+                                    <span className="text-xs md:text-sm text-white/50 ml-1 hidden">
+                                        {parseDate(entry.date, false)}
+                                    </span>
+                                    <span className="text-xs md:text-sm text-white/50 ml-1 md:block">
+                                        {parseDate(entry.date, true)}
+                                    </span>
+                                    <span className="text-xs md:text-sm text-white/50">
+                                        {entry.aircraftRegistration
+                                            ? entry.aircraftRegistration.split(" ")[0]
+                                            : "-"}
+                                    </span>
+                                    <span className="text-xs md:text-sm text-white/50 text-center md:text-left">
+                                        {entry.depAd || "-"}
+                                    </span>
+                                    <span className="text-xs md:text-sm text-white/50 text-center md:text-left">
+                                        {entry.arrAd || "-"}
+                                    </span>
+                                    <span className="text-xs md:text-sm text-white/50 text-right md:text-left">
+                                        {parseDuration(
+                                            typeof entry.total === "number" && entry.total > 0
+                                                ? entry.total
+                                                : entry.simTime,
+                                        ) || "-"}
+                                    </span>
+                                    <span className="flex justify-end px-2 md:px-0">
+                                        {manageMode && (
+                                            <div className="flex items-center cursor-pointer relative mr-4">
+                                                <input
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
 
+                                                        if (
+                                                            (e.target as HTMLInputElement).checked
+                                                        ) {
                                                             if (
-                                                                (e.target as HTMLInputElement)
-                                                                    .checked
+                                                                !managedEntries.includes(entry.id)
                                                             ) {
-                                                                if (
-                                                                    !managedEntries.includes(
-                                                                        entry.id,
-                                                                    )
-                                                                ) {
-                                                                    setManagedEntries([
-                                                                        ...managedEntries,
-                                                                        entry.id,
-                                                                    ]);
-                                                                }
-                                                            } else {
-                                                                const newManagedEntries =
-                                                                    managedEntries.filter(
-                                                                        (id) => id !== entry.id,
-                                                                    );
-                                                                setManagedEntries(
-                                                                    newManagedEntries,
-                                                                );
+                                                                setManagedEntries([
+                                                                    ...managedEntries,
+                                                                    entry.id,
+                                                                ]);
                                                             }
-                                                        }}
-                                                        type="checkbox"
-                                                        className="peer h-4 w-4 md:h-5 md:w-5 cursor-pointer transition-all appearance-none rounded border border-white/25 checked:bg-accent/25 checked:border-accent"
-                                                    />
-                                                    <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            className="h-3.5 w-3.5"
-                                                            viewBox="0 0 20 20"
-                                                            fill="currentColor"
-                                                            stroke="currentColor"
-                                                            strokeWidth="1"
-                                                        >
-                                                            <path
-                                                                fillRule="evenodd"
-                                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                                clipRule="evenodd"
-                                                            />
-                                                        </svg>
-                                                    </span>
-                                                </div>
-                                            )}
-
-                                            <span className="hidden md:inline-block">
-                                                <Button
-                                                    to={`/me/logbook/${entry.id}`}
-                                                    text="View"
-                                                    styleType="small"
-                                                    className="text-sm"
+                                                        } else {
+                                                            const newManagedEntries =
+                                                                managedEntries.filter(
+                                                                    (id) => id !== entry.id,
+                                                                );
+                                                            setManagedEntries(newManagedEntries);
+                                                        }
+                                                    }}
+                                                    type="checkbox"
+                                                    className="peer h-4 w-4 md:h-5 md:w-5 cursor-pointer transition-all appearance-none rounded border border-white/25 checked:bg-accent/25 checked:border-accent"
                                                 />
-                                            </span>
+                                                <span className="absolute text-white opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        className="h-3.5 w-3.5"
+                                                        viewBox="0 0 20 20"
+                                                        fill="currentColor"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1"
+                                                    >
+                                                        <path
+                                                            fillRule="evenodd"
+                                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                            clipRule="evenodd"
+                                                        />
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        )}
+
+                                        <span className="hidden md:inline-block">
+                                            <Button
+                                                to={`/me/logbook/${entry.id}`}
+                                                text="View"
+                                                styleType="small"
+                                                className="text-sm"
+                                            />
                                         </span>
-                                    </div>
-                                )) : <>
-                                    {
-                                        (user?.logbookEntries && user?.logbookEntries?.length === 0) ? <><p className="text-center text-white/25">No entries found.</p></> : <PageLoader/>
-                                    }
-                                </>}
+                                    </span>
+                                </div>
+                            ))
+                    ) : (
+                        <>
+                            {user?.logbookEntries && user?.logbookEntries?.length === 0 ? (
+                                <>
+                                    <p className="text-center text-white/25">No entries found.</p>
+                                </>
+                            ) : (
+                                <PageLoader />
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -475,7 +475,7 @@ export default function Logbook() {
                                     toggleUploadModal(!uploadModal);
                                 }}
                                 text={
-                                    <img 
+                                    <img
                                         src={FlightLogger}
                                         alt="FlightLogger"
                                         title="FlightLogger"
@@ -496,34 +496,46 @@ export default function Logbook() {
                             />
                         </div>
 
-                        {
-                            uploadModal && (
-                                <>
-                                    <div className="flex flex-col mb-2">
-                                        <label className="text-sm text-white/75 mt-4 mb-1">CSV file</label>
-                                        <input
-                                            onChange={handleFileChange}
-                                            type="file"
-                                            accept=".csv"
-                                            className="bg-secondary ring-2 ring-white/25 rounded-lg px-2 py-2 file:text-white file:bg-primary/50 file:border-0 file:rounded-md file:px-3"
-                                        />
-                                    </div>
+                        {uploadModal && (
+                            <>
+                                <div className="flex flex-col mb-2">
+                                    <label className="text-sm text-white/75 mt-4 mb-1">
+                                        CSV file
+                                    </label>
+                                    <input
+                                        onChange={handleFileChange}
+                                        type="file"
+                                        accept=".csv"
+                                        className="bg-secondary ring-2 ring-white/25 rounded-lg px-2 py-2 file:text-white file:bg-primary/50 file:border-0 file:rounded-md file:px-3"
+                                    />
+                                </div>
 
-                                    <div className="flex flex-row my-4">
-                                        <Link to="/guides#flightlogger" className="text-accent font-medium cursor-pointer hover:opacity-75 transition-all duration-300">
-                                            <InfoIcon className="inline-block h-6 w-6"/><span className="text-sm ml-2">How to retrieve your CSV logbook file</span>
-                                        </Link>
-                                    </div>
+                                <div className="flex flex-row my-4">
+                                    <Link
+                                        to="/guides#flightlogger"
+                                        className="text-accent font-medium cursor-pointer hover:opacity-75 transition-all duration-300"
+                                    >
+                                        <InfoIcon className="inline-block h-6 w-6" />
+                                        <span className="text-sm ml-2">
+                                            How to retrieve your CSV logbook file
+                                        </span>
+                                    </Link>
+                                </div>
 
-                                    {uploadInfo && (
-                                        <div className="text-sm text-second-accent mb-4">{uploadInfo}</div>
-                                    )}
-                                    <div className="flex justify-start space-x-4">
-                                        <Button text="Submit" onClick={uploadLogbook} styleType="small" />
+                                {uploadInfo && (
+                                    <div className="text-sm text-second-accent mb-4">
+                                        {uploadInfo}
                                     </div>
-                                </>
-                            )
-                        }
+                                )}
+                                <div className="flex justify-start space-x-4">
+                                    <Button
+                                        text="Submit"
+                                        onClick={uploadLogbook}
+                                        styleType="small"
+                                    />
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </Modal>

@@ -75,7 +75,10 @@ export default function ProfileHeader(props: { user: User | null }) {
 
         const entries = user.logbookEntries.filter((entry) => entry.includeInFt);
 
-        return entries.reduce((acc, entry) => acc + (entry.landDay || 0) + (entry.landNight || 0), 0);
+        return entries.reduce(
+            (acc, entry) => acc + (entry.landDay || 0) + (entry.landNight || 0),
+            0,
+        );
     }
 
     return (
@@ -123,7 +126,10 @@ export default function ProfileHeader(props: { user: User | null }) {
                                     )}
 
                                     {user?.organizationId && user?.organizationRole && (
-                                        <AtSign className="h-5 w-5 inline-block top-1/2 transform -translate-y-1/15 opacity-25 mx-4" strokeWidth={2} />
+                                        <AtSign
+                                            className="h-5 w-5 inline-block top-1/2 transform -translate-y-1/15 opacity-25 mx-4"
+                                            strokeWidth={2}
+                                        />
                                     )}
 
                                     {user?.organizationId && (
@@ -145,10 +151,16 @@ export default function ProfileHeader(props: { user: User | null }) {
                                 <AtSign className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/15 opacity-50" />
                                 {user ? user?.username : <Skeleton type="span" />}
                             </span>
-                            { user?.location && <span className="text-sm text-white/75 ring-white/25 ring-2 rounded-md px-4 py-0.5 inline-block">
-                                <MapPin className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
-                                {user ? user?.location?.substring(0, 24) : <Skeleton type="span" />}
-                            </span>}
+                            {user?.location && (
+                                <span className="text-sm text-white/75 ring-white/25 ring-2 rounded-md px-4 py-0.5 inline-block">
+                                    <MapPin className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
+                                    {user ? (
+                                        user?.location?.substring(0, 24)
+                                    ) : (
+                                        <Skeleton type="span" />
+                                    )}
+                                </span>
+                            )}
                             <span className="text-sm text-white/75 ring-white/25 ring-2 rounded-md px-4 py-0.5 hidden lg:inline-block relative">
                                 {user?.publicProfile || !user ? (
                                     <Globe className="h-4 w-4 inline-block mr-1 top-1/2 transform -translate-y-1/10 opacity-50" />
@@ -226,9 +238,7 @@ export default function ProfileHeader(props: { user: User | null }) {
                         </div>
                         <div className="flex justify-between">
                             <span className="text-white/50">Total Landings</span>
-                            <span className="text-white/75 font-semibold">
-                                {totalLandings()}
-                            </span>
+                            <span className="text-white/75 font-semibold">{totalLandings()}</span>
                         </div>
                     </div>
                 </div>

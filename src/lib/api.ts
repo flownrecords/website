@@ -164,7 +164,7 @@ export class API {
     }
 
     private _format<T>(response: AxiosResponse<any>): ApiResponse<T> | Array<T> {
-        if(Array.isArray(response.data)) {
+        if (Array.isArray(response.data)) {
             return response.data as Array<T>;
         } else {
             return {

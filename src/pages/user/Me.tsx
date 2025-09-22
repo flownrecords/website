@@ -78,10 +78,7 @@ export default function Me() {
                                 <Button
                                     to="/me/logbook"
                                     text={
-                                        <Book
-                                            strokeWidth={1.25}
-                                            className="h-6 w-6 inline-block"
-                                        />
+                                        <Book strokeWidth={1.25} className="h-6 w-6 inline-block" />
                                     }
                                 />
 
@@ -241,7 +238,9 @@ export default function Me() {
                                     <span className="text-white/50">METAR</span>
                                     <p className="text-sm text-white/75">
                                         {homeWx.metar
-                                            ? homeWx.metar?.replace(/METAR/g, "").replace(/[A-Z]{4}/, "")
+                                            ? homeWx.metar
+                                                  ?.replace(/METAR/g, "")
+                                                  .replace(/[A-Z]{4}/, "")
                                             : "No METAR available"}
                                     </p>
                                 </div>
