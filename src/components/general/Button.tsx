@@ -8,6 +8,7 @@ type ButtonProps = {
     type?: "button" | "submit" | "reset";
     styleType?: "normal" | "small";
     disabled?: boolean;
+    id?: string;
 };
 
 function alertIfDisabled() {
@@ -22,6 +23,7 @@ const Button: React.FC<ButtonProps> = ({
     onClick,
     type = "button",
     styleType = "normal",
+    id
 }) => {
     const style = `
     ${disabled ? "opacity-50" : "hover:opacity-75"}
@@ -43,11 +45,11 @@ const Button: React.FC<ButtonProps> = ({
   `;
 
     return to && !disabled ? (
-        <Link to={to} onClick={onClick} className={style}>
+        <Link to={to} onClick={onClick} className={style} id={id}>
             {text}
         </Link>
     ) : (
-        <button onClick={disabled ? alertIfDisabled : onClick} className={style} type={type}>
+        <button onClick={disabled ? alertIfDisabled : onClick} className={style} type={type} id={id}>
             {text}
         </button>
     );

@@ -33,6 +33,7 @@ export const ENDPOINTS = {
         SIGMET: "/wx/sigmet",
     },
     GEN: {
+        STATS: "/stats",
     },
     REPORTS: {
         STATS: {
