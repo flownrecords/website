@@ -4,6 +4,8 @@ import Splash from "../../components/general/Splash";
 import { captalize } from "../../lib/utils";
 import api, { ENDPOINTS } from "../../lib/api";
 import type { FIR } from "../../lib/types";
+import Button from "../../components/general/Button";
+import Footer from "../../components/general/Footer";
 
 export default function Reports() {
     const { user } = useAuth();
@@ -83,6 +85,12 @@ export default function Reports() {
         return mostFlownAcft || "None";
     }
 
+    const images = [
+        {
+            url: URL + `/reports/year?hours=${totalFlightTime()}&flights=${user?.logbookEntries.length}&aircraft=${mostFlownAcft()}&airport=${mostVisitedAd}`,
+        },
+    ]
+
     return (
         <>
             <Splash
@@ -99,18 +107,40 @@ export default function Reports() {
             />
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
-                <div className="grid grid-cols-4 gap-4">
-                    <div className="ring-2 ring-white/25 rounded-lg overflow-hidden">
-                        <img
-                            src={
-                                URL +
-                                `/report?hours=${totalFlightTime()}&flights=${user?.logbookEntries.length}&aircraft=${mostFlownAcft()}&airport=${mostVisitedAd}`
-                            }
-                            className=""
-                        />
-                    </div>
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                    {
+                        user ? (
+                            images.map((image, i) => (
+                                <div className="ring-2 ring-white/25 rounded-lg overflow-hidden" key={i}>
+                                    <img
+                                        src={
+                                            URL +
+                                            `/reports/year?hours=${totalFlightTime()}&flights=${user?.logbookEntries.length}&aircraft=${mostFlownAcft()}&airport=${mostVisitedAd}`
+                                        }
+                                        className="rounded-lg w-full object-cover lg:max-h-vh"
+                                    />
+                                    <div className="flex flex-row p-4">
+                                        <Button 
+                                            styleType="small" 
+                                            text="Download" 
+                                            className="w-full" 
+                                            onClick={() => { window.open(image.url, "_blank") }}
+                                        />
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="col-span-4 h-96 flex items-center justify-center">
+                                <p className="text-center text-white/25">
+                                    No entries found.
+                                </p>
+                            </div>
+                        )
+                    }
                 </div>
             </div>
+
+            <Footer />
         </>
     );
 }

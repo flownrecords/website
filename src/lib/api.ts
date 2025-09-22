@@ -32,7 +32,13 @@ export const ENDPOINTS = {
         AD: "/wx/ad",
         SIGMET: "/wx/sigmet",
     },
-    GEN: {},
+    GEN: {
+    },
+    REPORTS: {
+        STATS: {
+            YEAR: "/reports/year",
+        }
+    },
     ORGS: {
         LIST: "/orgs",
     },

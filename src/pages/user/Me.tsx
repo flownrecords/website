@@ -187,8 +187,7 @@ export default function Me() {
                                             <span className="ml-2">Reports</span>
                                         </>
                                     }
-                                    disabled={true}
-                                    to="/me/report"
+                                    to="/me/reports"
                                 />
 
                                 <Button

@@ -242,6 +242,7 @@ export default function CrewEntry() {
                                 </div>
                             </div>
                         </div>
+                        
                         <div className="mt-4 ring-2 ring-white/25 rounded-lg p-4">
                             <h1 className="text-lg text-white/50 font-semibold mb-2">Details</h1>
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
