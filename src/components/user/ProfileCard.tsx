@@ -55,7 +55,7 @@ export default function ProfileCard(props: {
 
     return (
         <>
-            <div className="bg-secondary rounded-lg p-4 min-w-[300px]">
+            <div className="bg-secondary rounded-lg p-4 min-w-[350px]">
                 <div className="flex flex-row items-center space-x-4">
                     {data.profilePictureUrl ? (
                         <img

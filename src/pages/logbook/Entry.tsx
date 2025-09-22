@@ -539,7 +539,7 @@ export default function LogbookEntry() {
                                                                             ) || ""
                                                                         }${m?.lastName?.charAt(0) || ""}`
                                                                     }
-                                                                    className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600"
+                                                                    className="h-6 w-6 rounded-full inline-block ring-2 ring-neutral-600  object-cover"
                                                                 />
                                                             </Link>
 
