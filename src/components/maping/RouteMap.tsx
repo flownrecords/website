@@ -7,6 +7,7 @@ import { RoutePlot } from "./RoutePlot";
 import { MapToolbar } from "./MapToolbar";
 import RecordingPlot from "./RecordingPlot";
 import SigmetMap from "./Sigmets";
+import MapNotAvailable from "./MapNotAvail";
 
 type MapProps = {
     type: "OVERVIEW" | "PLANNING" | "ENTRY" | "SIGMET";
@@ -167,12 +168,7 @@ const RouteMap: React.FC<MapProps> = ({
             </MapContainer>
         </div>
     ) : (
-        <div
-            className="w-full overflow-hidden relative flex items-center justify-center"
-            style={{ height: dimensions?.height ?? "400px" }}
-        >
-            <h1 className="font-bold text-3xl text-white/15">Map not available</h1>
-        </div>
+        <MapNotAvailable dimensions={dimensions} />
     );
 };
 
