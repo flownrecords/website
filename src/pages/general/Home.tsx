@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import Splash from "../../components/general/Splash";
 import Footer from "../../components/general/Footer";
 import { useAuth } from "../../components/auth/AuthContext";
