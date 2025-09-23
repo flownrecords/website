@@ -27,6 +27,8 @@ import {
     CrewLogbook,
     CrewEntry,
     Reports,
+    Terms,
+    Privacy,
 } from "./pages";
 
 // Components
@@ -69,6 +71,10 @@ function App() {
 
                 {/* TOOLS ROUTES */}
                 <Route path="/tools" element={<Tools />} />
+
+                {/* LEGAL ROUTES */}
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
 
                 {/* Catch-all route for 404 Not Found */}
                 <Route path="*" element={<NotFound />} />
