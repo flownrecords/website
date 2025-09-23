@@ -29,7 +29,7 @@ export default function Guides() {
     };
 
     const stepStyle =
-        "bg-gradient-to-br from-neutral-900 to-neutral-800 p-4 rounded-lg ring-2 ring-white/25";
+        "";
 
     const guides = [
         {
@@ -206,7 +206,7 @@ export default function Guides() {
                             if (!foundGuide || !foundGuide.content)
                                 return (
                                     <div>
-                                        <h1 className="font-semibold text-white mb-4">
+                                        <h1 className="font-medium text-lg text-white mb-4">
                                             {foundGuide?.title
                                                 ? foundGuide?.title
                                                 : "Untitled Guide"}
@@ -219,7 +219,7 @@ export default function Guides() {
 
                             return (
                                 <div>
-                                    <h1 className="font-semibold text-white mb-4">
+                                    <h1 className="font-medium text-lg text-white mb-4">
                                         {foundGuide.title}
                                     </h1>
                                     <div>{foundGuide.content}</div>
