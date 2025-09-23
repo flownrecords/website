@@ -89,6 +89,27 @@ export default function Home() {
     const gradient = " bg-gradient-to-br from-neutral-900 to-neutral-800";
     const variableGradient = " hover:from-neutral-800 hover:to-neutral-900 transition duration-500"
 
+    const LAST_MONTH_VALUES = {
+        userCount: 1,
+        organizationCount: 1,
+        logbookEntryCount: 72,
+    }
+
+    function calculateGrowth(current: number, previous: number) {
+        if(previous === 0) return 100;
+        return Math.round(((current - previous) / previous) * 100);
+    }
+
+    const LAST_MONTH_PERCENTAGES = {
+        userCount: calculateGrowth(stats?.userCount || 0, LAST_MONTH_VALUES.userCount),
+        organizationCount: calculateGrowth(stats?.organizationCount || 0, LAST_MONTH_VALUES.organizationCount),
+        logbookEntryCount: calculateGrowth(stats?.logbookEntryCount || 0, LAST_MONTH_VALUES.logbookEntryCount),
+    }
+
+
+    const GROWTH = <span className="text-[#57F287]" title="Growth">+</span>
+    const STABLE = <span className="text-[#F28757]" title="Stable">-</span>
+
     return (
         <>
             <Splash />
@@ -156,16 +177,32 @@ export default function Home() {
                 <div className="container mx-auto max-w-6xl p-4 mt-34 lg:mt-28">
                     <div>
                         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-                            <div className={`${gradient} p-4 rounded-lg ring-2 ring-white/25 lg:col-2`}>
-                                <div className="text-3xl font-bold text-white">{stats.userCount?.toLocaleString()}</div>
+                            <div className={`${gradient} p-4 rounded-lg ring-2 ring-white/25 lg:col-2 group`}>
+                                <div className="text-3xl font-bold text-white">
+                                    {stats.userCount?.toLocaleString()}{" "}
+                                    {LAST_MONTH_PERCENTAGES.userCount > 5 ? GROWTH : STABLE}
+                                    <span className="transition duration-500 group-hover:opacity-100 opacity-0">{LAST_MONTH_PERCENTAGES.userCount}%</span>
+                                </div>
                                 <div className="text-sm text-white/75">User{stats.userCount > 1 ? "s" : ""}</div>
                             </div>
-                            <div className={`${gradient} p-4 rounded-lg ring-2 ring-white/25`}>
-                                <div className="text-3xl font-bold text-white">{stats.logbookEntryCount?.toLocaleString()}</div>
+                            <div className={`${gradient} p-4 rounded-lg ring-2 ring-white/25 group`}>
+                                <div className="text-3xl font-bold text-white">
+                                    {stats.logbookEntryCount?.toLocaleString()}{" "}
+                                    {LAST_MONTH_PERCENTAGES.logbookEntryCount > 5 ? GROWTH : STABLE}
+                                    <span className="transition duration-500 group-hover:opacity-100 opacity-0">
+                                        {LAST_MONTH_PERCENTAGES.logbookEntryCount}%
+                                    </span>
+                                </div>
                                 <div className="text-sm text-white/75">Logbook Entrie{stats.logbookEntryCount > 1 ? "s" : ""}</div>
                             </div>
-                            <div className={`${gradient} p-4 rounded-lg ring-2 ring-white/25`}>
-                                <div className="text-3xl font-bold text-white">{stats.organizationCount?.toLocaleString()}</div>
+                            <div className={`${gradient} p-4 rounded-lg ring-2 ring-white/25 group`}>
+                                <div className="text-3xl font-bold text-white">
+                                    {stats.organizationCount?.toLocaleString()}{" "}
+                                    {LAST_MONTH_PERCENTAGES.organizationCount > 5 ? GROWTH : STABLE}
+                                    {LAST_MONTH_PERCENTAGES.organizationCount > 5 && <span className="transition duration-500 group-hover:opacity-100 opacity-0">
+                                        {LAST_MONTH_PERCENTAGES.organizationCount}%
+                                    </span>}
+                                </div>
                                 <div className="text-sm text-white/75">Organizations{stats.organizationCount > 1 ? "s" : ""}</div>
                             </div>
                         </div>
