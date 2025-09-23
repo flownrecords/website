@@ -11,7 +11,7 @@ export default function Footer() {
                             © {new Date().getFullYear()} Flown Records. All rights reserved.
                         </p>
 
-                        <div className="flex flex-row space-x-4 mt-4">
+                        <div className="flex flex-row space-x-4 mt-4 font-inter">
                             <a
                                 href="https://github.com/flownrecords"
                                 target="_blank"
@@ -30,7 +30,7 @@ export default function Footer() {
                             </a>
                             <img
                                 className="rounded-sm"
-                                src="https://img.shields.io/github/package-json/v/flownrecords/website?style=flat-square&color=313ED8"
+                                src="https://img.shields.io/github/package-json/v/flownrecords/website?style=flat-square&color=313ED8&label=Version"
                                 draggable="false"
                                 alt="Github Repository Version"
                             />
@@ -67,7 +67,7 @@ export default function Footer() {
                                 </a>
                                 <img
                                     className="rounded-sm"
-                                    src="https://img.shields.io/github/package-json/v/flownrecords/website?style=flat-square&color=313ED8"
+                                    src="https://img.shields.io/github/package-json/v/flownrecords/website?style=flat-square&color=313ED8&label=Version"
                                     draggable="false"
                                     alt="Github Repository Version"
                                 />
