@@ -274,7 +274,7 @@ export default function Register() {
                         </div>
                         <label htmlFor="terms" className="text-sm text-white/75">
                             I agree to the{" "}
-                            <Link to="#" className="text-second-accent">
+                            <Link to="/terms" className="text-second-accent">
                                 terms and conditions
                             </Link>
                         </label>

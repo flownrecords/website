@@ -9,10 +9,10 @@ export default function Privacy() {
     const STYLE = {
         BLOCK: "rounded-lg ring-2 ring-white/25 p-4",
         SECTION_TITLE: "text-xl text-white font-medium",
-        SUBSECTION_TITLE: "text-lg text-white/50 font-medium",
-        PARAGRAPH: "text-base/snug ",
-        PARAGRAPH_M: "text-base/snug mt-4",
-        HIGHLIGHT: "font-medium decoration-2 underline decoration-accent underline-offset-2",
+        SUBSECTION_TITLE: "text-lg text-white/100 font-medium",
+        PARAGRAPH: "text-base/snug text-white/75",
+        PARAGRAPH_M: "text-base/snug mt-4 text-white/75",
+        HIGHLIGHT: "text-white font-medium decoration-2 underline decoration-accent underline-offset-2",
         STRONG: "font-semibold text-white"
     }
 
