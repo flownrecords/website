@@ -156,7 +156,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
     ];
 
     const sixMonths = new Date();
-    sixMonths.setMonth(sixMonths.getMonth() - 5);
+    sixMonths.setMonth(sixMonths.getMonth() - 12);
 
     const landingData = logbook
         .filter((e) => e.date && new Date(e.date) >= sixMonths)
@@ -207,6 +207,62 @@ export default function ChartCarousel({ logbook = [] }: Props) {
     const flightsByDayOfWeekArray = orderedWeekdays.map(
         (day) => flightsByDayOfWeek[day] || { name: day, flights: 0 },
     );
+
+
+    // Create data for a pie chart displaying flight time by operation 
+    // (picTime, copilotTime, multiPilotTime, instructorTime+simInstructorTime, dualTime)
+    const flightTimeByOperation = [
+        {
+            name: "PIC",
+            value: logbook.reduce((sum, e) => sum + (Number(e.picTime) || 0), 0),
+            color: "#434FDB",
+        },
+        {
+            name: "Copilot",
+            value: logbook.reduce((sum, e) => sum + (Number(e.copilotTime) || 0), 0),
+            color: "#7B9AEA",   
+        },
+        {
+            name: "Multi Pilot",
+            value: logbook.reduce((sum, e) => sum + (Number(e.multiPilotTime) || 0), 0),
+            color: "#C4F5FC",
+        },
+        {
+            name: "Instructor",
+            value: logbook.reduce((sum, e) => sum + (Number(e.instructorTime) || 0) + (Number(e.simInstructorTime) || 0), 0),
+            color: "#736CED",
+        },
+        {
+            name: "Dual",
+            value: logbook.reduce((sum, e) => sum + (Number(e.dualTime) || 0), 0),
+            color: "#ABAFEE",
+        },
+    ].filter(entry => entry.value > 0); // Filter out operations with 0 time
+
+    const mostVisitedAerodrome = logbook.reduce(
+        (acc, entry) => {
+            const dep = entry.depAd || "Unknown";
+            const arr = entry.arrAd || "Unknown";
+
+            // If unknown, skip
+            if (dep === "Unknown" && arr === "Unknown") return acc;
+
+            if (!acc[dep]) acc[dep] = { name: dep, flights: 0 };
+            if (!acc[arr]) acc[arr] = { name: arr, flights: 0 };
+
+            acc[dep].flights += 1;
+            if (arr !== dep) acc[arr].flights += 1; // Avoid double counting if same
+
+            return acc;
+        },
+        {} as Record<string, { name: string; flights: number }>,
+    );
+
+    const sortedAerodromes = Object.values(mostVisitedAerodrome)
+        .sort((a, b) => b.flights - a.flights)
+        .slice(0, isMobile ? 5 : 9);
+
+    const flightsByAerodromeArray = sortedAerodromes;
 
     return (
         <div className="relative">
@@ -413,6 +469,65 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                                 dataKey="flights"
                                 name="Day"
                                 fill="#732EDC"
+                                radius={[5, 5, 0, 0]}
+                            />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+
+                <div className="keen-slider__slide">
+                    <h2 className="text-white text-center">Flight Time by Operation</h2>
+                    <ResponsiveContainer width="100%" height={chartHeight}>
+                        <PieChart margin={chartMargin}>
+                            <Legend 
+                                layout="vertical" 
+                                verticalAlign="middle"
+                                align="left"
+                            />
+
+                            <Tooltip content={<ChartTooltip type="time" />} />
+
+                            <Pie
+                                data={flightTimeByOperation}
+                                dataKey="value"
+                                nameKey="name"
+                                cx="50%"
+                                cy="50%"
+                                outerRadius={isMobile ? 64 : 128}
+                                label={(entry) => `${entry.name}: ${parseTime(entry.value)}`}
+                                strokeWidth={0}
+                            >
+                                {flightTimeByOperation.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-day-${index}-${entry.name}`}
+                                        fill={entry.color}
+                                    />
+                                ))}
+                            </Pie>
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+
+                <div className="keen-slider__slide">
+                    <h2 className="text-white text-center">Most Visited Aerodromes</h2>
+                    <ResponsiveContainer width="100%" height={chartHeight}>
+                        <BarChart
+                            data={flightsByAerodromeArray}
+                            margin={{
+                                left: -30,
+                            }}
+                        >
+                            <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25} />
+                            <XAxis dataKey="name" fontSize={isMobile ? 12 : 14} />
+                            <YAxis fontSize={isMobile ? 10 : 12} />
+                            <Tooltip
+                                cursor={{ fill: "rgba(255, 255, 255, 0.01)" }}
+                                content={<ChartTooltip />}
+                            />
+                            <Bar
+                                dataKey="flights"
+                                name="Visits"
+                                fill="#DD3434"
                                 radius={[5, 5, 0, 0]}
                             />
                         </BarChart>
