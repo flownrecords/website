@@ -447,7 +447,7 @@ export default function Plan() {
                                         <span className="text-xs md:text-sm text-white/50 ml-1">
                                             {entry.plan?.arrAd ?? entry.arrAd ?? "N/A"}
                                         </span>
-                                        <span className="text-xs md:text-sm text-white/50 ml-1 hidden md:inline-block">
+                                        <span className="text-xs md:text-sm text-white/50 ml-1 hidden md:inline-block" title={entry.plan?.route ?? ""}>
                                             {truncateString(entry.plan?.route ?? "", 16) ?? "N/A"}
                                         </span>
                                         <span className="hidden md:flex md:justify-end">

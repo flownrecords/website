@@ -29,6 +29,7 @@ import {
     Reports,
     Terms,
     Privacy,
+    Raw,
 } from "./pages";
 
 // Components
@@ -59,6 +60,8 @@ function App() {
                 <Route path="/me/crew" element={<CrewLogbook />} />
                 <Route path="/me/crew/:entryId" element={<CrewEntry />} />
                 <Route path="/me/reports" element={<Reports />} />
+
+                <Route path="/me/raw" element={<Raw />} />
 
                 <Route path="/me/logbook" element={<Logbook />} />
                 <Route path="/me/logbook/:entryId" element={<LogbookEntry />} />
