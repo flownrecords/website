@@ -18,7 +18,8 @@ export default function Profile() {
     const me = useAuth().user;
 
     if(me === undefined) {
-        return navigate("/login");
+        navigate("/login");
+        return;
     }
 
     const [ user, updateUser ] = useState<User | undefined>();
@@ -32,7 +33,8 @@ export default function Profile() {
     const { userId } = useParams();
 
     if(!userId) {
-        return <div>No user ID provided</div>;
+        navigate("/me");
+        return;
     }
     
     useEffect(() => {
@@ -73,7 +75,8 @@ export default function Profile() {
             url: `${import.meta.env.VITE_WEBSITE_URL}/u/${user?.username || user?.id}`,
         })
         .catch(() => {
-            return alert("Not supported", "Sharing is not supported in this browser.");
+            alert("Not supported", "Sharing is not supported in this browser.");
+            return;
         });
     }
 
