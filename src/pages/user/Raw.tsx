@@ -23,7 +23,7 @@ export default function Raw() {
     const parsed = { ...rest };
     const json = JSON.stringify(parsed, null, 2);
 
-    const PAGE_ENABLED = false;
+    const PAGE_ENABLED = true;
 
     return (
         <>

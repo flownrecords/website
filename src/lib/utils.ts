@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { LogbookEntry } from "./types";
 
 export function captalize(str?: string | null) {
     if (!str) return undefined;
@@ -64,4 +65,31 @@ export function useIsMobile(breakpoint = 768) {
     }, [breakpoint]);
 
     return isMobile;
+}
+
+export function lastFlightSince(logbookEntries?: LogbookEntry[]) {
+    if (!logbookEntries || logbookEntries.length === 0) return undefined;
+
+    // Find the most recent flight entry
+    const mostRecentFlight = logbookEntries.reduce((latest, entry) => {
+        if (!entry.offBlock) return latest;
+        const entryDate = new Date(entry.offBlock);
+        return entryDate > latest ? entryDate : latest;
+    }, new Date(0));
+
+    // Answer with x days ago, or "Today" if within the last 24 hours or x months ago if over 30 days or last year if over 365 days
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - mostRecentFlight.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return "Today";
+    if (diffDays < 30) return `${diffDays} days ago`;
+    if (diffDays < 365) {
+        const diffMonths = Math.floor(diffDays / 30);
+        return `${diffMonths} month${diffMonths > 1 ? "s" : ""} ago`;
+    }
+    const diffYears = Math.floor(diffDays / 365);
+    return `${diffYears} year${diffYears > 1 ? "s" : ""} ago`;
+
+    // Fallback to the most recent flight date if all else fails
 }

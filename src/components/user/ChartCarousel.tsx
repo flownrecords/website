@@ -278,7 +278,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                                 right: 5,
                             }}
                         >
-                            <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25} />
+                            <CartesianGrid stroke="#262626" strokeLinecap="round" opacity={0.25} />
                             <XAxis dataKey="name" stroke="#ccc" fontSize={isMobile ? 10 : 14} />
 
                             <YAxis
@@ -334,7 +334,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                                 left: -30,
                             }}
                         >
-                            <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25} />
+                            <CartesianGrid stroke="#262626" strokeLinecap="round" opacity={0.25} />
 
                             <XAxis
                                 dataKey="name"
@@ -432,7 +432,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                                 left: -30,
                             }}
                         >
-                            <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25} />
+                            <CartesianGrid stroke="#262626" strokeLinecap="round" opacity={0.25} />
                             <XAxis dataKey="name" fontSize={isMobile ? 12 : 14} />
                             <YAxis fontSize={isMobile ? 10 : 12} />
                             <Tooltip
@@ -458,7 +458,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                                 left: -30,
                             }}
                         >
-                            <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25} />
+                            <CartesianGrid stroke="#262626" strokeLinecap="round" opacity={0.25} />
                             <XAxis dataKey="name" fontSize={isMobile ? 12 : 14} />
                             <YAxis fontSize={isMobile ? 10 : 12} />
                             <Tooltip
@@ -517,7 +517,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                                 left: -30,
                             }}
                         >
-                            <CartesianGrid stroke="#1E1E1E" strokeLinecap="round" opacity={0.25} />
+                            <CartesianGrid stroke="#262626" strokeLinecap="round" opacity={0.25} />
                             <XAxis dataKey="name" fontSize={isMobile ? 12 : 14} />
                             <YAxis fontSize={isMobile ? 10 : 12} />
                             <Tooltip

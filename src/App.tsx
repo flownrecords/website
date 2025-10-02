@@ -30,6 +30,7 @@ import {
     Terms,
     Privacy,
     Raw,
+    Profile,
 } from "./pages";
 
 // Components
@@ -66,7 +67,7 @@ function App() {
                 <Route path="/me/logbook" element={<Logbook />} />
                 <Route path="/me/logbook/:entryId" element={<LogbookEntry />} />
                 <Route path="/me/logbook/manual" element={<LogbookManualInput />} />
-                {/* <Route path="/u/:userId" element={<Logbook/>} /> */}
+                <Route path="/u/:userId" element={<Profile/>} />
 
                 {/* ORGANIZATION ROUTES */}
                 <Route path="/organizations" element={<Organizations />} />

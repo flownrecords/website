@@ -4,6 +4,7 @@ export const ENDPOINTS = {
     USER: {
         ME: "/users/me",
         USERNAME: "/users/{username}",
+        ID: "/users/id/{id}",
         SIGNIN: "/auth/signin",
         SIGNUP: "/auth/signup",
         ADD_PLAN: "/users/plan/add",
