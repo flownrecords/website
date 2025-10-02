@@ -3,15 +3,18 @@ import { useAuth } from "../../components/auth/AuthContext";
 import ProfileHeader from "../../components/user/ProfileHeader";
 import api, { ENDPOINTS } from "../../lib/api";
 import { useNavigate, useParams } from "react-router-dom";
-import { Book, Cloudy, Loader, Share, UsersRound } from "lucide-react";
+import { Book, Cloudy, Loader, Share, UserPlus, UsersRound } from "lucide-react";
 import Button from "../../components/general/Button";
 import RouteMap from "../../components/maping/RouteMap";
 import type { User } from "../../lib/types";
 import { lastFlightSince, parseDate, parseDuration } from "../../lib/utils";
+import Footer from "../../components/general/Footer";
+import useAlert from "../../components/alert/useAlert";
 
 export default function Profile() {
 
     const navigate = useNavigate();
+    const alert = useAlert();
     const me = useAuth().user;
 
     if(me === undefined) {
@@ -33,10 +36,13 @@ export default function Profile() {
     }
     
     useEffect(() => {
-        api.get(ENDPOINTS.USER.ID, {
+        const endpoint = isNaN(Number(userId)) ? ENDPOINTS.USER.USERNAME : ENDPOINTS.USER.ID;
+        const replaceBy = isNaN(Number(userId)) ? [{ key: "{username}", value: userId }] : [{ key: "{id}", value: userId }];
+
+        api.get(endpoint, {
             requireAuth: true,
             navigate: (p) => window.location.replace(p),
-            replaceBy: [{ key: "{id}", value: userId }]
+            replaceBy
         }).then((res) => {
             updateUser(res);
 
@@ -59,7 +65,17 @@ export default function Profile() {
         });
     }, []);
 
-
+    function share() {
+        navigator
+        .share({
+            title: `Flight Records - ${user?.firstName || `@${user?.username}`}`,
+            text: `Check out ${user?.firstName || `@${user?.username}`}'s flight records on Flight Records!`,
+            url: `${import.meta.env.VITE_WEBSITE_URL}/u/${user?.username || user?.id}`,
+        })
+        .catch(() => {
+            return alert("Not supported", "Sharing is not supported in this browser.");
+        });
+    }
 
     return (
         <>
@@ -67,40 +83,14 @@ export default function Profile() {
                 <ProfileHeader user={user as User} />
 
                 {user ? (
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
+                    user.publicProfile && me?.id === user.id ? (
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
                         <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg block lg:hidden">
                             <div className="grid grid-cols-5 gap-4">
-                                {/*<Button
-                                    to="/me/edit"
-                                    text={
-                                        <UserPen
-                                            strokeWidth={1.25}
-                                            className="h-6 w-6 inline-block"
-                                        />
-                                    }
-                                />
-
                                 <Button
-                                    to="/me/logbook"
+                                    onClick={() => {}}
                                     text={
-                                        <Book strokeWidth={1.25} className="h-6 w-6 inline-block" />
-                                    }
-                                />
-
-                                <Button
-                                    to="/me/crew"
-                                    text={
-                                        <Users
-                                            strokeWidth={1.25}
-                                            className="h-6 w-6 inline-block"
-                                        />
-                                    }
-                                />
-
-                                <Button
-                                    disabled={true}
-                                    text={
-                                        <FileChartLine
+                                        <UserPlus
                                             strokeWidth={1.25}
                                             className="h-6 w-6 inline-block"
                                         />
@@ -114,7 +104,7 @@ export default function Profile() {
                                             className="h-6 w-6 inline-block"
                                         />
                                     }
-                                />*/}
+                                />
                             </div>
                         </div>
 
@@ -155,14 +145,14 @@ export default function Profile() {
                                             <span className="ml-2">Share</span>
                                         </>
                                     }
-                                    onClick={() => {}}
+                                    onClick={share}
                                     type="button"
                                 />
                             </div>
                         </div>
 
                         <div className="col-span-1 lg:col-span-3 p-4 ring-2 ring-white/25 rounded-lg ">
-                            <div className="flex justify-between mb-1">
+                            <div className="flex justify-between mb-1 items-baseline">
                                 <h1 className="font-semibold text-white/75">
                                     <Book
                                         strokeWidth={2}
@@ -170,7 +160,7 @@ export default function Profile() {
                                     />
                                     Most Recent Flights
                                 </h1>
-                                <span className="font-semibold text-white/75">
+                                <span className="font-semibold text-white/75  text-xs md:text-base">
                                     {lastFlight ? `Last flight ${lastFlight}` : " "}
                                 </span>
                             </div>
@@ -186,7 +176,7 @@ export default function Profile() {
                                     <div
                                         key={index}
                                         className={`
-                                        grid grid-cols-6 py-4 px-2 md:px-4 items-center
+                                        grid grid-cols-5 md:grid-cols-6 py-4 px-2 md:px-4 items-center
                                         transition-all duration-150
                                         ${index % 2 === 0 ? "bg-primary hover:bg-primary/75" : "bg-gradient-to-br to-neutral-900 from-neutral-800 hover:from-neutral-800/75"} 
                                         rounded-lg ${entry.id && me?.id === user.id ? "cursor-pointer" : ""}
@@ -206,20 +196,20 @@ export default function Profile() {
                                                 ? entry.aircraftRegistration.split(" ")[0]
                                                 : "-"}
                                         </span>
-                                        <span className="text-xs md:text-sm text-white/50 text-center md:text-left">
+                                        <span className="text-xs md:text-sm text-white/50 text-center">
                                             {entry.depAd || "-"}
                                         </span>
-                                        <span className="text-xs md:text-sm text-white/50 text-center md:text-left">
+                                        <span className="text-xs md:text-sm text-white/50 text-center">
                                             {entry.arrAd || "-"}
                                         </span>
-                                        <span className="text-xs md:text-sm text-white/50 text-right md:text-left">
+                                        <span className="text-xs md:text-sm text-white/50 text-center">
                                             {parseDuration(
                                                 typeof entry.total === "number" && entry.total > 0
                                                     ? entry.total
                                                     : entry.simTime,
                                             ) || "-"}
                                         </span>
-                                        <span className="text-xs md:text-sm text-white/50 text-center md:text-left">
+                                        <span className="text-xs md:text-sm text-white/50 text-center hidden md:block">
                                             {
                                                 (entry.landDay || 0) + (entry.landNight || 0) === 0 && entry.simTime && (Number(entry.simTime) || 0) > 0
                                                 ? "Simulator" :
@@ -278,6 +268,18 @@ export default function Profile() {
                             </div>
                         </div>
                     </div>
+                    ) : (
+                        <div className="p-4 ring-2 ring-white/25 rounded-lg mt-4 mb-12">
+                            <div className="text-center text-white/50 my-24">
+                                <h1 className="font-semibold text-white/75 text-2xl">
+                                    This profile is private.
+                                </h1> 
+                                <p className="text-sm mt-2">
+                                    The user has set their profile to private. You cannot view their information.
+                                </p>
+                            </div>
+                        </div>
+                    )
                 ) : (
                     <div className="container mx-auto max-w-6xl p-4 h-screen">
                         <div className="flex justify-center items-center h-64">
@@ -286,6 +288,8 @@ export default function Profile() {
                     </div>
                 )}
             </div>
+
+            <Footer />
         </>
     );
 }   
