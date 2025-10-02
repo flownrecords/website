@@ -73,7 +73,7 @@ export default function Login() {
             <div className="container mx-auto max-w-4xl p-4 lg:px-0">
                 <form
                     onSubmit={handleSubmit}
-                    className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-24"
                     autoComplete="off"
                     spellCheck="false"
                     autoCorrect="off"
