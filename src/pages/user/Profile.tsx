@@ -12,8 +12,9 @@ import { lastFlightSince, parseDate, parseDuration } from "../../lib/utils";
 export default function Profile() {
 
     const navigate = useNavigate();
+    const me = useAuth().user;
 
-    if(useAuth().user === undefined) {
+    if(me === undefined) {
         return navigate("/login");
     }
 
@@ -185,13 +186,13 @@ export default function Profile() {
                                     <div
                                         key={index}
                                         className={`
-                                        flex justify-between py-4 px-2 md:px-4 items-center
+                                        grid grid-cols-6 py-4 px-2 md:px-4 items-center
                                         transition-all duration-150
                                         ${index % 2 === 0 ? "bg-primary hover:bg-primary/75" : "bg-gradient-to-br to-neutral-900 from-neutral-800 hover:from-neutral-800/75"} 
-                                        rounded-lg cursor-pointer
+                                        rounded-lg ${entry.id && me?.id === user.id ? "cursor-pointer" : ""}
                                         `}
                                         onClick={() => {
-                                            
+                                            if(me?.id === user.id) navigate(`/me/logbook/${entry.id}`);
                                         }}
                                     >
                                         <span className="text-xs md:text-sm text-white/50 ml-1 hidden">
@@ -219,7 +220,15 @@ export default function Profile() {
                                             ) || "-"}
                                         </span>
                                         <span className="text-xs md:text-sm text-white/50 text-center md:text-left">
-                                            { (entry.landDay || 0) + (entry.landNight || 0)} Landings
+                                            {
+                                                (entry.landDay || 0) + (entry.landNight || 0) === 0 && entry.simTime && (Number(entry.simTime) || 0) > 0
+                                                ? "Simulator" :
+                                                `${(entry.landDay || 0) + (entry.landNight || 0)} Landing${
+                                                    (entry.landDay || 0) + (entry.landNight || 0) > 1
+                                                    ? "s"
+                                                    : ""
+                                                }`
+                                            }
                                         </span>
                                     </div>
                                 ))
