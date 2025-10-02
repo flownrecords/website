@@ -68,7 +68,7 @@ export const AerodromesLayer = ({
                                 fillOpacity: 1,
                                 weight: 0,
                             }}
-                            radius={1}
+                            radius={isVisited ? 1.5 : 1}
                             stroke={false}
                         >
                             <Popup>

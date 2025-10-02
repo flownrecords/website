@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { FIR, FlightRecording, User } from "../../lib/types";
-import { MapContainer, TileLayer } from "react-leaflet";
+import { MapContainer, TileLayer, Polyline } from "react-leaflet";
 import axios from "axios";
 import { AerodromesLayer } from "./AerodromesLayer";
 import { RoutePlot } from "./RoutePlot";
@@ -20,6 +20,13 @@ type MapProps = {
     };
 };
 
+const colors = {
+    accent: "#313ED8",
+    base: "#666666",
+    vor: "#D86E31",
+};
+
+
 const RouteMap: React.FC<MapProps> = ({
     type,
     user,
@@ -33,33 +40,9 @@ const RouteMap: React.FC<MapProps> = ({
     const [waypoints, setWaypoints] = useState<any[]>([]);
     const [navaids, setNavaids] = useState<any[]>([]);
     const [mapBounds, setMapBounds] = useState<[number, number][]>([]);
+    const [visitedRoutes, setVisitedRoutes] = useState<[number, number][][]>([]); // array of [ [dep, arr], [dep, arr], ... ]
     const [displaySigmets, toggleDisplaySigmets] = useState<boolean>(false);
-
-    const visitedIcaos = useMemo(() => {
-        const set = new Set<string>();
-        const entries = user?.logbookEntries ?? [];
-        entries
-            .filter((e) => {
-                if (type === "OVERVIEW") return true;
-                if (type === "ENTRY") return e.id === entryId;
-                return false;
-            })
-            .forEach((entry) => {
-                if (entry.depAd) set.add(entry.depAd.toUpperCase());
-                if (entry.arrAd) set.add(entry.arrAd.toUpperCase());
-                if (entry.plan?.depAd) set.add(entry.plan.depAd.toUpperCase());
-                if (entry.plan?.arrAd) set.add(entry.plan.arrAd.toUpperCase());
-                if (entry.plan?.route) {
-                    entry.plan.route.split(" ").forEach((token: string) => {
-                        if (/^[A-Z0-9]{2,5}$/.test(token)) {
-                            set.add(token.toUpperCase());
-                        }
-                    });
-                }
-            });
-
-        return set;
-    }, [user, type, entryId]);
+    const [showRoute, setShowRoute] = useState(false);
 
     useEffect(() => {
         fetchNavdata();
@@ -79,26 +62,48 @@ const RouteMap: React.FC<MapProps> = ({
             setWaypoints(wpts);
             setNavaids(navaids);
 
-            const visitedCoords: [number, number][] = ads
-                .filter(
-                    (ad: any) =>
-                        visitedIcaos.has(ad.icao?.toUpperCase?.()) &&
-                        ad.coords?.lat &&
-                        ad.coords?.long,
-                )
-                .map((ad: any) => [ad.coords.lat, ad.coords.long]);
+            // Build polyline segments from depAd -> arrAd in logbook order
+            const routes: [number, number][][] = [];
+            const bounds: [number, number][] = [];
 
+            (user?.logbookEntries ?? [])
+                .filter((e) => {
+                    if (type === "OVERVIEW") return true;
+                    if (type === "ENTRY") return e.id === entryId;
+                    return false;
+                })
+                .forEach((entry) => {
+                    const dep = ads.find(
+                        (ad) => ad?.icao?.toUpperCase() === entry.depAd?.toUpperCase()
+                    );
+                    const arr = ads.find(
+                        (ad) => ad?.icao?.toUpperCase() === entry.arrAd?.toUpperCase()
+                    );
+
+                    if (dep?.coords?.lat && dep?.coords?.long &&
+                        arr?.coords?.lat && arr?.coords?.long) {
+                        const segment: [number, number][] = [
+                            [dep.coords.lat, dep.coords.long],
+                            [arr.coords.lat, arr.coords.long],
+                        ];
+                        routes.push(segment);
+                        bounds.push(...segment);
+                    }
+                });
+
+            // If ENTRY with a recording, include it in bounds
             if (type === "ENTRY" && recording) {
                 const coords: [number, number][] = recording?.coords.map((point) => [
                     point.latitude,
                     point.longitude,
                 ]);
-                visitedCoords.push(...coords);
+                bounds.push(...coords);
             }
 
-            setMapBounds(visitedCoords);
+            setVisitedRoutes(routes);
+            setMapBounds(bounds);
         }
-    }, [user, visitedIcaos, API]);
+    }, [user, entryId, type, API, recording]);
 
     return mapBounds.length > 0 ? (
         <div
@@ -107,7 +112,7 @@ const RouteMap: React.FC<MapProps> = ({
         >
             <MapContainer
                 center={mapBounds.length === 1 ? mapBounds[0] : undefined}
-                zoom={mapBounds.length === 1 ? 10 : undefined} // <-- ADD THIS
+                zoom={mapBounds.length === 1 ? 10 : undefined}
                 bounds={mapBounds.length > 1 ? mapBounds : undefined}
                 boundsOptions={{ padding: [25, 25] }}
                 minZoom={2}
@@ -124,13 +129,17 @@ const RouteMap: React.FC<MapProps> = ({
                     initialBounds={mapBounds.length > 1 ? mapBounds : undefined}
                     initialCenterZoom={
                         mapBounds.length === 1
-                            ? { center: mapBounds[0], zoom: 10 } // your default zoom for single point
+                            ? { center: mapBounds[0], zoom: 10 }
                             : undefined
                     }
                     sigmets={{
                         toggle: () => toggleDisplaySigmets((prev) => !prev),
                         status: displaySigmets,
                         disable: type === "ENTRY",
+                    }}
+                    route={{
+                        show: showRoute,
+                        toggle: () => setShowRoute((prev) => !prev),
                     }}
                 />
 
@@ -142,14 +151,32 @@ const RouteMap: React.FC<MapProps> = ({
 
                 {type === "ENTRY" && recording && <RecordingPlot recording={recording} />}
 
-                {aerodromes.length > 0 && waypoints.length > 0 && (
-                    <RoutePlot
-                        navdata={{ aerodromes, waypoints, navaids }}
-                        user={user}
-                        options={
-                            type === "ENTRY" ? { singleEntry: true, singleEntryId: entryId } : {}
-                        }
+                {/* Always connect flown routes (dep -> arr per entry) */}
+                {!showRoute && visitedRoutes.map((segment, idx) => (
+                    <Polyline
+                        key={idx}
+                        positions={segment}
+                        pathOptions={{ color: colors.base }}
+                        weight={1.5}
+                        noClip
+                        opacity={0.75}
                     />
+                ))}
+
+                {aerodromes.length > 0 && waypoints.length > 0 && (
+                    <>
+                        {showRoute && (
+                            <RoutePlot
+                                navdata={{ aerodromes, waypoints, navaids }}
+                                user={user}
+                                options={
+                                    type === "ENTRY"
+                                        ? { singleEntry: true, singleEntryId: entryId }
+                                        : {}
+                                }
+                            />
+                        )}
+                    </>
                 )}
 
                 {type !== "ENTRY" && aerodromes.length > 0 && (
@@ -161,10 +188,6 @@ const RouteMap: React.FC<MapProps> = ({
                 )}
 
                 <SigmetMap displaySigmets={displaySigmets} />
-
-                {/* waypoints.length > 0 && (
-                <WaypointsLayer navdata={ waypoints } user={ user } options={{}} />
-            ) */}
             </MapContainer>
         </div>
     ) : (

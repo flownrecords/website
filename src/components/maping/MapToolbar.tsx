@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import ReactDOM from "react-dom/client";
-import { CloudAlert, Crosshair, Maximize, Minus, Plus } from "lucide-react";
+import { CloudAlert, Crosshair, Maximize, Minus, Plus, Route } from "lucide-react";
 
 type MapToolbarProps = {
     initialBounds?: [number, number][]; // multiple points
@@ -12,9 +12,13 @@ type MapToolbarProps = {
         toggle: () => void;
         status: boolean;
     };
+    route?: {
+        show: boolean;
+        toggle: () => void;
+    };
 };
 
-export function MapToolbar({ initialBounds, initialCenterZoom, sigmets }: MapToolbarProps) {
+export function MapToolbar({ initialBounds, initialCenterZoom, sigmets, route }: MapToolbarProps) {
     const map = useMap();
 
     const style = `w-8 h-8 
@@ -80,6 +84,15 @@ export function MapToolbar({ initialBounds, initialCenterZoom, sigmets }: MapToo
                         <CloudAlert className="w-4 h-4" />
                     </button>
                 )}
+                <button
+                    title="Route"
+                    onClick={() => {
+                        route?.toggle();
+                    }}
+                    className={style}
+                >
+                    <Route className="w-4 h-4" />
+                </button>
             </div>,
         );
 
