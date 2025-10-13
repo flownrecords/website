@@ -28,6 +28,11 @@ export default function Downloads() {
             name: "Cessna 172R - QRH",
             link: `${API}/download/QRH_C172R.pdf`,
         },
+        {
+            id: "QRH172S",
+            name: "Cessna 172S - QRH",
+            link: `${API}/download/QRH_C172S.pdf`,
+        },
     ];
 
     function downloadFile(file: File) {
@@ -70,7 +75,7 @@ export default function Downloads() {
 
                 <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
                     <h1 className="text-xl font-semibold text-white mb-2">Files</h1>
-                    <div className="grid grid-cols-1 lg:grid-cols-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
                         {files.map((file) => (
                             <div
                                 className="bg-secondary rounded-lg p-4 ring-2 ring-white/25"

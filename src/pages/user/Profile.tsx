@@ -86,7 +86,7 @@ export default function Profile() {
                 <ProfileHeader user={user as User} />
 
                 {user ? (
-                    user.publicProfile && me?.id === user.id ? (
+                    user.publicProfile || (!user.publicProfile && me?.id === user.id) ? (
                         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-4">
                         <div className="col-span-1 p-4 ring-2 ring-white/25 rounded-lg block lg:hidden">
                             <div className="grid grid-cols-5 gap-4">

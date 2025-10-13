@@ -31,6 +31,7 @@ import {
     Privacy,
     Raw,
     Profile,
+    ChartBuilder
 } from "./pages";
 
 // Components
@@ -75,6 +76,7 @@ function App() {
 
                 {/* TOOLS ROUTES */}
                 <Route path="/tools" element={<Tools />} />
+                <Route path="/tools/chart-builder" element={<ChartBuilder />} />
 
                 {/* LEGAL ROUTES */}
                 <Route path="/terms" element={<Terms />} />
