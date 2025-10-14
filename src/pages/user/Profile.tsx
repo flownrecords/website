@@ -45,7 +45,13 @@ export default function Profile() {
             requireAuth: true,
             navigate: (p) => window.location.replace(p),
             replaceBy
-        }).then((res) => {
+        }).then((res: User) => {
+            if(!res) {
+                alert("User not found", "The user you are looking for does not exist or has been deleted.");
+                navigate("/");
+                return;
+            }
+
             updateUser(res);
 
             setLastFlight(lastFlightSince(res.logbookEntries));

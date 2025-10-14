@@ -305,7 +305,7 @@ export default function ChartBuilder() {
                                     className={`w-full px-4 py-2 bg-secondary ring-2 ring-white/25 rounded-lg text-white focus:ring-white/50 focus:outline-none transition duration-150 resize-none ${
                                         waypointData.output.startsWith('Error')
                                         ? 'bg-red-900 text-red-300 ring-2 ring-red-500'
-                                        : 'bg-gray-700 text-yellow-300 ring-2 ring-gray-600'
+                                        : 'bg-secondary ring-2 ring-white/25'
                                     }`}
                                 />
                                 {waypointData.output.startsWith('Error') && (
