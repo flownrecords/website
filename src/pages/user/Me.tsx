@@ -237,9 +237,7 @@ export default function Me() {
                                     <span className="text-white/50">METAR</span>
                                     <p className="text-sm text-white/75">
                                         {homeWx.metar
-                                            ? homeWx.metar
-                                                  ?.replace(/METAR/g, "")
-                                                  .replace(/[A-Z]{4}/, "")
+                                            ? homeWx.metar?.replace(/METAR/g, "").replace(/[A-Z]{4}/, "")
                                             : "No METAR available"}
                                     </p>
                                 </div>
@@ -248,7 +246,7 @@ export default function Me() {
                                     <span className="text-white/50">TAF</span>
                                     <p className="text-sm text-white/75">
                                         {homeWx.taf
-                                            ? homeWx.taf?.replace(/TAF [A-Z]{4}/, "")
+                                            ? homeWx.taf?.replace(/TAF/g, "").replace(/[A-Z]{4}/, "")
                                             : "No TAF available"}
                                     </p>
                                 </div>
