@@ -480,6 +480,7 @@ export default function Logbook() {
                                         alt="FlightLogger"
                                         title="FlightLogger"
                                         className="inline-block h-6 object-fill"
+                                        loading="lazy"
                                     />
                                 }
                             />
