@@ -42,7 +42,7 @@ const RouteMap: React.FC<MapProps> = ({
     const [mapBounds, setMapBounds] = useState<[number, number][]>([]);
     const [visitedRoutes, setVisitedRoutes] = useState<[number, number][][]>([]); // array of [ [dep, arr], [dep, arr], ... ]
     const [displaySigmets, toggleDisplaySigmets] = useState<boolean>(false);
-    const [showRoute, setShowRoute] = useState(false);
+    const [showRoute, setShowRoute] = useState(false || type === "ENTRY");
 
     useEffect(() => {
         fetchNavdata();
