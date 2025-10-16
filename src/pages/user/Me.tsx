@@ -5,17 +5,28 @@ import Button from "../../components/general/Button";
 import type { User } from "../../lib/types";
 import ChartCarousel from "../../components/user/ChartCarousel";
 import Footer from "../../components/general/Footer";
-import { Book, Cloudy, FileChartLine, FileText, Loader, Share, UserPen, Users } from "lucide-react";
+import { Book, Cloudy, FileChartLine, FileText, Loader, Search, Share, UserPen, Users } from "lucide-react";
 import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
 import ProfileHeader from "../../components/user/ProfileHeader";
 
 import api, { ENDPOINTS } from "../../lib/api";
+import Modal from "../../components/general/Modal";
 
 export default function Me() {
     const alert = useAlert();
     const navigate = useNavigate();
     const [user, setUser] = useState<User>(null);
+    const [wxModal, toggleWxModal] = useState(false);
+    const [queryWx, setQueryWx] = useState<{
+        ad: string;
+        metar: string | null;
+        taf: string | null;
+    }>({
+        ad: "",
+        metar: null,
+        taf: null,
+    });
 
     const [homeWx, setHomeWx] = useState<{
         metar?: string;
@@ -43,6 +54,27 @@ export default function Me() {
             })
             .catch((e) => console.error("Error fetching user data:", e));
     }, []);
+
+    function searchWx() {
+        if (!queryWx.ad || queryWx.ad.length !== 4) {
+            return alert("Invalid ICAO", "Please enter a valid 4-letter ICAO code.");
+        }
+
+        api.get(ENDPOINTS.WX.AD, {
+            params: { icao: queryWx.ad.toUpperCase() },
+        })
+        .then((wx) => {
+            setQueryWx({
+                ...queryWx,
+                metar: wx.rawOb,
+                taf: wx.rawTaf,
+            });
+        })
+        .catch((e) => {
+            console.error("Error fetching weather data:", e);
+            alert("Error", "Could not fetch weather data for the given ICAO code.");
+        });
+    }
 
     function share() {
         navigator
@@ -251,6 +283,18 @@ export default function Me() {
                                     </p>
                                 </div>
                             </div>
+                            <div className="mt-4 flex flex-row">
+                                <Button 
+                                    className="w-full"
+                                    text={
+                                        <>
+                                            <Search className="h-4 w-4 inline-block mr-2" strokeWidth={2} />
+                                            <span>Check other airports</span>
+                                        </>
+                                    }
+                                    onClick={() => toggleWxModal(true)}
+                                />
+                            </div>
                         </div>
                     </div>
                 ) : (
@@ -263,6 +307,89 @@ export default function Me() {
             </div>
 
             <Footer />
+
+            <Modal
+                isOpen={wxModal}
+                onClose={() => {
+                    toggleWxModal(false);
+                    setQueryWx({
+                        ad: "",
+                        metar: null,
+                        taf: null,
+                    });
+                }}
+                title=""
+                buttons={[
+                    <Button text={<><Search className="h-4 w-4 inline-block mr-2" strokeWidth={2} />Check Weather</>} onClick={searchWx} />
+                ]}
+            >
+                <h1 className="text-xl font-semibold mb-2">
+                    <Cloudy
+                        strokeWidth={2}
+                        className="h-5 w-5 inline-block mr-2 top-1/2 transform -translate-y-1/10 opacity-75"
+                    />
+
+                    Check Weather
+                </h1>
+                <div className="bg-primary rounded-lg p-4 mt-4">
+                    <div>
+                        <div className="flex flex-col mb-2">
+                            <label className="text-sm text-white/75 mb-1">
+                                Aerodrome ICAO Code
+                            </label>
+                            <input
+                                type="text"
+                                value={queryWx.ad}
+                                onChange={(e) =>
+                                    setQueryWx({
+                                        ad: e.target.value.toUpperCase(),
+                                        metar: null,
+                                        taf: null,
+                                    })
+                                }
+                                placeholder="e.g. LPPR"
+                                className="bg-secondary ring-2 ring-white/25 rounded-lg px-4 py-2 focus:outline-none focus:ring-white/50"
+                            />
+                        </div>
+                        <div className="max-w-96">
+                            {queryWx.metar || queryWx.taf ? (
+                                <div className="space-y-2 mt-4">
+                                    {queryWx.metar && (
+                                        <div className="text-sm">
+                                            <span className="text-white/50">METAR</span>
+                                            <p className="text-sm text-white/75">
+                                                {queryWx.metar
+                                                    ? queryWx.metar
+                                                            ?.replace(/METAR/g, "")
+                                                            .replace(/[A-Z]{4}/, "")
+                                                    : "No METAR available"}
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {queryWx.taf && (
+                                        <div className="text-sm">
+                                            <span className="text-white/50">TAF</span>
+                                            <p className="text-sm text-white/75">
+                                                {queryWx.taf
+                                                    ? queryWx.taf
+                                                            ?.replace(/TAF/g, "")
+                                                            .replace(/[A-Z]{4}/, "")
+                                                    : "No TAF available"}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <p className="text-sm text-white/50 mt-4">
+                                    Enter an ICAO code and click "Check Weather" to fetch the
+                                    latest METAR and TAF.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </Modal>
         </>
     );
 }
