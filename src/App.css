@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @import "tailwindcss";
 
 /*@font-face {
@@ -6,20 +8,8 @@
     src: url('/Inter.ttf') format('truetype');
 }*/
 
-html {
-    -webkit-font-smoothing: antialiased;
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; 
-
-    font-family: 'Inter', sans-serif;
-}
-
 @theme {
-    --font-inter: 'Inter', sans-serif;
+    --font-sans: 'Inter', sans-serif;
 
     --color-primary: #09090B;
     /*--color-primary-light: #;*/
@@ -30,6 +20,18 @@ html {
     --color-accent: #313ED8;
     --color-second-accent: #DD3434;
 }
+
+html {
+    -webkit-font-smoothing: antialiased;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; 
+}
+
+
 
 .custom-scrollbar::-webkit-scrollbar {
 	width: 10px;
@@ -75,6 +77,11 @@ html {
     background: rgba(0, 0, 0, 0.25) !important;
     border-radius: 5px 0px 0px 0px !important;
     color: rgba(255, 255, 255, 0.5) !important;
+    z-index: 500 !important;
+}
+
+.leaflet-pane {
+    z-index: 1 !important;
 }
 
 .recharts-brush rect:focus, .recharts-brush-traveller {

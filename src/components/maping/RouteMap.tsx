@@ -123,7 +123,7 @@ const RouteMap: React.FC<MapProps> = ({
                     [-90, -180],
                     [90, 180],
                 ]}
-                className="h-full w-full"
+                className="h-full w-full "
             >
                 <MapToolbar
                     initialBounds={mapBounds.length > 1 ? mapBounds : undefined}
