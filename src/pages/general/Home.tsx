@@ -40,25 +40,25 @@ export default function Home() {
         // Years (365 days)
         let interval = Math.floor(seconds / 31536000);
         if (interval >= 1) {
-            return interval === 1 ? "last year" : `${interval} years ago`;
+            return interval === 1 ? "Last year" : `${interval} years ago`;
         }
 
         // Months (30 days)
         interval = Math.floor(seconds / 2592000);
         if (interval >= 1) {
-            return interval === 1 ? "last month" : `${interval} months ago`;
+            return interval === 1 ? "Last month" : `${interval} months ago`;
         }
 
         // Weeks (7 days)
         interval = Math.floor(seconds / 604800);
         if (interval >= 1) {
-            return interval === 1 ? "last week" : `${interval} weeks ago`;
+            return interval === 1 ? "Last week" : `${interval} weeks ago`;
         }
 
         // Days
         interval = Math.floor(seconds / 86400);
         if (interval >= 1) {
-            return interval === 1 ? "yesterday" : `${interval} days ago`;
+            return interval === 1 ? "Yesterday" : `${interval} days ago`;
         }
 
         // Hours
@@ -71,7 +71,7 @@ export default function Home() {
         interval = Math.floor(seconds / 60);
         if (interval >= 1) {
             // Returns "a few minutes ago" if less than 5 minutes, otherwise specific count
-            if (interval < 5) return "a few minutes ago";
+            if (interval < 5) return "A few minutes ago";
             return `${interval} minutes ago`;
         }
 
