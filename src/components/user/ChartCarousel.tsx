@@ -17,7 +17,7 @@ import {
 } from "recharts";
 import { ChartTooltip } from "./ChartTooltip";
 import { useEffect, useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight, Filter } from "lucide-react"; // Added Filter icon
+import { ChevronDown, ChevronLeft, ChevronRight, Filter } from "lucide-react"; // Added Filter icon
 import { parseDuration } from "../../lib/utils";
 import Button from "../general/Button";
 
@@ -384,7 +384,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                 <div className="keen-slider__slide flex flex-col">
                     <div className="mb-2 relative z-10 flex items-center justify-center w-full">
                         {/* Filter Dropdown - Positioned Absolutely to the Left */}
-                        <div className="absolute left-0 flex items-center space-x-2 rounded-lg px-2 py-1 border border-white/25 bg-secondary">
+                        <div className="absolute left-0 flex items-center space-x-2 bg-neutral-800/50 rounded-md px-2 py-1 border border-white/10">
                             <Filter className="w-3 h-3 text-white/50" />
                             <select
                                 value={aircraftTypeFilter}
@@ -394,10 +394,12 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                             >
                                 {availableAircraftTypes.map((type) => (
                                     <option key={type} value={type} className="bg-neutral-800 text-white">
-                                        {type}
+                                        {/* \u00A0 is a non-breaking space. Adding 2 of them creates a nice gap. */}
+                                        {`\u00A0\u00A0${type}`} 
                                     </option>
                                 ))}
                             </select>
+                            <ChevronDown className="w-3 h-3 text-white/50 absolute right-1 pointer-events-none" />
                         </div>
 
                         {/* Title - Centered by the parent flex container */}
