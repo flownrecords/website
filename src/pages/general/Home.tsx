@@ -10,7 +10,7 @@ export default function Home() {
 
     const { user } = useAuth();
     const [ stats, setStats ] = useState<any>(null);
-    const [ uptime, setUptime ] = useState<string>("0d 0h 0m 0s");
+    const [ uptime, setUptime ] = useState<string>("0h 0m 0s");
     const [ lastUpdate, setLastUpdate ] = useState<any>(null);
 
     function highlight() {
@@ -33,28 +33,85 @@ export default function Home() {
         }, 6 * 1000);
     }
 
-    function humanDate(date : string | number | Date) {
-        return new Date(date).toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-        });
+    function timeAgo(date: string | number | Date) {
+        const value = new Date(date);
+        const seconds = Math.floor((new Date().getTime() - value.getTime()) / 1000);
+
+        // Years (365 days)
+        let interval = Math.floor(seconds / 31536000);
+        if (interval >= 1) {
+            return interval === 1 ? "last year" : `${interval} years ago`;
+        }
+
+        // Months (30 days)
+        interval = Math.floor(seconds / 2592000);
+        if (interval >= 1) {
+            return interval === 1 ? "last month" : `${interval} months ago`;
+        }
+
+        // Weeks (7 days)
+        interval = Math.floor(seconds / 604800);
+        if (interval >= 1) {
+            return interval === 1 ? "last week" : `${interval} weeks ago`;
+        }
+
+        // Days
+        interval = Math.floor(seconds / 86400);
+        if (interval >= 1) {
+            return interval === 1 ? "yesterday" : `${interval} days ago`;
+        }
+
+        // Hours
+        interval = Math.floor(seconds / 3600);
+        if (interval >= 1) {
+            return `${interval} hour${interval === 1 ? "" : "s"} ago`;
+        }
+
+        // Minutes
+        interval = Math.floor(seconds / 60);
+        if (interval >= 1) {
+            // Returns "a few minutes ago" if less than 5 minutes, otherwise specific count
+            if (interval < 5) return "a few minutes ago";
+            return `${interval} minutes ago`;
+        }
+
+        return "just now";
     }
 
     function updateUptime() {
-        if(stats?.uptime) {
-            const seconds = Math.floor((stats.uptime || 0) % 60);
-            const minutes = Math.floor((stats.uptime || 0) / 60 % 60);
-            const hours = Math.floor((stats.uptime || 0) / 3600 % 24);
-            const days = Math.floor((stats.uptime || 0) / 86400);
-
+        if (stats?.uptime) {
+            const totalSeconds = stats.uptime;
             let human = "";
-            if(days > 0) human += `${days}d `;
-            if(hours > 0) human += `${hours}h `;
-            if(minutes > 0) human += `${minutes}m `;
-            human += `${seconds}s`;
+
+            if (totalSeconds < 86400) { 
+                // Less than 24 hours: Show h m s
+                const seconds = Math.floor(totalSeconds % 60);
+                const minutes = Math.floor((totalSeconds / 60) % 60);
+                const hours = Math.floor((totalSeconds / 3600));
+                human = `${hours}h ${minutes}m ${seconds}s`;
+
+            } else if (totalSeconds < 604800) { 
+                // Less than 1 week: Show days and hours
+                const hours = Math.floor((totalSeconds / 3600) % 24);
+                const days = Math.floor(totalSeconds / 86400);
+                human = `${days} day${days !== 1 ? "s" : ""} ${hours} hour${hours !== 1 ? "s" : ""}`;
+
+            } else if (totalSeconds < 2592000) { 
+                // Less than 1 month (approx 30 days): Show weeks and days
+                const days = Math.floor((totalSeconds / 86400) % 7);
+                const weeks = Math.floor(totalSeconds / 604800);
+                human = `${weeks} week${weeks !== 1 ? "s" : ""} ${days} day${days !== 1 ? "s" : ""}`;
+
+            } else { 
+                // More than 1 month: Show months
+                // Using 30.44 days per month average (2629746 seconds)
+                const months = Math.floor(totalSeconds / 2629746);
+                human = `${months} months`;
+            }
+
+            setUptime(human);
             
-            setUptime(human.trim());
+            // Keep the counter running
             setStats((prevStats: any) => ({
                 ...prevStats,
                 uptime: prevStats.uptime + 1
@@ -82,7 +139,7 @@ export default function Home() {
         fetch("https://api.github.com/repos/flownrecords/website")
         .then(async (response) => {
             const data = await response.json();
-            if(data.updated_at) setLastUpdate(humanDate(data.updated_at));
+            if(data.updated_at) setLastUpdate(timeAgo(data.updated_at));
         })
     }, []);
 
@@ -90,9 +147,9 @@ export default function Home() {
     const variableGradient = " hover:from-neutral-800 hover:to-neutral-900 transition duration-500"
 
     const LAST_MONTH_VALUES = {
-        userCount: 1,
+        userCount: 3,
         organizationCount: 1,
-        logbookEntryCount: 72,
+        logbookEntryCount: 250,
     }
 
     function calculateGrowth(current: number, previous: number) {
