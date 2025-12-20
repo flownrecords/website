@@ -330,7 +330,7 @@ export default function Stats() {
                         <div className="bg-primary ring-2 ring-white/25 rounded-lg p-4">
                             {/* Filter Header */}
                             <div className="mb-2 relative z-10 flex items-center justify-center w-full">
-                                <div className="absolute left-0 flex items-center space-x-2 bg-neutral-800/50 rounded-md px-2 py-1 border border-white/10">
+                                <div className="absolute left-0 flex items-center space-x-2 bg-secondary rounded-lg px-2 py-1 border border-white/25">
                                     <Filter className="w-3 h-3 text-white/50" />
                                     <select
                                         value={aircraftTypeFilter}
@@ -339,7 +339,7 @@ export default function Stats() {
                                         style={{ backgroundImage: "none" }}
                                     >
                                         {availableAircraftTypes.map((type) => (
-                                            <option key={type} value={type} className="bg-neutral-800 text-white">
+                                            <option key={type} value={type} className="bg-secondary text-white">
                                                 {/* \u00A0 is a non-breaking space. Adding 2 of them creates a nice gap. */}
                                                 {`\u00A0\u00A0${type}`} 
                                             </option>
