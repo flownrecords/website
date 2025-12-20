@@ -16,8 +16,8 @@ import {
     Pie,
 } from "recharts";
 import { ChartTooltip } from "./ChartTooltip";
-import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import { ChevronLeft, ChevronRight, Filter } from "lucide-react"; // Added Filter icon
 import { parseDuration } from "../../lib/utils";
 import Button from "../general/Button";
 
@@ -39,6 +39,23 @@ export function parseTime(time?: string | number | null) {
     const hours = total.toFixed(0);
     const minutes = Math.round((total % 1) * 60);
     return `${hours}:${minutes < 10 ? "0" + minutes : minutes}`;
+}
+
+// Temporary fix for erroneous data provided from @nortavia flightlogger logbook which aircraft type is replaced by the callsign
+function fixType(aircraftType?: string | null): string | undefined {
+    if (!aircraftType) return undefined;
+    let type = aircraftType.trim().toUpperCase();
+    if (type && type.length === 2) {
+        if (type.startsWith("4")) {
+            type = "P06T";
+        } else if (type.startsWith("2")) {
+            type = "C172";
+        } else if (type.startsWith("1")) {
+            type = "C152";
+        }
+    }
+
+    return type;
 }
 
 export default function ChartCarousel({ logbook = [] }: Props) {
@@ -74,13 +91,17 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         },
     });
 
-    // Group by month: { "Jan 2024": { time: 5.3, flights: 4 } }
+    // --- NEW: State for Aircraft Type Filter ---
+    const [aircraftTypeFilter, setAircraftTypeFilter] = useState<string>("All");
+
+    // --- FIX 1: Group by Sortable Key (YYYY-MM) for Monthly Data ---
     const monthlyData = logbook.reduce(
         (acc, entry) => {
-            const key = new Date(entry.date as any).toLocaleString("default", {
-                month: "short",
-                year: "numeric",
-            });
+            if (!entry.date) return acc;
+            const date = new Date(entry.date);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const key = `${year}-${month}`;
 
             if (!acc[key]) acc[key] = { time: 0, flights: 0 };
             acc[key].time +=
@@ -98,33 +119,57 @@ export default function ChartCarousel({ logbook = [] }: Props) {
     );
 
     const chartDataONE = Object.entries(monthlyData)
-        .sort(([a], [b]) => {
-            const dateA = new Date(a);
-            const dateB = new Date(b);
-            return dateA.getTime() - dateB.getTime();
-        })
+        .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
         .slice(isMobile ? -4 : -6)
-        .map(([month, values]) => ({
-            name: month,
-            time: values.time,
-            flights: values.flights,
-        }));
+        .map(([key, values]) => {
+            const [year, month] = key.split("-").map(Number);
+            const date = new Date(year, month - 1);
+            const name = date.toLocaleString("default", {
+                month: "short",
+                year: "numeric",
+            });
 
+            return {
+                name,
+                time: values.time,
+                flights: values.flights,
+            };
+        });
+
+    // --- Aircraft Data with Filtering Logic ---
+    
+    // 1. Extract unique types for the dropdown
+    const availableAircraftTypes = useMemo(() => {
+        const types = new Set<string>();
+        logbook.forEach(entry => {
+            let type = fixType(entry.aircraftType);
+
+            if (type) types.add(type);
+        });
+        return ["All", ...Array.from(types).sort()];
+    }, [logbook]);
+
+    // 2. Aggregate data
     const chartDataTWO = logbook.reduce(
         (acc, entry) => {
             const aircraft = entry.aircraftRegistration || "Unknown";
-            if (!acc[aircraft]) acc[aircraft] = { name: aircraft, flights: 0 };
+            if (!acc[aircraft]) acc[aircraft] = { name: aircraft, flights: 0, type: fixType(entry.aircraftType) || "Unknown" };
             acc[aircraft].flights += 1;
             return acc;
         },
-        {} as Record<string, { name: string; flights: number }>,
+        {} as Record<string, { name: string; flights: number, type: string }>,
     );
-    Object.values(chartDataTWO).sort((a, b) => b.flights - a.flights);
 
+    // 3. Filter, Sort, and Slice
     const sortedAircraft = Object.values(chartDataTWO)
+        .filter((item) => {
+            if (aircraftTypeFilter === "All") return true;
+            return item.type === aircraftTypeFilter;
+        })
         .sort((a, b) => b.flights - a.flights)
         .slice(0, isMobile ? 5 : 9);
 
+    // --- VFR / IFR Data ---
     const vfrIfrData = [
         {
             name: "VFR",
@@ -144,6 +189,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         },
     ];
 
+    // --- Day / Night Data ---
     const dayNightData = [
         {
             name: "Day",
@@ -155,6 +201,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         },
     ];
 
+    // --- FIX 2: Group by Sortable Key (YYYY-MM) for Landings ---
     const sixMonths = new Date();
     sixMonths.setMonth(sixMonths.getMonth() - 12);
 
@@ -162,28 +209,37 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         .filter((e) => e.date && new Date(e.date) >= sixMonths)
         .reduce(
             (acc, entry) => {
-                const date = new Date(entry.date as any);
-                const key = date.toLocaleString("default", { month: "short", year: "numeric" });
-                if (!acc[key]) acc[key] = { name: key, landings: 0 };
+                if (!entry.date) return acc;
+                const date = new Date(entry.date);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const key = `${year}-${month}`;
+
+                if (!acc[key]) acc[key] = { key, landings: 0 };
                 acc[key].landings += (entry.landDay || 0) + (entry.landNight || 0);
                 return acc;
             },
-            {} as Record<string, { name: string; landings: number }>,
+            {} as Record<string, { key: string; landings: number }>,
         );
 
     const landingChartData = Object.values(landingData)
-        .sort((a, b) => {
-            const dateA = new Date(a.name);
-            const dateB = new Date(b.name);
-            return dateA.getTime() - dateB.getTime();
-        })
-        .slice(isMobile ? -4 : -6);
+        .sort((a, b) => a.key.localeCompare(b.key))
+        .slice(isMobile ? -4 : -6)
+        .map((item) => {
+            const [year, month] = item.key.split("-").map(Number);
+            const date = new Date(year, month - 1);
+            const name = date.toLocaleString("default", {
+                month: "short",
+                year: "numeric",
+            });
+            return { name, landings: item.landings };
+        });
 
-    // Count flights by weekday
+    // --- Weekday Data ---
     const flightsByDayOfWeek = logbook.reduce(
         (acc, entry) => {
             const date = new Date(entry.date as any);
-            const day = date.toLocaleString("en-US", { weekday: "long" }); // "Monday", "Tuesday", etc.
+            const day = date.toLocaleString("en-US", { weekday: "long" });
 
             if (!acc[day]) acc[day] = { name: day, flights: 0 };
             acc[day].flights += 1;
@@ -193,7 +249,6 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         {} as Record<string, { name: string; flights: number }>,
     );
 
-    // Convert to sorted array (Mon → Sun)
     const orderedWeekdays = [
         "Sunday",
         "Monday",
@@ -208,9 +263,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         (day) => flightsByDayOfWeek[day] || { name: day, flights: 0 },
     );
 
-
-    // Create data for a pie chart displaying flight time by operation 
-    // (picTime, copilotTime, multiPilotTime, instructorTime+simInstructorTime, dualTime)
+    // --- Operation Time Data ---
     const flightTimeByOperation = [
         {
             name: "PIC",
@@ -220,7 +273,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         {
             name: "Copilot",
             value: logbook.reduce((sum, e) => sum + (Number(e.copilotTime) || 0), 0),
-            color: "#7B9AEA",   
+            color: "#7B9AEA",
         },
         {
             name: "Multi Pilot",
@@ -229,7 +282,11 @@ export default function ChartCarousel({ logbook = [] }: Props) {
         },
         {
             name: "Instructor",
-            value: logbook.reduce((sum, e) => sum + (Number(e.instructorTime) || 0) + (Number(e.simInstructorTime) || 0), 0),
+            value: logbook.reduce(
+                (sum, e) =>
+                    sum + (Number(e.instructorTime) || 0) + (Number(e.simInstructorTime) || 0),
+                0,
+            ),
             color: "#736CED",
         },
         {
@@ -237,21 +294,21 @@ export default function ChartCarousel({ logbook = [] }: Props) {
             value: logbook.reduce((sum, e) => sum + (Number(e.dualTime) || 0), 0),
             color: "#ABAFEE",
         },
-    ].filter(entry => entry.value > 0); // Filter out operations with 0 time
+    ].filter((entry) => entry.value > 0);
 
+    // --- Aerodrome Data ---
     const mostVisitedAerodrome = logbook.reduce(
         (acc, entry) => {
             const dep = entry.depAd || "Unknown";
             const arr = entry.arrAd || "Unknown";
 
-            // If unknown, skip
             if (dep === "Unknown" && arr === "Unknown") return acc;
 
             if (!acc[dep]) acc[dep] = { name: dep, flights: 0 };
             if (!acc[arr]) acc[arr] = { name: arr, flights: 0 };
 
             acc[dep].flights += 1;
-            if (arr !== dep) acc[arr].flights += 1; // Avoid double counting if same
+            if (arr !== dep) acc[arr].flights += 1;
 
             return acc;
         },
@@ -267,6 +324,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
     return (
         <div className="relative">
             <div ref={sliderRef} className="keen-slider">
+                {/* 1. Monthly Hours Chart */}
                 <div className="keen-slider__slide">
                     <h2 className="text-white mb-2 text-sm font-semibold text-center">
                         Monthly Hours & Flights
@@ -322,14 +380,35 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     </ResponsiveContainer>
                 </div>
 
-                <div className="keen-slider__slide">
-                    <h2 className="text-white mb-2 text-sm font-semibold text-center">
-                        Most Flown Aircraft
-                    </h2>
+                {/* 2. Aircraft Chart (UPDATED with Dropdown) */}
+                <div className="keen-slider__slide flex flex-col">
+                    <div className="mb-2 relative z-10 flex items-center justify-center w-full">
+                        {/* Filter Dropdown - Positioned Absolutely to the Left */}
+                        <div className="absolute left-0 flex items-center space-x-2 rounded-lg px-2 py-1 border border-white/25 bg-secondary">
+                            <Filter className="w-3 h-3 text-white/50" />
+                            <select
+                                value={aircraftTypeFilter}
+                                onChange={(e) => setAircraftTypeFilter(e.target.value)}
+                                className="bg-transparent text-white text-xs outline-none cursor-pointer appearance-none pr-4"
+                                style={{ backgroundImage: "none" }}
+                            >
+                                {availableAircraftTypes.map((type) => (
+                                    <option key={type} value={type} className="bg-neutral-800 text-white">
+                                        {type}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        {/* Title - Centered by the parent flex container */}
+                        <h2 className="text-white text-sm font-semibold mt-2">
+                            Most Flown Aircraft
+                        </h2>
+                    </div>
 
                     <ResponsiveContainer width="100%" height={chartHeight}>
                         <BarChart
-                            data={Object.values(sortedAircraft)}
+                            data={sortedAircraft}
                             margin={{
                                 left: -30,
                             }}
@@ -363,6 +442,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     </ResponsiveContainer>
                 </div>
 
+                {/* 3. VFR/IFR Chart */}
                 <div className="keen-slider__slide">
                     <h2 className="text-white text-center">VFR vs IFR Time</h2>
 
@@ -395,6 +475,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     </ResponsiveContainer>
                 </div>
 
+                {/* 4. Day/Night Chart */}
                 <div className="keen-slider__slide">
                     <h2 className="text-white text-center">Day vs Night Time</h2>
                     <ResponsiveContainer width="100%" height={chartHeight}>
@@ -423,6 +504,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     </ResponsiveContainer>
                 </div>
 
+                {/* 5. Monthly Landings Chart */}
                 <div className="keen-slider__slide">
                     <h2 className="text-white text-center">Monthly Landings</h2>
                     <ResponsiveContainer width="100%" height={chartHeight}>
@@ -449,6 +531,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     </ResponsiveContainer>
                 </div>
 
+                {/* 6. Day of Week Chart */}
                 <div className="keen-slider__slide">
                     <h2 className="text-white text-center">Flights by Day of Week</h2>
                     <ResponsiveContainer width="100%" height={chartHeight}>
@@ -475,12 +558,13 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     </ResponsiveContainer>
                 </div>
 
+                {/* 7. Operation Type Chart */}
                 <div className="keen-slider__slide">
                     <h2 className="text-white text-center">Flight Time by Operation</h2>
                     <ResponsiveContainer width="100%" height={chartHeight}>
                         <PieChart margin={chartMargin}>
-                            <Legend 
-                                layout="vertical" 
+                            <Legend
+                                layout="vertical"
                                 verticalAlign="middle"
                                 align="left"
                             />
@@ -508,6 +592,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                     </ResponsiveContainer>
                 </div>
 
+                {/* 8. Aerodromes Chart */}
                 <div className="keen-slider__slide">
                     <h2 className="text-white text-center">Most Visited Aerodromes</h2>
                     <ResponsiveContainer width="100%" height={chartHeight}>
@@ -535,6 +620,7 @@ export default function ChartCarousel({ logbook = [] }: Props) {
                 </div>
             </div>
 
+            {/* Navigation Controls */}
             <div className="flex mx-auto gap-4 mt-4 justify-center">
                 <Button
                     styleType="small"
