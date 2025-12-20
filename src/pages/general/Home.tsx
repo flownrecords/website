@@ -75,7 +75,7 @@ export default function Home() {
             return `${interval} minutes ago`;
         }
 
-        return "just now";
+        return "Just now";
     }
 
     function updateUptime() {
