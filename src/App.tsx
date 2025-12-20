@@ -35,7 +35,7 @@ import {
 } from "./pages";
 
 // Components
-import Navbar from "./components/general/Navbar";
+import Navbar from "./components/general/navbar/Navbar";
 
 function App() {
     return (
