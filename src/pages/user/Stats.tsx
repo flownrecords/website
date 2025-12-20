@@ -23,9 +23,27 @@ import {
 import { ChartTooltip } from "../../components/user/ChartTooltip";
 import Button from "../../components/general/Button";
 import { useNavigate } from "react-router-dom";
-import { Undo2 } from "lucide-react";
+import { Undo2, Filter, ChevronDown } from "lucide-react"; // Added Filter icon
 import Footer from "../../components/general/Footer";
 import { parseTime } from "../../components/user/ChartCarousel";
+import { useState, useMemo } from "react"; // Added useMemo and useState
+
+// Temporary fix for erroneous data provided from @nortavia flightlogger logbook which aircraft type is replaced by the callsign
+function fixType(aircraftType?: string | null): string | undefined {
+    if (!aircraftType) return undefined;
+    let type = aircraftType.trim().toUpperCase();
+    if (type && type.length === 2) {
+        if (type.startsWith("4")) {
+            type = "P06T";
+        } else if (type.startsWith("2")) {
+            type = "C172";
+        } else if (type.startsWith("1")) {
+            type = "C152";
+        }
+    }
+
+    return type;
+}
 
 export default function Stats() {
     const { user } = useAuth();
@@ -39,12 +57,18 @@ export default function Stats() {
 
     const chartHeight = isMobile ? 300 : 400;
 
+    // --- NEW: Aircraft Filter State ---
+    const [aircraftTypeFilter, setAircraftTypeFilter] = useState<string>("All");
+
+    // --- FIX 1: Monthly Hours Data (YYYY-MM Sorting) ---
     const monthlyData = logbook.reduce(
         (acc, entry) => {
-            const key = new Date(entry.date as any).toLocaleString("default", {
-                month: "short",
-                year: "numeric",
-            });
+            if (!entry.date) return acc;
+            const date = new Date(entry.date);
+            // Create sortable key: "2024-01"
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const key = `${year}-${month}`;
 
             if (!acc[key]) acc[key] = { time: 0, flights: 0 };
             acc[key].time +=
@@ -62,33 +86,57 @@ export default function Stats() {
     );
 
     const monthFlightHours = Object.entries(monthlyData)
-        .sort(([a], [b]) => {
-            const dateA = new Date(a);
-            const dateB = new Date(b);
-            return dateA.getTime() - dateB.getTime();
-        })
+        .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)) // Sort by string "2024-01"
         .slice(isMobile ? -4 : -12)
-        .map(([month, values]) => ({
-            name: month,
-            time: values.time,
-            flights: values.flights,
-        }));
+        .map(([key, values]) => {
+            // Convert back to "Jan 2024" for display
+            const [year, month] = key.split("-").map(Number);
+            const date = new Date(year, month - 1);
+            const name = date.toLocaleString("default", {
+                month: "short",
+                year: "numeric",
+            });
+            return {
+                name,
+                time: values.time,
+                flights: values.flights,
+            };
+        });
 
+    // --- NEW: Aircraft Data with Filtering ---
+    
+    // 1. Get unique types
+    const availableAircraftTypes = useMemo(() => {
+        const types = new Set<string>();
+        logbook.forEach(entry => {
+            let type = fixType(entry.aircraftType);
+
+            if (type) types.add(type);
+        });
+        return ["All", ...Array.from(types).sort()];
+    }, [logbook]);
+
+    // 2. Aggregate data including type
     const mostFlownAircraft = logbook.reduce(
         (acc, entry) => {
             const aircraft = entry.aircraftRegistration || "Unknown";
-            if (!acc[aircraft]) acc[aircraft] = { name: aircraft, flights: 0 };
+            if (!acc[aircraft]) acc[aircraft] = { name: aircraft, flights: 0, type: fixType(entry.aircraftType) || "Unknown" };
             acc[aircraft].flights += 1;
             return acc;
         },
-        {} as Record<string, { name: string; flights: number }>,
+        {} as Record<string, { name: string; flights: number; type: string }>,
     );
-    Object.values(mostFlownAircraft).sort((a, b) => b.flights - a.flights);
 
+    // 3. Filter and Sort
     const sortedAircraft = Object.values(mostFlownAircraft)
+        .filter((item) => {
+            if (aircraftTypeFilter === "All") return true;
+            return item.type === aircraftTypeFilter;
+        })
         .sort((a, b) => b.flights - a.flights)
         .slice(0, isMobile ? 5 : 15);
 
+    // --- Other Charts (VFR/IFR, Day/Night) ---
     const vfrIfrData = [
         {
             name: "VFR",
@@ -122,29 +170,39 @@ export default function Stats() {
         },
     ];
 
+    // --- FIX 2: Monthly Landings Data (YYYY-MM Sorting) ---
     const landingsDataRaw = logbook.reduce(
         (acc, entry) => {
-            const date = new Date(entry.date as any);
-            const key = date.toLocaleString("default", { month: "short", year: "numeric" });
-            if (!acc[key]) acc[key] = { name: key, landings: 0 };
+            if (!entry.date) return acc;
+            const date = new Date(entry.date);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const key = `${year}-${month}`; // Sortable Key
+
+            if (!acc[key]) acc[key] = { key, landings: 0 };
             acc[key].landings += (entry.landDay || 0) + (entry.landNight || 0);
             return acc;
         },
-        {} as Record<string, { name: string; landings: number }>,
+        {} as Record<string, { key: string; landings: number }>,
     );
 
     const landingsData = Object.values(landingsDataRaw)
-        .sort((a, b) => {
-            const dateA = new Date(a.name);
-            const dateB = new Date(b.name);
-            return dateA.getTime() - dateB.getTime();
-        })
-        .slice(isMobile ? -5 : -12);
+        .sort((a, b) => a.key.localeCompare(b.key))
+        .slice(isMobile ? -5 : -12)
+        .map((item) => {
+             const [year, month] = item.key.split("-").map(Number);
+             const date = new Date(year, month - 1);
+             const name = date.toLocaleString("default", {
+                 month: "short",
+                 year: "numeric",
+             });
+             return { name, landings: item.landings };
+        });
 
     const flightsByDayOfWeek = logbook.reduce(
         (acc, entry) => {
             const date = new Date(entry.date as any);
-            const day = date.toLocaleString("en-US", { weekday: "long" }); // "Monday", "Tuesday", etc.
+            const day = date.toLocaleString("en-US", { weekday: "long" });
 
             if (!acc[day]) acc[day] = { name: day, flights: 0 };
             acc[day].flights += 1;
@@ -154,7 +212,6 @@ export default function Stats() {
         {} as Record<string, { name: string; flights: number }>,
     );
 
-    // Convert to sorted array (Mon → Sun)
     const orderedWeekdays = [
         "Sunday",
         "Monday",
@@ -202,11 +259,8 @@ export default function Stats() {
                 </div>
 
                 {user ? (
-                    <div
-                        className="
-                            space-y-4
-                        "
-                    >
+                    <div className="space-y-4">
+                        {/* Monthly Hours Chart */}
                         <div className="bg-primary ring-2 ring-white/25 rounded-lg p-4">
                             <h2 className="text-white mb-2 text-sm font-semibold text-center">
                                 Monthly Hours & Flights
@@ -272,10 +326,31 @@ export default function Stats() {
                             </ResponsiveContainer>
                         </div>
 
+                        {/* Aircraft Chart with Filter */}
                         <div className="bg-primary ring-2 ring-white/25 rounded-lg p-4">
-                            <h2 className="text-white mb-2 text-sm font-semibold text-center">
-                                Most Flown Aircraft
-                            </h2>
+                            {/* Filter Header */}
+                            <div className="mb-2 relative z-10 flex items-center justify-center w-full">
+                                <div className="absolute left-0 flex items-center space-x-2 bg-neutral-800/50 rounded-md px-2 py-1 border border-white/10">
+                                    <Filter className="w-3 h-3 text-white/50" />
+                                    <select
+                                        value={aircraftTypeFilter}
+                                        onChange={(e) => setAircraftTypeFilter(e.target.value)}
+                                        className="bg-transparent text-white text-xs outline-none cursor-pointer appearance-none pr-4"
+                                        style={{ backgroundImage: "none" }}
+                                    >
+                                        {availableAircraftTypes.map((type) => (
+                                            <option key={type} value={type} className="bg-neutral-800 text-white">
+                                                {/* \u00A0 is a non-breaking space. Adding 2 of them creates a nice gap. */}
+                                                {`\u00A0\u00A0${type}`} 
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown className="w-3 h-3 text-white/50 absolute right-1 pointer-events-none" />
+                                </div>
+                                <h2 className="text-white text-sm font-semibold">
+                                    Most Flown Aircraft
+                                </h2>
+                            </div>
 
                             <ResponsiveContainer width="100%" height={chartHeight}>
                                 <BarChart
@@ -317,6 +392,7 @@ export default function Stats() {
                             </ResponsiveContainer>
                         </div>
 
+                        {/* VFR/IFR and Day/Night */}
                         <div className="bg-primary lg:ring-2 ring-white/25 rounded-lg lg:p-4 grid grid-cols-1 lg:grid-cols-2 gap-y-4">
                             <div className="ring-2 lg:ring-0 ring-white/25 rounded-lg p-4 lg:p-0">
                                 <h2 className="text-white text-center">VFR vs IFR Time</h2>
@@ -382,6 +458,7 @@ export default function Stats() {
                             </div>
                         </div>
 
+                        {/* Monthly Landings Chart */}
                         <div className="bg-primary ring-2 ring-white/25 rounded-lg p-4">
                             <h2 className="text-white text-center">Monthly Landings</h2>
                             <ResponsiveContainer width="100%" height={chartHeight}>
@@ -412,6 +489,7 @@ export default function Stats() {
                             </ResponsiveContainer>
                         </div>
 
+                        {/* Flights by Day of Week */}
                         <div className="bg-primary ring-2 ring-white/25 rounded-lg p-4">
                             <h2 className="text-white text-center">Flights by Day of Week</h2>
                             <ResponsiveContainer width="100%" height={chartHeight}>
