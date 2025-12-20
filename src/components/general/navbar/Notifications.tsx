@@ -1,10 +1,11 @@
 import { Bell, Info, Star, User, UserMinus, UserPlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Notifications() {
     const [showNotifications, setShowNotifications] = useState(false);
     const notificationRef = useRef(null);
+    const navigate = useNavigate();
 
     // 1. Initial State with Read status and IDs
     const [notifications, setNotifications] = useState([
@@ -38,17 +39,6 @@ export default function Notifications() {
                 user: { username: 'mbr', iconURL: 'https://placehold.co/32x32' }
             }
         },
-        {
-            id: '4',
-            type: 'follower',
-            title: 'New Follower',
-            timestamp: new Date('2025-12-02T14:30:00Z'),
-            read: false,
-            metadata: {
-                isFollowingBack: false, // State for the follow button
-                user: { username: 'joaovfamorim', iconURL: 'https://placehold.co/32x32' }
-            }
-        }
     ]);
 
     useEffect(() => {
@@ -121,9 +111,12 @@ export default function Notifications() {
                         <span className="text-xs text-gray-400">{unreadCount} unread</span>
                     </div>
                     
-                    <div className="max-h-96 overflow-y-auto">
+                    <div className="max-h-84 overflow-y-auto">
                         {notifications.length > 0 ? (
-                            notifications.map((notif) => (
+                            notifications
+                            .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+                            .slice(0, 3)
+                            .map((notif) => (
                                 <div 
                                     key={notif.id} 
                                     className={`p-4 border-b border-white/25 last:border-0 flex gap-3 transition-colors ${notif.read ? 'bg-transparent hover:bg-white/5' : 'bg-white/5 hover:bg-white/10'}`}
@@ -157,14 +150,16 @@ export default function Notifications() {
                                                         <img src={notif.metadata.user.iconURL} alt="user" className="h-5 w-5 rounded-full" />
                                                     )}
                                                     <span className="text-sm text-white/75">
-                                                        <span className="font-bold text-white">{notif.metadata?.user.username}</span> has followed you.
+                                                        <span className="font-medium text-white cursor-pointer hover:text-white/75 transition-colors" onClick={() => navigate(`/u/${notif.metadata?.user.username}`)}>
+                                                            {notif.metadata?.user.username}
+                                                        </span> has followed you.
                                                     </span>
                                                 </div>
                                                 
                                                 <div className="flex gap-2">
                                                     <button 
                                                         onClick={(e) => handleFollowUser(notif.id, e)}
-                                                        className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer ${
+                                                        className={`px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1 transition-colors cursor-pointer ${
                                                             notif.metadata?.isFollowingBack 
                                                             ? 'bg-transparent ring-1 ring-white/25 text-white/25' 
                                                             : 'bg-accent text-white hover:bg-accent/75'
@@ -178,7 +173,7 @@ export default function Notifications() {
                                                     </button>
                                                     <button 
                                                         onClick={(e) => handleRemoveNotification(notif.id, e)}
-                                                        className="px-3 py-1 rounded-lg text-xs font-semibold bg-second-accent/25 text-second-accent hover:bg-second-accent/15 flex items-center gap-1 transition-colors"
+                                                        className="px-3 py-1 rounded-lg text-xs font-medium bg-second-accent/25 text-second-accent hover:bg-second-accent/15 flex items-center gap-1 transition-colors cursor-pointer"
                                                     >
                                                         <UserMinus className="w-3 h-3" /> Remove
                                                     </button>
@@ -216,7 +211,7 @@ export default function Notifications() {
                         )}
                     </div>
                     <div className="p-2 border-t border-white/25 bg-secondary text-center">
-                        <Link to="/notifications" className="text-xs text-accent hover:text-white transition-colors font-semibold">
+                        <Link to="/notifications" className="text-xs text-accent hover:text-accent/75 transition-colors font-semibold">
                             View all activity
                         </Link>
                     </div>
