@@ -23,41 +23,44 @@ export default function AboutUs() {
             <Splash uppertext="About" />
 
             <div className="container mx-auto max-w-6xl p-4 xl:px-0">
-                <div className="ring-2 ring-white/25 rounded-lg p-4">
-                    <h1 className="text-xl font-semibold text-white">About the Platform</h1>
-                    <div className="mt-1 opacity-75">
-                        <p>
-                            Our mission is to turn raw flight data into meaningful insights,
-                            stories, and visuals. Whether you're a student pilot logging your first
-                            solo, an instructor tracking progress, or simply an aviation enthusiast,
-                            Flown Records helps you see your flying journey in a whole different
-                            perspective.
-                        </p>
-                        <p>
-                            With smart data import tools, you can upload your flight logs from
-                            different sources and instantly transform them into interactive charts,
-                            statistics, and summaries.
-                        </p>
-                        <p>
-                            We believe flying isn't just about hours logged, but about the
-                            experiences behind them. Flown Records gives you a personal dashboard to
-                            revisit those moments, celebrate milestones, and share your progress
-                            with others in the aviation community.
-                        </p>
-                        <p>
-                            Take your flight data further. Discover trends, set goals, and keep
-                            writing your story in the skies.
-                        </p>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="ring-2 ring-white/25 rounded-lg p-4">
+                        <h1 className="text-xl font-semibold text-white">About the Platform</h1>
+                        <div className="mt-1 opacity-75">
+                            <p>
+                                Our mission is to turn basic flight data into meaningful insights,
+                                stories, and visuals. Whether you're a student pilot logging your first
+                                solo, an instructor tracking progress, or simply an aviation enthusiast,
+                                Flown Records helps you see your flying journey in a whole different
+                                perspective.
+                            </p>
+                            <p>
+                                With smart data import tools, you can upload your flight logs from
+                                different sources and instantly transform them into interactive charts,
+                                statistics, and summaries.
+                            </p>
+                            <p>
+                                We believe flying isn't just about hours logged, but about the
+                                experiences behind them. Flown Records gives you a personal dashboard to
+                                revisit those moments, celebrate milestones, and share your progress
+                                with others in the aviation community.
+                            </p>
+                            <p>
+                                Take your flight data further. Discover trends, set goals, and keep
+                                writing your story in the skies.
+                            </p>
+                        </div>
                     </div>
-                </div>
 
-                <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
-                    <h1 className="text-xl font-semibold text-white">Our Team</h1>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-2 ">
-                        {Team.map((member) => (
-                            <ProfileCard data={member} />
-                        ))}
+                    <div className="ring-2 ring-white/25 rounded-lg p-4">
+                        <h1 className="text-xl font-semibold text-white">Our Team</h1>
+                        <div className="mt-2">
+                            {Team.map((member) => (
+                                <ProfileCard data={member} />
+                            ))}
+                        </div>
                     </div>
+
                 </div>
 
                 <div className="ring-2 ring-white/25 rounded-lg p-4 mt-4">
