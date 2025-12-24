@@ -5,7 +5,7 @@ import Button from "../../components/general/Button";
 import type { User } from "../../lib/types";
 import ChartCarousel from "../../components/user/ChartCarousel";
 import Footer from "../../components/general/Footer";
-import { Book, Cloudy, FileChartLine, FileText, Loader, Search, Share, UserPen, Users } from "lucide-react";
+import { Bell, Book, Cloudy, FileChartLine, FileText, Loader, Search, Share, UserPen, Users } from "lucide-react";
 import useAlert from "../../components/alert/useAlert";
 import RouteMap from "../../components/maping/RouteMap";
 import ProfileHeader from "../../components/user/ProfileHeader";
@@ -186,6 +186,32 @@ export default function Me() {
                                 <Button
                                     text={
                                         <>
+                                            <FileChartLine
+                                                className="h-4 w-4 inline-block"
+                                                strokeWidth={2}
+                                            />
+                                            <span className="ml-2">Reports</span>
+                                        </>
+                                    }
+                                    to="/me/reports"
+                                />
+
+                                <Button
+                                    text={
+                                        <>
+                                            <Bell
+                                                className="h-4 w-4 inline-block"
+                                                strokeWidth={2}
+                                            />
+                                            <span className="ml-2">Notifications</span>
+                                        </>
+                                    }
+                                    to="/me/notifications"
+                                />
+
+                                <Button
+                                    text={
+                                        <>
                                             <Users
                                                 className="h-4 w-4 inline-block"
                                                 strokeWidth={2}
@@ -207,19 +233,6 @@ export default function Me() {
                                         </>
                                     }
                                     to="/me/plan"
-                                />
-
-                                <Button
-                                    text={
-                                        <>
-                                            <FileChartLine
-                                                className="h-4 w-4 inline-block"
-                                                strokeWidth={2}
-                                            />
-                                            <span className="ml-2">Reports</span>
-                                        </>
-                                    }
-                                    to="/me/reports"
                                 />
 
                                 <Button
