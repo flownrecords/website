@@ -2,44 +2,68 @@ import { Bell, Info, Star, User, UserMinus, UserPlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+type NotificationType = {
+    id: string;
+    type: 'follower' | 'update' | 'other';
+    title: string;
+    changelogId?: string; // for update type
+    timestamp: Date;
+    read: boolean;
+    metadata?: {
+        isFollowingBack?: boolean; // for follower type
+        user?: {
+            username: string;
+            iconURL: string;
+        };
+    };
+};
+
 export default function Notifications() {
     const [showNotifications, setShowNotifications] = useState(false);
     const notificationRef = useRef(null);
     const navigate = useNavigate();
 
     // 1. Initial State with Read status and IDs
-    const [notifications, setNotifications] = useState([
-        {
-            id: '1',
-            type: 'update',
-            title: 'New feature released!',
-            changelogId: 'v2.4.0', // ID for the redirect
-            timestamp: new Date('2025-12-01T10:00:00Z'),
-            read: false,
-        },
-        {
-            id: '2',
-            type: 'follower',
-            title: 'New Follower',
-            timestamp: new Date('2025-12-02T14:30:00Z'),
-            read: false,
-            metadata: {
-                isFollowingBack: false, // State for the follow button
-                user: { username: 'music_lover_92', iconURL: 'https://placehold.co/32x32' }
-            }
-        },
-        {
-            id: '3',
-            type: 'follower',
-            title: 'New Follower',
-            timestamp: new Date('2025-12-02T14:30:00Z'),
-            read: false,
-            metadata: {
-                isFollowingBack: false, // State for the follow button
-                user: { username: 'mbr', iconURL: 'https://placehold.co/32x32' }
-            }
-        },
-    ]);
+    const [notifications, setNotifications] = useState<NotificationType[]>([]);
+
+    // if development environment, use mock data
+    useEffect(() => {
+        // MOCK DATA FOR DEMO TESTING
+        if(true) return;
+        setNotifications([
+            {
+                id: '1',
+                type: 'update',
+                title: 'New feature released!',
+                changelogId: 'v2.4.0', // ID for the redirect
+                timestamp: new Date('2025-12-01T10:00:00Z'),
+                read: false,
+            },
+            {
+                id: '2',
+                type: 'follower',
+                title: 'New Follower',
+                timestamp: new Date('2025-12-02T14:30:00Z'),
+                read: false,
+                metadata: {
+                    isFollowingBack: false, // State for the follow button
+                    user: { username: 'music_lover_92', iconURL: 'https://placehold.co/32x32' }
+                }
+            },
+            {
+                id: '3',
+                type: 'follower',
+                title: 'New Follower',
+                timestamp: new Date('2025-12-02T14:30:00Z'),
+                read: false,
+                metadata: {
+                    isFollowingBack: false, // State for the follow button
+                    user: { username: 'mbr', iconURL: 'https://placehold.co/32x32' }
+                }
+            },
+        ]);
+        
+    }, []);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -150,8 +174,8 @@ export default function Notifications() {
                                                         <img src={notif.metadata.user.iconURL} alt="user" className="h-5 w-5 rounded-full" />
                                                     )}
                                                     <span className="text-sm text-white/75">
-                                                        <span className="font-medium text-white cursor-pointer hover:text-white/75 transition-colors" onClick={() => navigate(`/u/${notif.metadata?.user.username}`)}>
-                                                            {notif.metadata?.user.username}
+                                                        <span className="font-medium text-white cursor-pointer hover:text-white/75 transition-colors" onClick={() => navigate(`/u/${notif.metadata?.user?.username}`)}>
+                                                            {notif.metadata?.user?.username}
                                                         </span> has followed you.
                                                     </span>
                                                 </div>
