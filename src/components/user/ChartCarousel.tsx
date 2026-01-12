@@ -52,6 +52,8 @@ function fixType(aircraftType?: string | null): string | undefined {
             type = "C172";
         } else if (type.startsWith("1")) {
             type = "C152";
+        } else if (type === "3S") {
+            type = "SR20";
         }
     }
 
