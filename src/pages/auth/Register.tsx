@@ -280,7 +280,7 @@ export default function Register() {
                         </label>
                     </div>
 
-                    <div className="col-span-1 lg:col-span-2 block lg:flex lg:justify-end">
+                    <div className="col-span-1 lg:col-span-2 block lg:flex lg:justify-end space-y-4">
                         <button
                             type="submit"
                             className={`
@@ -299,6 +299,25 @@ export default function Register() {
                         >
                             Create my account
                         </button>
+                        <Link
+                            to="/login"
+                            type="submit"
+                            className={`
+                            cursor-pointer hover:opacity-75
+                            inline-block
+                            bg-gradient-to-t 
+                            from-neutral-900 to-neutral-800 
+                            transition duration-150
+                            text-white
+                            py-2 px-6 
+                            rounded-md text-center
+                            ring-2 ring-white/25
+                            w-full
+                            lg:hidden
+                        `}
+                        >
+                            Already have an account?
+                        </Link>
                     </div>
                 </form>
             </div>
