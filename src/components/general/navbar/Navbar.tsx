@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../auth/AuthContext";
 
 import Icon from "../../../assets/images/icon.png";
-import { AlignRight, Bell } from "lucide-react";
+import { AlignRight, Bell, Book, BookOpenText, LogOut, Play } from "lucide-react";
 import Notifications from "./Notifications";
 
 export default function Navbar() {
@@ -76,15 +76,50 @@ export default function Navbar() {
             {mobileMenu && (
                 <div className="block md:hidden p-4 m-4 bg-secondary rounded-lg ring-2 ring-white/25">
                      <ul className="container mx-auto flex flex-col space-y-4">
-                        <li><Link to="/getstarted" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Get started</Link></li>
-                        <li><Link to="/guides" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">Guides</Link></li>
-                        <li><Link to="/about" className="decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">About Us</Link></li>
+                        <li>
+                            <Link to={user ? "/me" : "/getstarted"} className="flex items-center decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">
+                                {
+                                    user ? 
+                                        <>
+                                            <img src={user?.profilePictureUrl ?? "https://placehold.co/512x512"} draggable="false" className="rounded-full h-4 w-4 mr-2 object-cover" alt="User profile icon" />
+                                            {user?.firstName ?? `@${user?.username}`}
+                                        </> : 
+                                        <>
+                                            <Play className="h-4 w-4 mr-2" />
+                                            Get Started
+                                        </>
+                                }
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/guides" className="flex items-center decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">
+                                <BookOpenText className="h-4 w-4 mr-2" />
+                                Guides
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/about" className="flex items-center decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">
+                                <Book className="h-4 w-4 mr-2" />
+                                About Us
+                            </Link>
+                        </li>
                         <li>
                              <Link to="/notifications" className="flex items-center decoration-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">
                                 <Bell className="h-4 w-4 mr-2" />
                                 Notifications
                             </Link>
                         </li>
+                        {
+                            user ? 
+                            <>
+                                <li>
+                                    <button onClick={logout} className="flex items-center decoration-second-accent decoration-2 hover:underline hover:text-white/75 transition-all duration-150">
+                                        <LogOut className="h-4 w-4 mr-2" />
+                                        Logout
+                                    </button>
+                                </li>
+                            </> : <></>
+                        }
                      </ul>
                 </div>
             )}
