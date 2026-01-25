@@ -222,7 +222,7 @@ export default function ProfileHeader(props: { user: User | null }) {
                         </div>
                         <div className="flex justify-between">
                             <span className="text-white/50">Most flown aircraft</span>
-                            <span className="text-white/75 font-semibold">{mostFlownAcft()}</span>
+                            <span className="text-white/75 font-semibold">{mostFlownAcft().split(" ")[0]}</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-white/50">Most visited airport</span>
